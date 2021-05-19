@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Project.WebMVC.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager
         )
         {
             _userManager = userManager;
@@ -34,6 +37,10 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+            
+            [Required]
+            [DataType(DataType.Date)]
+            public DateTime Birthday { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
@@ -57,9 +64,10 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
                 Page();
             }
 
-            var user = new IdentityUser(Input.Username)
+            var user = new AppUser(Input.Username)
             {
-                Email = Input.Email
+                Email = Input.Email,
+                Birthday = Input.Birthday
             };
 
             var createResult = await _userManager.CreateAsync(user, Input.Password);

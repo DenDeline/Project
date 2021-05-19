@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Project.WebMVC.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class AppDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }

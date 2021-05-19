@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Project.WebMVC.Identity;
 
 namespace Project.WebMVC
 {
@@ -24,12 +25,14 @@ namespace Project.WebMVC
 
         public IConfiguration Configuration { get; }
 
+        
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("TestDb"));
+            services.AddDbContext<AppIdentityDbContext>(options => options.UseInMemoryDatabase("TestDb"));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddIdentity<AppUser, IdentityRole>()
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
