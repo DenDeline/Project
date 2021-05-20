@@ -40,8 +40,7 @@
 
 <hr/>
 
-<form asp-page="ExternalLogin">
-    
+<form asp-page="ExternalLogin" method="post">
     <div class="col-12">
         @foreach (var provider in Model.ExternalProviders)
         {
@@ -54,4 +53,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

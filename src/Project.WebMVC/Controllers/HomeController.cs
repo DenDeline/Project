@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Project.WebMVC.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Project.WebMVC.Controllers
 {
@@ -20,6 +22,18 @@ namespace Project.WebMVC.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Secret()
+        {
+            return View();
+        }
+        
+        [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
+        public IActionResult GoogleSecret()
         {
             return View();
         }

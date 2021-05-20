@@ -22,6 +22,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             _signInManager = signInManager;
         }
 
+        [FromRoute]
         public string ReturnUrl { get; set; }
             
         public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
@@ -39,9 +40,9 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             public string Password { get; set; }
         }
 
-        public async Task OnGet(string returnUrl = null)
+        public async Task OnGet()
         {
-            returnUrl ??= Url.Content("~/");
+            ReturnUrl ??= Url.Content("~/");
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             ExternalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
         }
