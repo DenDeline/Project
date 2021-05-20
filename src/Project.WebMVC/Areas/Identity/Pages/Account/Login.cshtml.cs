@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +13,19 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
         public LoginModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
         }
 
+        public string ReturnUrl { get; set; }
+            
+        public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
+        
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -38,9 +39,11 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             public string Password { get; set; }
         }
 
-        public void OnGet()
+        public async Task OnGet(string returnUrl = null)
         {
-
+            returnUrl ??= Url.Content("~/");
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            ExternalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()

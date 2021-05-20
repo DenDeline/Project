@@ -36,7 +36,19 @@
     <div class="col-12 mt-3">
         <button type="submit" class="btn btn-dark">Register</button>
     </div>
+</form>
+
+<hr/>
+
+<form asp-page="ExternalLogin">
     
+    <div class="col-12">
+        @foreach (var provider in Model.ExternalProviders)
+        {
+            <button class="btn btn-dark" name="provider" type="submit" value="@provider.Name">Sign in with @provider.Name</button>
+        }
+    </div>
+    <input name="returnUrl" type="hidden" value="@Model.ReturnUrl"/>
 </form>
 
 @section Scripts {

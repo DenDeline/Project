@@ -1,0 +1,20 @@
+﻿@page
+@model Project.WebMVC.Areas.Identity.Pages.Account.ExternalRegister
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" class="row g-3 ">
+    <div class="col-12">
+        <label asp-for="Input.Username" cclass="col-form-label"></label>
+        <input asp-for="Input.Username" class="form-control"/>
+        <span asp-validation-for="Input.Username" class="text-danger"></span>
+    </div>
+    <input type="hidden" asp-for="Input.ReturnUrl" value="@Model.ReturnUrl"/>
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-dark">Register</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
