@@ -1,17 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Project.WebMVC.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Project.WebMVC.Identity;
 
 namespace Project.WebMVC
@@ -28,13 +21,24 @@ namespace Project.WebMVC
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppIdentityDbContext>(options => options.UseInMemoryDatabase("TestDb"));
+            services.AddDbContext<AppIdentityDbContext>(options => 
+                options.UseInMemoryDatabase("TestDb"));
 
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication()
+                .AddGoogle(config =>
+                {
+                    IConfigurationSection googleConfig = 
+                        Configuration.GetSection("Authentication:Google");
+
+                    config.ClientId = googleConfig["ClientId"];
+                    config.ClientSecret = googleConfig["ClientSecret"];
+                });
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

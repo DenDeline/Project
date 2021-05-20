@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,10 +51,16 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             [Compare("Password")]
             public string ConfirmPassword { get; set; }
         }
+        
+        public string ReturnUrl { get; set; }
+            
+        public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
 
-        public void OnGet()
+        public async Task OnGet(string returnUrl = null)
         {
-
+            ReturnUrl = returnUrl ?? Url.Content("~/");
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            ExternalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
