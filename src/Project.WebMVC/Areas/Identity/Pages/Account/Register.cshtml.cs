@@ -56,7 +56,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             
         public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
 
-        public async Task OnGet(string returnUrl = null)
+        public async Task OnGet([FromQuery] string returnUrl = null)
         {
             ReturnUrl = returnUrl ?? Url.Content("~/");
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);

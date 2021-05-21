@@ -21,9 +21,9 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
 
             if (info == null)
             {
-                return RedirectToPage("Register", new { returnUrl });
+                return RedirectToPage("Register", new { ReturnUrl = returnUrl });
             }
-
+            
             var result = await _signInManager.ExternalLoginSignInAsync(
                 info.LoginProvider, 
                 info.ProviderKey, 

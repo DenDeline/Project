@@ -22,7 +22,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             _signInManager = signInManager;
         }
 
-        [FromRoute]
+        [FromQuery]
         public string ReturnUrl { get; set; }
             
         public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }

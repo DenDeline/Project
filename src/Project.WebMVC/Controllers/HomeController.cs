@@ -32,12 +32,6 @@ namespace Project.WebMVC.Controllers
             return View();
         }
         
-        [Authorize(AuthenticationSchemes = GoogleDefaults.AuthenticationScheme)]
-        public IActionResult GoogleSecret()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
