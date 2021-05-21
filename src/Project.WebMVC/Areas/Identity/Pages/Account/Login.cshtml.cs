@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -21,11 +22,6 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
         {
             _signInManager = signInManager;
         }
-
-        [FromQuery]
-        public string ReturnUrl { get; set; }
-            
-        public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
         
         [BindProperty]
         public InputModel Input { get; set; }
@@ -40,30 +36,30 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             public string Password { get; set; }
         }
 
-        public async Task OnGet()
+        public string ReturnUrl { get; set; }
+            
+        public List<AuthenticationScheme> ExternalProviders { get; set; }
+        
+        public async Task<IActionResult> OnGetAsync([FromQuery] string returnUrl = null)
         {
-            ReturnUrl ??= Url.Content("~/");
+            ReturnUrl = returnUrl ?? Url.Content("~/");
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-            ExternalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
+            ExternalProviders = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-            
             var signInResult = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, false, false);
 
             if (signInResult.Succeeded)
             {
                 return RedirectToAction("Index");
             }
-
-            ModelState.AddModelError("Input.Username", "Fail to login");
             
-            return Page();
+            ModelState.AddModelError("Input.Username", "Fail to login");
+
+            return await OnGetAsync(ReturnUrl);
         }
     }
 }

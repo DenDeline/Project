@@ -29,11 +29,6 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
         
         public IActionResult OnPost()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
             var redirectUri = Url.Page(nameof(ExternalLoginCallback), new { ReturnUrl = Input.ReturnUrl });
 
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(Input.Provider, redirectUri);

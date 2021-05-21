@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Project.WebMVC.Identity;
@@ -30,7 +28,8 @@ namespace Project.WebMVC.Controllers
             var vm = new ProfileViewModel
             {
                 Username = user.UserName,
-                ProfileImageUrl = user.ProfileImageUrl
+                ProfileImageUrl = user.ProfileImageUrl,
+                Birthday = user.Birthday
             };
             
             return View("Index", vm);

@@ -1,4 +1,10 @@
-﻿@model Project.WebMVC.ViewModels.ProfileViewModel
+﻿@using NodaTime
+@model Project.WebMVC.ViewModels.ProfileViewModel
+
+@{
+    var currentDate = LocalDate.FromDateTime(DateTime.Now);
+    var period = Period.Between(Model.Birthday, currentDate, PeriodUnits.Years);
+}
 
 <div style="display: flex; align-items: center; ">
     <div>
@@ -6,6 +12,7 @@
     </div>
     <div class="ml-3">
         <h1>@Model.Username</h1>
+        <span>@period.Years.ToString(), years</span>
     </div>
 </div>
 

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NodaTime;
 
 namespace Project.WebMVC.ViewModels
 {
@@ -6,5 +6,6 @@ namespace Project.WebMVC.ViewModels
     {
         public string Username { get; set; }
         public string ProfileImageUrl { get; set; }
+        public LocalDate Birthday { get; set; }
     }
 }
