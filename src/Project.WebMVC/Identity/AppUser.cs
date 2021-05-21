@@ -15,8 +15,9 @@ namespace Project.WebMVC.Identity
         {
             
         }
-        
-        public string AvatarImageUrl { get; set; }
+
+        public string AvatarImageUrl { get; set; } =
+            "https://i.pinimg.com/474x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg";
         public DateTime Birthday { get; set; }
     }
 }
