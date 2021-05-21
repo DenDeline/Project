@@ -30,7 +30,7 @@ namespace Project.WebMVC.Controllers
             var vm = new ProfileViewModel
             {
                 Username = user.UserName,
-                ProfileImageUrl = user.AvatarImageUrl
+                ProfileImageUrl = user.ProfileImageUrl
             };
             
             return View("Index", vm);
