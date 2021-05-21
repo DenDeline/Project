@@ -1,12 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NodaTime;
 using Project.WebMVC.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
@@ -40,7 +41,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             
             [Required]
             [DataType(DataType.Date)]
-            public DateTime Birthday { get; set; }
+            public LocalDate Birthday { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
@@ -54,22 +55,19 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
         
         public string ReturnUrl { get; set; }
             
-        public IEnumerable<AuthenticationScheme> ExternalProviders { get; set; }
+        public List<AuthenticationScheme> ExternalProviders { get; set; }
 
-        public async Task OnGet([FromQuery] string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync([FromQuery] string returnUrl = null)
         {
             ReturnUrl = returnUrl ?? Url.Content("~/");
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-            ExternalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
+            ExternalProviders = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                Page();
-            }
-
             var user = new AppUser(Input.Username)
             {
                 Email = Input.Email,
@@ -85,7 +83,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
 
-                return Page();
+                return await OnGetAsync(ReturnUrl);
             }
 
             await _signInManager.SignInAsync(user, false);

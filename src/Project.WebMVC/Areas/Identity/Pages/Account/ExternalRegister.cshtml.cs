@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NodaTime;
 using Project.WebMVC.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
@@ -32,6 +33,10 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             public string Username { get; set; }
             
             [Required]
+            [DataType(DataType.Date)]
+            public LocalDate Birthday { get; set; }
+            
+            [Required]
             public string ReturnUrl { get; set; }
 
         }
@@ -51,7 +56,8 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             
             var user = new AppUser(Input.Username)
             {
-                Email = info.Principal.FindFirst(ClaimTypes.Email).Value
+                Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+                Birthday = Input.Birthday
             };
 
             var result = await _userManager.CreateAsync(user);
