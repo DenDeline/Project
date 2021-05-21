@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -35,7 +34,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            var redirectUri = Url.Page(nameof(ExternalLoginCallback), new { Input.ReturnUrl });
+            var redirectUri = Url.Page(nameof(ExternalLoginCallback), new { ReturnUrl = Input.ReturnUrl });
 
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(Input.Provider, redirectUri);
 

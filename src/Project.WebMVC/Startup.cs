@@ -21,6 +21,7 @@ namespace Project.WebMVC
         
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddDbContext<AppIdentityDbContext>(options => 
                 options.UseInMemoryDatabase("TestDb"));
 
@@ -32,13 +33,14 @@ namespace Project.WebMVC
             services.AddAuthentication()
                 .AddGoogle(config =>
                 {
-                    IConfigurationSection googleConfig = 
+                    IConfigurationSection googleConfig =
                         Configuration.GetSection("Authentication:Google");
 
                     config.ClientId = googleConfig["ClientId"];
                     config.ClientSecret = googleConfig["ClientSecret"];
                 });
-            
+                
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

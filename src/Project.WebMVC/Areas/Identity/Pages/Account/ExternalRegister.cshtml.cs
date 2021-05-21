@@ -36,9 +36,9 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
 
         }
 
-        public void OnGet(string returnUrl = null)
+        public void OnGet([FromQuery] string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
+            ReturnUrl = returnUrl ?? Url.Content("~/");
         }
         
         public async Task<IActionResult> OnPostAsync()
@@ -67,8 +67,8 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             {
                 return Page();
             }
-            
-            await _signInManager.SignInAsync(user, false);
+
+            await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
             
             return Redirect(Input.ReturnUrl);
         }
