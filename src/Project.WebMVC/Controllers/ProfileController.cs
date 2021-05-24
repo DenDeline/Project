@@ -24,7 +24,6 @@ namespace Project.WebMVC.Controllers
             {
                 return NotFound(username);
             }
-
             var vm = new ProfileViewModel
             {
                 Username = user.UserName,

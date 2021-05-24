@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NodaTime;
 using Project.WebMVC.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
@@ -41,7 +41,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             
             [Required]
             [DataType(DataType.Date)]
-            public LocalDate Birthday { get; set; }
+            public DateTime Birthday { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
