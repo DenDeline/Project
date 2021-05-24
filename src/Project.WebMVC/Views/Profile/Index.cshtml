@@ -1,9 +1,12 @@
 ﻿@using NodaTime
-@model Project.WebMVC.ViewModels.ProfileViewModel
+@using Project.WebMVC.ViewModels
+
+@model ProfileViewModel
 
 @{
     var currentDate = LocalDate.FromDateTime(DateTime.Now);
-    var period = Period.Between(Model.Birthday, currentDate, PeriodUnits.Years);
+    var birthdayDate = LocalDate.FromDateTime(Model.Birthday);
+    var period =  Period.Between(birthdayDate, currentDate, PeriodUnits.Years);
 }
 
 <div style="display: flex; align-items: center; ">

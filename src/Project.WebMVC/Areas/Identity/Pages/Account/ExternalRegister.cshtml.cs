@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NodaTime;
 using Project.WebMVC.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
@@ -34,7 +34,7 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             
             [Required]
             [DataType(DataType.Date)]
-            public LocalDate Birthday { get; set; }
+            public DateTime Birthday { get; set; }
             
             [Required]
             public string ReturnUrl { get; set; }
