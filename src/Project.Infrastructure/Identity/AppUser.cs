@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Project.WebMVC.Identity
+namespace Project.Infrastructure.Identity
 {
     public class AppUser: IdentityUser
     {

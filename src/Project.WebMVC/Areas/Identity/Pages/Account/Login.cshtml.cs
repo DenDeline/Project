@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Project.WebMVC.Identity;
+using Project.Infrastructure.Identity;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
 {

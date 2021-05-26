@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Project.WebMVC.Data
+namespace Project.Infrastructure.Data
 {
     public class AppDbContext : DbContext
     {
