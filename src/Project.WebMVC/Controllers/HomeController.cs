@@ -17,12 +17,12 @@ namespace Project.WebMVC.Controllers
             return View();
         }
 
-        [Authorize]
-        public IActionResult Secret()
+        
+        public IActionResult Status()
         {
             return View();
         }
-        
+            
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
