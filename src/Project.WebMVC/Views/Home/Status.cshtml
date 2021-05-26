@@ -1,16 +1,68 @@
-﻿
-
+﻿@using System.Security.Claims
 @{
+    
     ViewData["Title"] = "Secret page";
+
+    
+    var authMethod = User.FindFirstValue(ClaimTypes.AuthenticationMethod);
+    if (authMethod is null)
+    {
+        authMethod = User.FindFirstValue("amr");
+    }
+
+    var username = User.Identity.Name ?? "$USER";
 }
 
-<h1>Default secret page</h1>
+<style>
+    .claims-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .claims-container .claims-line {
+       display: flex;
+       justify-content: space-between;
+    }
+</style>
+
+
+<h1>Hello, @username</h1>
 
 <hr/>
 
-<h2>From claims</h2>
-@foreach (var claim in User.Claims)
+@if (User.Identity.IsAuthenticated)
 {
-    <div>@claim.Type - @claim.Value</div>
+    <h2>You authenticaed by @authMethod</h2>
 }
+else
+{
+    <h2>I don't know anything about you</h2>
+}
+
+<hr/>
+
+<h2>Your claims</h2>
+
+<div class="claims-container">
+    <div class="claims-line">
+        <strong>
+            Type
+        </strong>
+        <strong>
+            Value
+        </strong>
+    </div>
+    
+    @foreach (var claim in User.Claims)
+    {
+        <div class="claims-line">
+            <div>
+                @claim.Type
+            </div>
+            <div>
+                @claim.Value
+            </div>
+        </div>
+    }
+</div>
 
