@@ -22,7 +22,7 @@ namespace Project.WebMVC
         {
 
             services.AddDbContext<AppIdentityDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
 
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddDefaultUI()

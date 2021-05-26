@@ -9,4 +9,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.15" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Project.ApplicationCore\Project.ApplicationCore.csproj" />
+    </ItemGroup>
 </Project>
