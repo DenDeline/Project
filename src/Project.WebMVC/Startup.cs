@@ -17,13 +17,12 @@ namespace Project.WebMVC
         }
 
         public IConfiguration Configuration { get; }
-
         
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddDbContext<AppIdentityDbContext>(options => 
-                options.UseInMemoryDatabase("TestDb"));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddDefaultUI()
