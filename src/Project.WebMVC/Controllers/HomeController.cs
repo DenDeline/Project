@@ -16,7 +16,6 @@ namespace Project.WebMVC.Controllers
         {
             return View();
         }
-
         
         public IActionResult Status()
         {

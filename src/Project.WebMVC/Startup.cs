@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Project.Infrastructure.Identity;
+using Project.Infrastructure.Data;
 
 namespace Project.WebMVC
 {
@@ -21,12 +21,12 @@ namespace Project.WebMVC
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<AppIdentityDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection")));
+            services.AddDbContext<AppDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddDefaultUI()
-                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddAuthentication()
