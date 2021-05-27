@@ -21,6 +21,6 @@ namespace Project.Infrastructure.Data
             "https://i.pinimg.com/474x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg";
         public DateTime Birthday { get; set; }
         
-        public Language Language { get; set; }
+        public int LanguageId { get; set; }
     }
 }

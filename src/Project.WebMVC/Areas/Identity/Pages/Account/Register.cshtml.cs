@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Project.Infrastructure.Data;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account
@@ -17,14 +19,17 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly AppDbContext _context;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager
+            SignInManager<AppUser> signInManager, 
+            AppDbContext context
         )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         [BindProperty]
@@ -66,12 +71,15 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(CancellationToken token)
         {
+            var defaultLanguage =  await _context.Languages.FirstOrDefaultAsync(e => e.IsDefault, token);
+            
             var user = new AppUser(Input.Username)
             {
                 Email = Input.Email,
-                Birthday = Input.Birthday
+                Birthday = Input.Birthday,
+                LanguageId = defaultLanguage.Id
             };
 
             var createResult = await _userManager.CreateAsync(user, Input.Password);
