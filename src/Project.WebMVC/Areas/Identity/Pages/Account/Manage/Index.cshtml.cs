@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -18,15 +19,18 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
     {
         private readonly ILogger<Index> _logger;
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly AppDbContext _context;
 
         public Index(
             ILogger<Index> logger,
             UserManager<AppUser> userManager, 
+            SignInManager<AppUser> signInManager,
             AppDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
+            _signInManager = signInManager;
             _context = context;
         }
         
@@ -68,7 +72,15 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
                 user.LanguageId = language.Id;
             }
 
+            var oldLanguage = User.FindFirst("lang");
             await _userManager.UpdateAsync(user);
+
+            if (language != null)
+            {
+                await _userManager.ReplaceClaimAsync(user, oldLanguage, new Claim("lang", language.Code));
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
             
             Input = new InputModel
             {   

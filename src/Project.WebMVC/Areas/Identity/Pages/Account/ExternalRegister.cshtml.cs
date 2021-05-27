@@ -69,6 +69,8 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
             };
 
             var result = await _userManager.CreateAsync(user);
+            
+            await _userManager.AddClaimAsync(user, new Claim("lang", defaultLanguage.Code));
 
             if (!result.Succeeded)
             {

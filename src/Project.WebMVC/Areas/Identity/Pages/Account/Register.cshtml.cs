@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -81,8 +82,10 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account
                 Birthday = Input.Birthday,
                 LanguageId = defaultLanguage.Id
             };
-
+            
             var createResult = await _userManager.CreateAsync(user, Input.Password);
+            
+            await _userManager.AddClaimAsync(user, new Claim("lang", defaultLanguage.Code));
             
             if (!createResult.Succeeded)
             {
