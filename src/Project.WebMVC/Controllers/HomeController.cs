@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Project.WebMVC.Models;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Project.Infrastructure.Data;
+using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
 {
@@ -19,7 +23,23 @@ namespace Project.WebMVC.Controllers
         
         public IActionResult Status()
         {
-            return View();
+            var vm = new StatusViewModel();
+            
+            if (User.Identity.IsAuthenticated)
+            {
+                vm.IsUserAuthenticated = true;
+                vm.AuthenticationMethod = User.FindFirstValue(ClaimTypes.AuthenticationMethod) 
+                                          ?? User.FindFirstValue("amr");
+                vm.Username = User.Identity.Name;
+            }
+            else
+            {
+                vm.IsUserAuthenticated = false;
+            }
+
+            vm.UserClaims = User.Claims.ToList().AsReadOnly();
+            
+            return View(vm);
         }
             
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

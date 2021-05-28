@@ -1,16 +1,7 @@
-﻿@using System.Security.Claims
+﻿@model Project.WebMVC.ViewModels.StatusViewModel
+
 @{
-    
     ViewData["Title"] = "Secret page";
-
-    
-    var authMethod = User.FindFirstValue(ClaimTypes.AuthenticationMethod);
-    if (authMethod is null)
-    {
-        authMethod = User.FindFirstValue("amr");
-    }
-
-    var username = User.Identity.Name ?? "$USER";
 }
 
 <style>
@@ -25,17 +16,16 @@
     }
 </style>
 
-
-<h1>Hello, @username</h1>
-
-<hr/>
-
-@if (User.Identity.IsAuthenticated)
+@if (Model.IsUserAuthenticated)
 {
-    <h2>You authenticaed by @authMethod</h2>
+    <h1>Hello, @Model.Username</h1>
+    <hr/>
+    <h2>You authenticaed by @Model.AuthenticationMethod</h2>
 }
 else
 {
+    <h1>Hello, $USER</h1>
+    <hr/>
     <h2>I don't know anything about you</h2>
 }
 
@@ -53,7 +43,7 @@ else
         </strong>
     </div>
     
-    @foreach (var claim in User.Claims)
+    @foreach (var claim in Model.UserClaims)
     {
         <div class="claims-line">
             <div>
