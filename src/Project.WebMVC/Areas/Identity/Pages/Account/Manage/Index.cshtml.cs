@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
@@ -45,7 +46,8 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
             
             [DataType(DataType.PhoneNumber)]
             public string PhoneNumber { get; set; }
-            public string LanguageCode { get; set; }
+            
+            public string LanguageId { get; set; }
         }
         
         public async Task OnGetAsync(CancellationToken token)
@@ -57,31 +59,46 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
                 Username = user.UserName,
                 PhoneNumber = user.PhoneNumber
             };
+            
             Languages = await GetEnabledLanguagesWithDefault(user.LanguageId, token);
         }
 
         public async Task OnPostAsync(CancellationToken token)
         {
             var user = await _userManager.GetUserAsync(User);
-            var language = await _context.Languages.FirstOrDefaultAsync(e => e.Code == Input.LanguageCode, token);
-
-            user.PhoneNumber = Input.PhoneNumber;
-
-            if (language != null)
-            {
-                user.LanguageId = language.Id;
-            }
-
-            var oldLanguage = User.FindFirst("lang");
-            await _userManager.UpdateAsync(user);
-
-            if (language != null)
-            {
-                await _userManager.ReplaceClaimAsync(user, oldLanguage, new Claim("lang", language.Code));
-            }
-
-            await _signInManager.RefreshSignInAsync(user);
             
+            if (Input.PhoneNumber != null && user.PhoneNumber != Input.PhoneNumber)
+            {
+                var phoneNumberResult =  await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                if (phoneNumberResult.Succeeded)
+                {
+                    _logger.LogInformation("Change phone number for user with id: {0}", user.Id);
+                }
+            }
+
+            if (user.LanguageId.ToString() != Input.LanguageId)
+            {
+                var language = await _context.Languages.FindAsync(Convert.ToInt32(Input.LanguageId));
+                
+                if (language != null)
+                {
+                    user.LanguageId = language.Id;
+                
+                    var changeLanguageResult = await _userManager.UpdateAsync(user);
+
+                    if (changeLanguageResult.Succeeded)
+                    {
+                        _logger.LogInformation("Change language for user with id: {0}", user.Id);
+                    }
+                
+                    var oldLanguageClaim = User.FindFirst("lang");
+                    var newLanguageClaim = new Claim("lang", language.Code);
+                    await _userManager.ReplaceClaimAsync(user, oldLanguageClaim, newLanguageClaim);
+                
+                    await _signInManager.RefreshSignInAsync(user);
+                }
+            }
+
             Input = new InputModel
             {   
                 Username = user.UserName,
@@ -102,9 +119,9 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
 
             var userLanguage = languages.First(lang => lang.Id == defaultLanguageId);
 
-            var selectListOfLanguages = languages.Select(lang => new SelectListItem(lang.Name, lang.Code)).ToList();
+            var selectListOfLanguages = languages.Select(lang => new SelectListItem(lang.Name, lang.Id.ToString())).ToList();
 
-            var userLanguageSelectItem = selectListOfLanguages.First(item => item.Value == userLanguage.Code);
+            var userLanguageSelectItem = selectListOfLanguages.First(item => item.Value == userLanguage.Id.ToString());
 
             userLanguageSelectItem.Selected = true;
 
