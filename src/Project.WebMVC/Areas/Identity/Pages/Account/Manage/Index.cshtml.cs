@@ -115,17 +115,14 @@ namespace Project.WebMVC.Areas.Identity.Pages.Account.Manage
         {
             var languages = await _context.Languages
                 .Where(language => language.Enabled)
+                .Select(language => new SelectListItem
+                {
+                    Text = language.Name,
+                    Value = language.Id.ToString(),
+                    Selected = language.Id == defaultLanguageId
+                })
                 .ToListAsync(token);
-
-            var userLanguage = languages.First(lang => lang.Id == defaultLanguageId);
-
-            var selectListOfLanguages = languages.Select(lang => new SelectListItem(lang.Name, lang.Id.ToString())).ToList();
-
-            var userLanguageSelectItem = selectListOfLanguages.First(item => item.Value == userLanguage.Id.ToString());
-
-            userLanguageSelectItem.Selected = true;
-
-            return selectListOfLanguages.AsReadOnly();
+            return languages.AsReadOnly();
         }
     }
 }
