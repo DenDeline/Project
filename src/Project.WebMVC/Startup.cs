@@ -24,7 +24,15 @@ namespace Project.WebMVC
             services.AddDbContext<AppDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>(config =>
+                {
+                    config.Password.RequireDigit = false;
+                    config.Password.RequiredLength = 4;
+                    config.Password.RequireLowercase = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequiredUniqueChars = 1;
+                    config.Password.RequireNonAlphanumeric = false;
+                })
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
