@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Project.Infrastructure\Project.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\RolePanel\Index.cshtml" />
+  </ItemGroup>
+
 </Project>
