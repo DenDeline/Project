@@ -1,3 +1,6 @@
+using System;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Project.Infrastructure.Data;
 
 namespace Project.WebMVC
@@ -37,7 +41,7 @@ namespace Project.WebMVC
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication()
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddGoogle(config =>
                 {
                     IConfigurationSection googleConfig =
@@ -45,6 +49,20 @@ namespace Project.WebMVC
 
                     config.ClientId = googleConfig["ClientId"];
                     config.ClientSecret = googleConfig["ClientSecret"];
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew = TimeSpan.FromMinutes(5),
+                        RequireSignedTokens = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("5479139e-1580-4ff9-920d-d23eb06db2ba")),
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        ValidAudience = "https://localhost:44307",
+                        ValidateIssuer = true,
+                        ValidIssuer = "https://localhost:44307"
+                    };
                 });
                 
 
@@ -62,13 +80,13 @@ namespace Project.WebMVC
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
+                app.UseHsts();  
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
