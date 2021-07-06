@@ -1,0 +1,17 @@
+﻿@model Project.WebMVC.ViewModels.AuthorizeViewModel
+
+<form asp-action="Token" method="post">
+    <div>
+        <label asp-for="Username"></label>
+        <input type="text" asp-for="Username">
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input type="password" asp-for="Password">
+    </div>
+    <div>
+        <input asp-for="State" value="@Context.Request.Query["state"]" hidden="hidden" >
+        <input asp-for="State" value="@Context.Request.Query["state"]" hidden="hidden" >
+    </div>
+    <button type="submit">Submit</button>
+</form>
