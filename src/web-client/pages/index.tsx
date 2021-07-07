@@ -1,42 +1,10 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import React from "react";
-import RandExp from "randexp";
-import {sha256} from "js-sha256";
 import {Button} from "@material-ui/core";
-import {GetServerSideProps} from "next";
 
-interface HomeProps {
-    responseType: string,
-    clientId: string,
-    redirectUri: string,
-    state: string,
-    codeChallenge: string,
-    codeChallengeMethod: string
-}
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-    const responseType = encodeURIComponent("code");
-    const clientId =  encodeURIComponent("project_next-js_8f62ee4312924427b386026f83028dff");
-    const redirectUri = encodeURIComponent("http://localhost:3000/");
-    const state = encodeURIComponent(new RandExp("[A-Za-z0-9._~]{43,128}").gen());
-    const codeVerifier = new RandExp("[A-Za-z0-9._~]{43,128}").gen();
-    const codeChallenge = encodeURIComponent(btoa(sha256(codeVerifier)));
-    const codeChallengeMethod = encodeURIComponent("S256");
-    
-    return {
-        props: {
-            responseType,
-            clientId,
-            redirectUri,
-            state,
-            codeChallenge,
-            codeChallengeMethod
-        }
-    }
-};
-
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC = (props) => {
     return (
         <>
             <Head>
@@ -47,21 +15,8 @@ const Home: React.FC<HomeProps> = (props) => {
 
             <h1>Home page</h1>
             
-            <Link href={{
-                protocol: "https",
-                hostname: "localhost",
-                port: "44307",
-                pathname: '/authorize',
-                query: {
-                    response_type: props.responseType,
-                    client_id: props.clientId,
-                    redirect_uri: props.redirectUri,
-                    state: props.state,
-                    code_challenge: props.codeChallenge,
-                    code_challenge_method: props.codeChallengeMethod
-                }
-            }} passHref={true}>
-                <Button variant={"outlined"}>Test</Button>
+            <Link href={"/sign-in"} passHref={true}>
+                <Button>Test auth</Button>
             </Link>
         </>
     )
