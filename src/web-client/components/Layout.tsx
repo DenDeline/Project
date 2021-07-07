@@ -9,6 +9,12 @@ const Layout: React.FC = ({children}) => {
                     <li>
                         <Link href={'/'}>Home</Link>
                     </li>
+                    <li>
+                        <Link href={'/sign-in'}>Sign-in</Link>
+                    </li>
+                    <li>
+                        <Link href={'/secret'}>Secret</Link>
+                    </li>
                 </ul>
             </div>
             

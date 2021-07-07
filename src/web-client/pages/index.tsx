@@ -14,10 +14,6 @@ const Home: React.FC = (props) => {
             </Head>
 
             <h1>Home page</h1>
-            
-            <Link href={"/sign-in"} passHref={true}>
-                <Button>Test auth</Button>
-            </Link>
         </>
     )
 };
