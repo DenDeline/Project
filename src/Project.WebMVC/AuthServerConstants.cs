@@ -6,5 +6,10 @@
         {
             public const string Code = "code";
         }
+
+        public static class GrantTypes
+        {
+            public const string AuthorizationCode = "authorization_code";
+        }
     }
 }

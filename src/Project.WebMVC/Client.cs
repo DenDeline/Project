@@ -6,6 +6,6 @@ namespace Project.WebMVC
     {
         public string ClientId { get; set; }
         public ICollection<string> RedirectUris { get; set; } = new HashSet<string>();
-        public ICollection<string> ClientSecrets { get; set; } = new HashSet<string>();
+        public string ClientSecret { get; set; }
     }
 }
