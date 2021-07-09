@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
-using Project.ApplicationCore.Entities;
 
-namespace Project.Infrastructure.Data
+namespace Project.ApplicationCore.Entities
 {
     public class AppUser: IdentityUser
     {

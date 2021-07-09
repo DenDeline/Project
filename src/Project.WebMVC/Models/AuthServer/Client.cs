@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Project.WebMVC
+namespace Project.WebMVC.Models.AuthServer
 {
     public class Client
     {

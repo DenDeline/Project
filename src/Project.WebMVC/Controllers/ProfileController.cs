@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Project.Infrastructure.Data;
+using Project.ApplicationCore.Entities;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers

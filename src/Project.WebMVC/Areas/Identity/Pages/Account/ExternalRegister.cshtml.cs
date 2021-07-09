@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Project.ApplicationCore.Entities;
 using Project.Infrastructure.Data;
 
 namespace Project.WebMVC.Areas.Identity.Pages.Account

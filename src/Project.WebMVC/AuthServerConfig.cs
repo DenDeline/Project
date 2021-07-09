@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Project.WebMVC.Controllers;
+using Project.WebMVC.Models.AuthServer;
 
 namespace Project.WebMVC
 {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Project.Infrastructure.Data;
+using Project.ApplicationCore.Entities;
 
 namespace Project.WebMVC
 {
