@@ -31,8 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     const postData = {
         grant_type: "authorization_code",
         code: codeToken,
-        redirect_uri: "http://localhost:3000/",
-        client_id: "project_next-js_8f62ee4312924427b386026f83028dff",
+        redirect_uri: process.env.REDIRECT_URI ?? "",
+        client_id: process.env.CLIENT_ID,
         code_verifier: codeVerifierFromCookies
     };
     
@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     }
 }
 
-const Oauth2callback: React.FC<any> = (props) => {
+const Oauth2callback: React.FC = () => {
     return <></>
 }
 
