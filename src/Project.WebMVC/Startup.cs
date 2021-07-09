@@ -50,18 +50,17 @@ namespace Project.WebMVC
                     config.ClientId = googleConfig["ClientId"];
                     config.ClientSecret = googleConfig["ClientSecret"];
                 })
+                
                 .AddJwtBearer(options =>
                 {
+                    IConfiguration projectConfig = Configuration.GetSection("Authentication:Project");
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(projectConfig["ClientSecret"]));
+                    
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ClockSkew = TimeSpan.FromMinutes(5),
-                        RequireSignedTokens = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("5479139e-1580-4ff9-920d-d23eb06db2ba")),
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
+                        ValidIssuer = "https://localhost:44307",
                         ValidAudience = "https://localhost:44307",
-                        ValidateIssuer = true,
-                        ValidIssuer = "https://localhost:44307"
+                        IssuerSigningKey = secretKey,
                     };
                 });
                 
