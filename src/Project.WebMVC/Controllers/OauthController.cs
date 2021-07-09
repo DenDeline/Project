@@ -1,17 +1,17 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Project.Infrastructure.Data;
+using Project.ApplicationCore.Entities;
+using Project.ApplicationCore.Extensions;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
@@ -34,18 +34,34 @@ namespace Project.WebMVC.Controllers
             [FromQuery] string code_challenge,
             [FromQuery] string code_challenge_method)
         {
-            if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != response_type))
-            {
-                // TODO: Implement other types for scaling
-                return BadRequest();
-            }
-            
             var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == client_id);
             
+            // TODO: Separate class for validation required params 
             if (client is null)
             {
-                // TODO: Implement for foreign clients
                 return BadRequest();
+            }
+
+            if (!client.RedirectUris.Contains(redirect_uri))
+            {
+                //TODO: Add error validation constant: invalid_request
+                var queryBuilder = new QueryBuilder
+                {
+                    {"error", "invalid_request"},
+                    {"state", state}
+                };
+                return Redirect($"{redirect_uri}{queryBuilder}");
+            }
+
+            if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != response_type))
+            {
+                //TODO: Add error validation constant: unsupported_response_type
+                var queryBuilder = new QueryBuilder
+                {
+                    {"error", "unsupported_response_type"},
+                    {"state", state}
+                };
+                return Redirect($"{redirect_uri}{queryBuilder}");
             }
 
             var vm = new AuthorizeViewModel
@@ -58,17 +74,6 @@ namespace Project.WebMVC.Controllers
             };
             
             return View(vm);
-        }
-
-        [HttpPost("/oauth2/validate-login")]
-        public async Task<IActionResult> ValidateLogin(string login)
-        {
-            var user = (await _userManager.FindByEmailAsync(login)) ?? (await  _userManager.FindByNameAsync(login));
-            if (user is null)
-            {
-                return BadRequest();
-            }
-            return Ok();
         }
 
         [HttpPost("/oauth2/signin-code")]
@@ -93,7 +98,7 @@ namespace Project.WebMVC.Controllers
             }
             
             
-            // TODO: Move out code generation
+            // TODO: Move out code token generation
             var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == vm.ClientId);
             
             if (client is null)
@@ -114,7 +119,7 @@ namespace Project.WebMVC.Controllers
 
             var jsonCodeToken = JsonConvert.SerializeObject(codeToken);
 
-            var encodedCodeToken = EncryptString(client.ClientSecret, jsonCodeToken);
+            var encodedCodeToken = jsonCodeToken.AesEncrypt(client.ClientSecret);
 
             // TODO: Create separate class for building redirectUrl
             var queryBuilder = new QueryBuilder
@@ -129,7 +134,7 @@ namespace Project.WebMVC.Controllers
 
 
         [HttpPost("/oauth2/token")]
-        public async Task<IActionResult> Token([FromBody] TokenRequest vm)
+        public async Task<IActionResult> Token([FromBody] TokenRequest vm, [FromServices] IConfiguration configuration)
         {
             if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != vm.grant_type))
             {
@@ -144,11 +149,10 @@ namespace Project.WebMVC.Controllers
                 return BadRequest();
             }
 
-            var decodedCodeToken = DecryptString(client.ClientSecret, vm.code);
+            var decodedCodeToken = vm.code.AesDecrypt(client.ClientSecret);
             var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
-
             
-            // TODO: Move code token validation to the separate class
+            // TODO: Add separate class for code token validation
             if (codeToken is null)
             {
                 // TODO: Add validation error
@@ -193,10 +197,9 @@ namespace Project.WebMVC.Controllers
                 return BadRequest();
             }
             
-            
             // TODO: Move out jwt generation
             var claim = new Claim("lang", "ru");
-            
+
             var token = new JwtSecurityToken(
                 "https://localhost:44307", 
                 "https://localhost:44307", 
@@ -204,7 +207,7 @@ namespace Project.WebMVC.Controllers
                 DateTime.UtcNow, 
                 DateTime.UtcNow.Add(TimeSpan.FromSeconds(3600)), 
                 new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("5479139e-1580-4ff9-920d-d23eb06db2ba")), 
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Project:ClientSecret"])), 
                     SecurityAlgorithms.HmacSha256));
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(token);
@@ -216,98 +219,8 @@ namespace Project.WebMVC.Controllers
                 expires_in = 3600
             });
         }
-        
-        // TODO: Move to separate encryption class
-        [NonAction]
-        private string EncryptString(string key, string plainText)
-        {
-            var iv = new byte[16];
-            byte[] array;
-
-            using (var aes = Aes.Create())
-            {
-                aes.Key = Encoding.UTF8.GetBytes(key);
-                aes.IV = iv;
-
-                var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-                using (MemoryStream memoryStream = new MemoryStream())
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
-                        {
-                            streamWriter.Write(plainText);
-                        }
-
-                        array = memoryStream.ToArray();
-                    }
-                }
-            }
-
-            return Convert.ToBase64String(array);
-        }
-        
-        
-        // TODO: Move to separate encryption class
-        [NonAction]
-        public static string DecryptString(string key, string cipherText)  
-        {  
-            byte[] iv = new byte[16];  
-            byte[] buffer = Convert.FromBase64String(cipherText);  
-  
-            using (Aes aes = Aes.Create())  
-            {  
-                aes.Key = Encoding.UTF8.GetBytes(key);  
-                aes.IV = iv;  
-                var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);  
-  
-                using (MemoryStream memoryStream = new MemoryStream(buffer))  
-                {  
-                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))  
-                    {  
-                        using (StreamReader streamReader = new StreamReader(cryptoStream))  
-                        {  
-                            return streamReader.ReadToEnd();  
-                        }  
-                    }  
-                }  
-            }  
-        }  
-        
-        // TODO: Move to models folder
-        class CodeToken
-        {
-            public Guid Id { get; } = Guid.NewGuid();
-            public string ClientId { get; set; }
-            public string UserId { get; set; }
-            public DateTime ExpireAt { get; } = DateTime.UtcNow.AddSeconds(60);
-            public string RedirectUri { get; set; }
-            public string CodeChallenge { get; set; }
-            public string CodeChallengeMethod { get; set; }
-        }
     }
 
-    // TODO: Move to separate class
-    public static class StringEncryptionExtensions
-    {
-        public static string Sha256(this string input)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())  
-            {  
-                // ComputeHash - returns byte array  
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));  
-  
-                // Convert byte array to a string   
-                StringBuilder builder = new StringBuilder();  
-                foreach (var b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }  
-                return builder.ToString();  
-            } 
-        }
-    }
-    
     // TODO: Move to separate file
     public class TokenRequest
     {
