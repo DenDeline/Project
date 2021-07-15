@@ -1,17 +1,13 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Extensions;
+using Project.ApplicationCore.Interfaces;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
@@ -134,7 +130,10 @@ namespace Project.WebMVC.Controllers
 
 
         [HttpPost("/oauth2/token")]
-        public async Task<IActionResult> Token([FromBody] TokenRequest vm, [FromServices] IConfiguration configuration)
+        public async Task<IActionResult> Token(
+            [FromBody] TokenRequest vm, 
+            [FromServices] IConfiguration configuration,
+            [FromServices] ITokenService tokenService)
         {
             if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != vm.grant_type))
             {
@@ -158,44 +157,22 @@ namespace Project.WebMVC.Controllers
             };
 
             var user = await _userManager.FindByIdAsync(codeToken.UserId);
-            
+
             if (user is null)
             {
-                // TODO: Add validation error
-                return BadRequest();
+                return NotFound();
             }
             
-            // TODO: Move out jwt generation
-            var claim = new Claim("lang", "ru");
+            var encodedJwtResult = tokenService.CreateAccessToken(
+                user, 
+                configuration["Authentication:Project:ClientSecret"]);
 
-            var token = new JwtSecurityToken(
-                "https://localhost:44307", 
-                "https://localhost:44307", 
-                new []{claim}, 
-                DateTime.UtcNow, 
-                DateTime.UtcNow.Add(TimeSpan.FromSeconds(3600)), 
-                new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Authentication:Project:ClientSecret"])), 
-                    SecurityAlgorithms.HmacSha256));
-
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(token);
-            
             return Ok(new
             {
-                access_token = encodedJwt,
+                access_token = encodedJwtResult,
                 token_type = "bearer",
                 expires_in = 3600
             });
         }
-    }
-
-    // TODO: Move to separate file
-    public class TokenRequest
-    {
-        public string grant_type { get; set; }
-        public string code { get; set; }
-        public string redirect_uri { get; set; }
-        public string client_id { get; set; }
-        public string code_verifier { get; set; }
     }
 }
