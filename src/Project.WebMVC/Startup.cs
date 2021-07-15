@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Project.ApplicationCore;
 using Project.ApplicationCore.Entities;
 using Project.Infrastructure.Data;
 
@@ -24,6 +25,8 @@ namespace Project.WebMVC
         
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddApplicationCore();
 
             services.AddDbContext<AppDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
