@@ -151,43 +151,11 @@ namespace Project.WebMVC.Controllers
 
             var decodedCodeToken = vm.code.AesDecrypt(client.ClientSecret);
             var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
-            
-            // TODO: Add separate class for code token validation
-            if (codeToken is null)
-            {
-                // TODO: Add validation error
-                return BadRequest();
-            }
 
-            if (codeToken.ExpireAt < DateTime.UtcNow)
+            if (!codeToken.IsValid(vm.client_id, vm.redirect_uri, "S256", vm.code_verifier))
             {
-                // TODO: Add validation error
                 return BadRequest();
-            }
-
-            if (codeToken.ClientId != vm.client_id)
-            {
-                // TODO: Add validation error
-                return BadRequest();
-            }
-            
-            if (codeToken.RedirectUri != vm.redirect_uri)
-            {
-                // TODO: Add validation error
-                return BadRequest();
-            }
-
-            if (codeToken.CodeChallengeMethod != "S256")
-            {
-                // TODO: Add validation error
-                return BadRequest();
-            }
-
-            if (vm.code_verifier.Sha256() != codeToken.CodeChallenge)
-            {
-                // TODO: Add validation error
-                return BadRequest();
-            }
+            };
 
             var user = await _userManager.FindByIdAsync(codeToken.UserId);
             
