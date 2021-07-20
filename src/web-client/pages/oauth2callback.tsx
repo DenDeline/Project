@@ -37,15 +37,18 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     };
     
     const response = await axios.post<AccessTokenResponse>("https://localhost:44307/oauth2/token", postData);
-
+    
     res.setHeader(
-        "Set-Cookie",
+        "Set-Cookie", 
         [
             cookie.serialize("access_token", response.data.access_token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== "development",
-            maxAge: response.data.expires_in,
-            path: "/"})
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                maxAge: response.data.expires_in,
+                path: "/"
+            }),
+            cookie.serialize("state", "", {maxAge: 0}),
+            cookie.serialize("code_verifier", "", {maxAge: 0})
         ]
     );
     

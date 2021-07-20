@@ -1,10 +1,10 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import React from "react";
-import {Button} from "@material-ui/core";
+
 
 
 const Home: React.FC = (props) => {
+    
     return (
         <>
             <Head>
@@ -14,7 +14,8 @@ const Home: React.FC = (props) => {
             </Head>
 
             <h1>Home page</h1>
-        </>
+            
+        </> 
     )
 };
 

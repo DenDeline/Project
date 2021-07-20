@@ -4,7 +4,7 @@ import {GetServerSideProps} from "next";
 import cookie from "cookie"
 import { createHash } from 'crypto'
 
-export const getServerSideProps: GetServerSideProps = async ({req, res}) => {
+export const getServerSideProps: GetServerSideProps = async ({ res}) => {
     const responseType = "code";
     const clientId =  process.env.CLIENT_ID ?? "";
     const redirectUri = process.env.REDIRECT_URI ?? "";
