@@ -11,6 +11,7 @@ using Project.ApplicationCore;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Interfaces;
 using Project.Infrastructure.Data;
+using Project.WebMVC.MappingProfiles;
 
 namespace Project.WebMVC
 {
@@ -29,6 +30,11 @@ namespace Project.WebMVC
         {
 
             services.AddApplicationCore();
+
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile(new AppUserProfile());
+            });
 
             services.AddDbContext<AppDbContext>(options =>
             {
