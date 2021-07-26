@@ -17,28 +17,7 @@ namespace Project.WebMVC.Controllers
         {
             return View();
         }
-        
-        public IActionResult Status()
-        {
-            var vm = new StatusViewModel();
-            
-            if (User.Identity.IsAuthenticated)
-            {
-                vm.IsUserAuthenticated = true;
-                vm.AuthenticationMethod = User.FindFirstValue(ClaimTypes.AuthenticationMethod) 
-                                          ?? User.FindFirstValue("amr");
-                vm.Username = User.Identity.Name;
-            }
-            else
-            {
-                vm.IsUserAuthenticated = false;
-            }
 
-            vm.UserClaims = User.Claims.ToList().AsReadOnly();
-            
-            return View(vm);
-        }
-            
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
