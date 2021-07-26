@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "@material-ui/data-grid": "^4.0.0-alpha.34",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.6.0",
     "axios": "^0.21.1",
     "cookie": "^0.4.1",
+    "jose": "^3.14.0",
     "next": "11.0.1",
     "randexp": "^0.5.3",
     "react": "17.0.2",
