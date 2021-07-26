@@ -59,8 +59,23 @@ namespace Project.WebMVC.Controllers.Api
             }
             
             //TODO: Create read dto for user model
-            var users = await _userManager.Users.SkipWhile(user => user.Id <= since).Take(perPage).ToListAsync();
-            return Ok(users);
+            var users = await _userManager.Users.Where(user => user.Id > since).Take(perPage).ToListAsync();
+            
+            await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+            {
+                return Ok(_mapper.Map<IEnumerable<AppUserReadDto>>(users));
+            }
+            
+            if (await _userManager.IsInRoleAsync(user, RoleConstants.Administrator))
+            {
+                return Ok(_mapper.Map<IEnumerable<AppUserConfidentialReadDto>>(users));
+            }
+            
+            return Ok(_mapper.Map<IEnumerable<AppUserReadDto>>(users));
         }
     }   
 }
