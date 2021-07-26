@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,28 +9,40 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Project.ApplicationCore;
 using Project.ApplicationCore.Entities;
+using Project.ApplicationCore.Interfaces;
 using Project.Infrastructure.Data;
 
 namespace Project.WebMVC
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
-        
+        public IWebHostEnvironment Environment { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddApplicationCore();
 
-            services.AddDbContext<AppDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                if (Environment.IsDevelopment())
+                {
+                    options.EnableSensitiveDataLogging();
+                }
+                
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
 
-            services.AddIdentity<AppUser, IdentityRole>(config =>
+            services.AddScoped<IDbContext, AppDbContext>();
+
+            services.AddIdentity<AppUser, IdentityRole<int>>(config =>
                 {
                     config.Password.RequireDigit = false;
                     config.Password.RequiredLength = 4;
@@ -56,8 +67,7 @@ namespace Project.WebMVC
                 
                 .AddJwtBearer(options =>
                 {
-                    IConfiguration projectConfig = Configuration.GetSection("Authentication:Project");
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(projectConfig["ClientSecret"]));
+                    var secretKey = new SigningIssuerCertificate().GetPublicKey();
                     
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

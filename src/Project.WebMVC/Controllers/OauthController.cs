@@ -1,9 +1,9 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Extensions;
@@ -130,10 +130,10 @@ namespace Project.WebMVC.Controllers
 
 
         [HttpPost("/oauth2/token")]
-        public async Task<IActionResult> Token(
-            [FromBody] TokenRequest vm, 
-            [FromServices] IConfiguration configuration,
-            [FromServices] ITokenService tokenService)
+        public async Task<IActionResult> GetAccessTokenAsync(
+            [FromBody] TokenRequest vm,
+            [FromServices] ITokenService tokenService,
+            CancellationToken cts = new CancellationToken())
         {
             if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != vm.grant_type))
             {
@@ -155,21 +155,22 @@ namespace Project.WebMVC.Controllers
             {
                 return BadRequest();
             };
+            
+            var certificate = new SigningIssuerCertificate();
+            
+            var encodedJwtResult = await tokenService.CreateAccessTokenAsync(
+                codeToken.UserId, 
+                certificate.GetPrivateKey(),
+                cts);
 
-            var user = await _userManager.FindByIdAsync(codeToken.UserId);
-
-            if (user is null)
+            if (!encodedJwtResult.IsSuccess)
             {
-                return NotFound();
+                return BadRequest();
             }
             
-            var encodedJwtResult = tokenService.CreateAccessToken(
-                user, 
-                configuration["Authentication:Project:ClientSecret"]);
-
             return Ok(new
             {
-                access_token = encodedJwtResult,
+                access_token = encodedJwtResult.Value,
                 token_type = "bearer",
                 expires_in = 3600
             });

@@ -3,23 +3,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Project.ApplicationCore.Entities
 {
-    public class AppUser: IdentityUser
+    public class AppUser: IdentityUser<int>
     {
-        public AppUser()
-        {
-            
-        }
+        public AppUser() { }
         
-        public AppUser(string userName):
-            base(userName)
-        {
-            
-        }
-
-        public string ProfileImageUrl { get; set; } =
-            "https://i.pinimg.com/474x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg";
+        public AppUser(string userName): base(userName) { }
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public bool Verified { get; set; }
+        public string? ProfileImageUrl { get; set; } 
         public DateTime Birthday { get; set; }
-        
         public int LanguageId { get; set; }
     }
 }

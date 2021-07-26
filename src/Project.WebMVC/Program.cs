@@ -1,45 +1,65 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Project.ApplicationCore.Entities;
+using Project.Infrastructure.Data;
 
 namespace Project.WebMVC
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
-            using (var services = host.Services.CreateScope())
+            await using (var services = host.Services.CreateAsyncScope())
             {
-                var roleManager = services.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                
-                var adminRole = new IdentityRole(RoleConstants.Administrator);
-                roleManager.CreateAsync(adminRole).GetAwaiter().GetResult();
+                var roleManager = services.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-                var leadManagerRole = new IdentityRole(RoleConstants.LeadManager);
-                roleManager.CreateAsync(leadManagerRole).GetAwaiter().GetResult();
+                if (!await roleManager.RoleExistsAsync(RoleConstants.Administrator))
+                {
+                    var adminRole = new IdentityRole<int>(RoleConstants.Administrator);
+                    await roleManager.CreateAsync(adminRole);
+                };
+               
+                if (!await roleManager.RoleExistsAsync(RoleConstants.LeadManager))
+                {
+                    var leadManagerRole = new IdentityRole<int>(RoleConstants.LeadManager);
+                    await roleManager.CreateAsync(leadManagerRole);
+                };
                 
-                var representativeAuthorityRole = new IdentityRole(RoleConstants.RepresentativeAuthority);
-                roleManager.CreateAsync(representativeAuthorityRole).GetAwaiter().GetResult();
+                if (!await roleManager.RoleExistsAsync(RoleConstants.RepresentativeAuthority))
+                {
+                    var representativeAuthorityRole = new IdentityRole<int>(RoleConstants.RepresentativeAuthority);
+                    await roleManager.CreateAsync(representativeAuthorityRole);
+                };
                 
-                var authority = new IdentityRole(RoleConstants.Authority);
-                roleManager.CreateAsync(authority).GetAwaiter().GetResult();
+                if (!await roleManager.RoleExistsAsync(RoleConstants.Authority))
+                {
+                    var authority = new IdentityRole<int>(RoleConstants.Authority);
+                    await roleManager.CreateAsync(authority);
+                };
                 
                 var userManager = services.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-                var admin = new AppUser("admin")
+                if (await userManager.FindByNameAsync("admin") is null)
                 {
-                    LanguageId = 3
-                };
-                userManager.CreateAsync(admin, "admin").GetAwaiter().GetResult();
-
-                userManager.AddToRoleAsync(admin, RoleConstants.Administrator).GetAwaiter().GetResult();
+                    var dbContext = services.ServiceProvider.GetRequiredService<AppDbContext>();
+                    var defaultLanguage = await dbContext.Languages.FirstOrDefaultAsync(_ => _.IsDefault && _.Enabled);
+                    var admin = new AppUser("admin")
+                    {
+                        LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
+                    };
+                    await userManager.CreateAsync(admin, "admin");
+                    await userManager.AddToRoleAsync(admin, RoleConstants.Administrator);
+                }
             }
             
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

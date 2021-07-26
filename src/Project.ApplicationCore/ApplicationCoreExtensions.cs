@@ -9,7 +9,7 @@ namespace Project.ApplicationCore
     {
         public static IServiceCollection AddApplicationCore(this IServiceCollection services)
         {
-            services.TryAddSingleton<ITokenService, TokenService>();
+            services.TryAddScoped<ITokenService, TokenService>();
 
             return services;
         }
