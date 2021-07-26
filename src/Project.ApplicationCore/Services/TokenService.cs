@@ -49,10 +49,11 @@ namespace Project.ApplicationCore.Services
             var userClaims = new List<Claim>
             {
                 new Claim("lang", language.Code),
-                new Claim("username", user.UserName)
+                new Claim("username", user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            userClaims.AddRange(roles.Select(_ => new Claim("role", _)));
+            userClaims.AddRange(roles.Select(_ => new Claim(ClaimTypes.Role, _)));
             
             var token = new JwtSecurityToken(
                 "https://localhost:44307", 
