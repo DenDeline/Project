@@ -81,9 +81,11 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
     const [availableRolesForUser, setAvailableRolesForUser] = useState<string[]>([]);
 
     useEffect(() => {
-        setUserRoles(props.user?.roles.slice() ?? []);
-        setUserVerified(props.user?.verified ?? false);
-    }, [props.user]);
+        if (props.open) {
+            setUserRoles(props.user?.roles.slice() ?? []);
+            setUserVerified(props.user?.verified ?? false);
+        }
+    }, [props.open]);
     
     useEffect(() => {
         setAvailableRolesForUser(props.availableRoles.filter(_ => ! userRoles.includes(_)));

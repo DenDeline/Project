@@ -57,6 +57,7 @@ const RolePanel: React.FC = (props) => {
     
     const handleClose = () => {
         setOpen(false);
+        setSelectedUser(undefined);
     };
     
     const handleSaveUser = useCallback((user: any) => {
