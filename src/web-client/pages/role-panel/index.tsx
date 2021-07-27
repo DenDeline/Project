@@ -32,19 +32,43 @@ const useStyles = makeStyles(theme =>
     })
 );
 
+enum AppRoles {
+    Administrator ='Administrator', 
+    LeadManager = 'Lead Manager', 
+    RepresentativeAuthority = 'Representative Authority', 
+    Authority = 'Authority'
+}
+
+const getAvailableRoles = (currentUserRole: AppRoles): AppRoles[] => {
+    switch (currentUserRole){
+        case AppRoles.Administrator:
+            return [ AppRoles.LeadManager, AppRoles.RepresentativeAuthority, AppRoles.Authority];
+        case AppRoles.LeadManager:
+            return [ AppRoles.RepresentativeAuthority, AppRoles.Authority];
+        case AppRoles.RepresentativeAuthority:
+            return [];
+        case AppRoles.Authority:
+            return [];
+        default:
+            return [];
+    }
+}
+ 
 const RolePanel: React.FC = (props) => {
-    
     const classes = useStyles();
     const [users, setUsers] = useState(
         [
             {id : 1, username: 'admin', fullname: 'Rostislav Statko', verified: true, roles: ['Administrator']},
-            {id : 2, username: 'DenDeline', fullname: 'Rostislav Statko', verified: false, roles: []},
+            {id : 2, username: 'Test', fullname: 'Rostislav Statko', verified: true, roles: ['Lead Manager']},
+            {id : 3, username: 'DenDeline', fullname: 'Rostislav Statko', verified: false, roles: []},
         ]
     );
-    
-    const [availableRoles, setAvailableRoles] = useState([
-        'Representative Authority', 'Authority', 'Administrator'
-    ]);
+    const [currentUser, ] = useState(users[1]);
+    const [permissions, ] = useState({
+        editProfile: false,
+        approvingDocuments: true,
+        availableRoles: getAvailableRoles(AppRoles.LeadManager)
+    });
     
     const [selectedUser, setSelectedUser] = useState(undefined);
     
@@ -116,8 +140,8 @@ const RolePanel: React.FC = (props) => {
                     </Paper>
                     <ConfigureUserDialog 
                         open={open} 
-                        user={selectedUser}
-                        availableRoles={availableRoles}
+                        selectedUser={selectedUser}
+                        permissions={permissions}
                         onSave={handleSaveUser}
                         onClose={handleClose}
                     />

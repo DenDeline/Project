@@ -14,14 +14,18 @@ import {Add} from "@material-ui/icons";
 
 interface ConfigureUserDialogProps {
     open: boolean,
-    user?: {
+    selectedUser?: {
         id: number,
         username: string,
         fullname: string,
         verified: boolean
         roles: string[]
     },
-    availableRoles: string[]
+    permissions: {
+        editProfile: boolean,
+        approvingDocuments: boolean,
+        availableRoles: string[]
+    }
     onSave: (user: any) => void
     onClose: () => void
 }
@@ -78,32 +82,32 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
         setIsUserChanged(true);
     }, []);
     
-    const [availableRolesForUser, setAvailableRolesForUser] = useState<string[]>([]);
+    const [remindedRoles, setRemindedRoles] = useState<string[]>([]);
 
     useEffect(() => {
+        setRemindedRoles(props.permissions.availableRoles.filter(_ => ! userRoles.includes(_)));
+    }, [props.permissions.availableRoles, userRoles]);
+    
+    useEffect(() => {
         if (props.open) {
-            setUserRoles(props.user?.roles.slice() ?? []);
-            setUserVerified(props.user?.verified ?? false);
+            setUserRoles(props.selectedUser?.roles.slice() ?? []);
+            setUserVerified(props.selectedUser?.verified ?? false);
         }
     }, [props.open]);
     
-    useEffect(() => {
-        setAvailableRolesForUser(props.availableRoles.filter(_ => ! userRoles.includes(_)));
-    }, [props.availableRoles, userRoles]);
-    
     return (
         <Dialog fullWidth={true} maxWidth={'sm'} open={props.open} aria-labelledby="dialog-title" onClose={props.onClose}>
-            <DialogTitle id={"dialog-title"}>Configure user: {props.user?.username}</DialogTitle>
+            <DialogTitle id={"dialog-title"}>Configure user: {props.selectedUser?.username}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Manage user account
                 </DialogContentText>
                 <Grid container direction={'column'} spacing={2}>
                     <Grid item>
-                        <TextField label={"Username"} value={props.user?.username} disabled/>
+                        <TextField label={"Username"} value={props.selectedUser?.username} disabled/>
                     </Grid>
                     <Grid item>
-                        <TextField label={"Full name"} value={props.user?.fullname} disabled/>
+                        <TextField label={"Full name"} value={props.selectedUser?.fullname} disabled/>
                     </Grid>
                     <Grid item>
                         <DialogContentText>
@@ -112,10 +116,10 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
                         </DialogContentText>
                         <FormControlLabel control={<Checkbox checked={userVerified}/>} onClick={() => {
                             handleUserVerification(!userVerified);
-                        }} label={"Documents approved"}/>
+                        }} label={"Documents approved"} disabled={!props.permissions.approvingDocuments}/>
                     </Grid>
                     {
-                        userVerified && (
+                        props.permissions.availableRoles.length > 0 && userVerified &&  (
                             <Grid item>
                                 <DialogContentText>
                                     User roles:
@@ -124,48 +128,63 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
                                     {
                                         userRoles.map((userRole, index) => (
                                             <li key={index}>
-                                                <Chip
-                                                    label={userRole}
-                                                    color={'primary'}
-                                                    onDelete={() => {
-                                                        handleDeleteRole(userRole);
-                                                    }}
-                                                    className={classes.chip}/>
+                                                {
+                                                    props.permissions.availableRoles.some(_ => _ === userRole) ?
+                                                        <Chip
+                                                            label={userRole}
+                                                            color={'primary'}
+                                                            onDelete={() => {
+                                                                handleDeleteRole(userRole);
+                                                            }}
+                                                            className={classes.chip}
+                                                        />
+                                                        :
+                                                        <Chip
+                                                            label={userRole}
+                                                            color={'primary'}
+                                                            className={classes.chip}
+                                                        />
+                                                }
                                             </li>
                                         ))
                                     }
-                                    <li key={userRoles.length}>
-                                        <Chip
-                                            aria-controls="user-roles-menu"
-                                            icon={<Add fontSize={'small'}/>}
-                                            label={"Add role"}
-                                            color={'default'}
-                                            onClick={handleMenuClick}
-                                            className={classes.chip}/>
-                                        <Menu
-                                            id="user-roles-menu"
-                                            anchorEl={anchorEl}
-                                            keepMounted
-                                            open={Boolean(anchorEl)}
-                                            onClose={handleMenuClose}
-                                        >
-                                            {
-                                                availableRolesForUser.length > 0 ?
-                                                    availableRolesForUser.map(role => (
-                                                        <MenuItem onClick={() => {
-                                                            handleAppendRole(role);
-                                                            handleMenuClose();}}
-                                                        >
-                                                            {
-                                                                role 
-                                                            }
-                                                        </MenuItem>)) : 
-                                                    (
-                                                        <MenuItem onClick={handleMenuClose}>None</MenuItem>
-                                                    )
-                                            }
-                                        </Menu>
-                                    </li>
+                                    {
+                                        remindedRoles.length > 0 && (
+                                            <li key={userRoles.length}>
+                                                <Chip
+                                                    aria-controls="user-roles-menu"
+                                                    icon={<Add fontSize={'small'}/>}
+                                                    label={"Add role"}
+                                                    color={'default'}
+                                                    onClick={handleMenuClick}
+                                                    className={classes.chip}/>
+                                                <Menu
+                                                    id="user-roles-menu"
+                                                    anchorEl={anchorEl}
+                                                    keepMounted
+                                                    open={Boolean(anchorEl)}
+                                                    onClose={handleMenuClose}
+                                                >
+                                                    {
+                                                        remindedRoles.length > 0 ?
+                                                            remindedRoles.map(role => (
+                                                                <MenuItem onClick={() => {
+                                                                    handleAppendRole(role);
+                                                                    handleMenuClose();}}
+                                                                >
+                                                                    {
+                                                                        role
+                                                                    }
+                                                                </MenuItem>)) :
+                                                            (
+                                                                <MenuItem onClick={handleMenuClose}>None</MenuItem>
+                                                            )
+                                                    }
+                                                </Menu>
+                                            </li>
+                                        )
+                                    }
+                                    
                                 </Paper>
                             </Grid>
                         )
@@ -179,9 +198,9 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
                 <Button onClick={() => {
                     if (isUserChanged){
                         props.onSave({
-                            id: props.user?.id,
-                            username: props.user?.username,
-                            fullname: props.user?.fullname,
+                            id: props.selectedUser?.id,
+                            username: props.selectedUser?.username,
+                            fullname: props.selectedUser?.fullname,
                             verified: userVerified,
                             roles: userRoles
                         });
