@@ -23,6 +23,8 @@ namespace Project.WebMVC
             Environment = environment;
         }
 
+        public string NetJSClientCorsPolicy = "NetJSClientCorsPolicy";
+        
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Environment { get; }
 
@@ -83,7 +85,16 @@ namespace Project.WebMVC
                     };
                 });
                 
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy(NetJSClientCorsPolicy, builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:3000");
+                    builder.AllowAnyMethod();
+                });
+            });
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -103,8 +114,10 @@ namespace Project.WebMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.UseCors(NetJSClientCorsPolicy);
             
+            app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
