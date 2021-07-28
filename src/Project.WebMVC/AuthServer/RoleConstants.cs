@@ -1,4 +1,4 @@
-﻿namespace Project.WebMVC
+﻿namespace Project.WebMVC.AuthServer
 {
     public static class RoleConstants
     {

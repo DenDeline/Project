@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Project.ApplicationCore.Entities;
 using Project.Infrastructure.Data;
+using Project.WebMVC.AuthServer;
 
 namespace Project.WebMVC
 {

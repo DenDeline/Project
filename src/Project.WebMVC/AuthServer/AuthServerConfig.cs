@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Project.WebMVC.Models.AuthServer;
+using Project.WebMVC.AuthServer.Models;
 
-namespace Project.WebMVC
+namespace Project.WebMVC.AuthServer
 {
     public static class AuthServerConfig
     {

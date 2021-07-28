@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Extensions;
 using Project.ApplicationCore.Interfaces;
+using Project.WebMVC.AuthServer;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
