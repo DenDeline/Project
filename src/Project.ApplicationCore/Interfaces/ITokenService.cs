@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.IdentityModel.Tokens;
-using Project.ApplicationCore.Entities;
 
 namespace Project.ApplicationCore.Interfaces
 {

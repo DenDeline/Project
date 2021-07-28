@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
