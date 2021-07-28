@@ -47,8 +47,8 @@ namespace Project.WebMVC.Controllers.Api
             {
                 return NotFound();
             }
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.ToList().AsReadOnly();
+            var roles = (await _userManager.GetRolesAsync(user)).ToList();
+            return Ok(roles);
         }
 
         [HttpGet("/api/users")]
