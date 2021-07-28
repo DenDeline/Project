@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
@@ -49,7 +50,16 @@ namespace Project.WebMVC.Controllers.Api
             var roles = await _userManager.GetRolesAsync(user);
             return roles.ToList().AsReadOnly();
         }
-        
+
+        [HttpGet("/api/users")]
+        public async Task<IActionResult> GetAllUsers(CancellationToken ctsToken)
+        {
+            var users = await _userManager.Users.ToListAsync(ctsToken);
+            return Ok(_mapper.Map<IEnumerable<AppUserReadDto>>(users));
+        }
+
+        // TODO: Implement pagination in the future
+        [NonAction]
         [HttpGet("/api/users")]
         public async Task<IActionResult> GetUserListPagination([FromQuery] int since = 0, [FromQuery] int perPage = 30)
         {
@@ -57,24 +67,8 @@ namespace Project.WebMVC.Controllers.Api
             {
                 return BadRequest();
             }
-            
             //TODO: Create read dto for user model
             var users = await _userManager.Users.Where(user => user.Id > since).Take(perPage).ToListAsync();
-            
-            await HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user is null)
-            {
-                return Ok(_mapper.Map<IEnumerable<AppUserReadDto>>(users));
-            }
-            
-            if (await _userManager.IsInRoleAsync(user, RoleConstants.Administrator))
-            {
-                return Ok(_mapper.Map<IEnumerable<AppUserConfidentialReadDto>>(users));
-            }
-            
             return Ok(_mapper.Map<IEnumerable<AppUserReadDto>>(users));
         }
     }   
