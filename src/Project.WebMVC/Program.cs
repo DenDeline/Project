@@ -44,11 +44,19 @@ namespace Project.WebMVC
                     await roleManager.CreateAsync(authority);
                 };
                 
-                var userManager = services.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                var dbContext = services.ServiceProvider.GetRequiredService<AppDbContext>();
 
+                if (await dbContext.Languages.CountAsync() == 0)
+                {
+                    var language = new Language {Name = "English", Code = "en", Enabled = true, IsDefault = true};
+                    await dbContext.Languages.AddAsync(language);
+                    await dbContext.SaveChangesAsync();
+                }
+                
+                var userManager = services.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                
                 if (await userManager.FindByNameAsync("admin") is null)
                 {
-                    var dbContext = services.ServiceProvider.GetRequiredService<AppDbContext>();
                     var defaultLanguage = await dbContext.Languages.FirstOrDefaultAsync(_ => _.IsDefault && _.Enabled);
                     var admin = new AppUser("admin")
                     {
