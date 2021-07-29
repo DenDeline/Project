@@ -33,10 +33,7 @@ namespace Project.WebMVC
 
             services.AddApplicationCore();
 
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile(new AppUserProfile());
-            });
+            services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddDbContext<AppDbContext>(options =>
             {
