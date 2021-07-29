@@ -24,7 +24,7 @@ import Link from 'next/link';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Navbar from "../../components/Navbar";
 import {FiberManualRecord, FileCopyOutlined, FormatListBulleted} from "@material-ui/icons";
-import theme from "../../src/theme";
+import theme from "../../theme";
 
 const AccordionSummary = withStyles({
     root: {
