@@ -1,23 +1,12 @@
-﻿import {GetServerSideProps} from "next";
-import React, {useCallback, useState} from "react";
+﻿import React, {useCallback, useEffect, useState} from "react";
 import {DataGrid, GridCellParams, GridColDef} from '@material-ui/data-grid';
-import Link from 'next/link'
-import {
-    Button,
-    Card,
-    Chip,
-    Container,
-    createStyles,
-    Grid,
-    Link as MaterialLink,
-    makeStyles,
-    Paper, Select,
-    Typography
-} from "@material-ui/core";
+import {Button, Chip, Container, createStyles, Grid, makeStyles, Paper, Typography} from "@material-ui/core";
 import Navbar from "../../components/Navbar";
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import ConfigureUserDialog from "../../components/ConfigureUserDialog";
+import axios from "axios"
+import {GetServerSideProps} from "next";
 
 const useStyles = makeStyles(theme => 
     createStyles({
@@ -53,17 +42,71 @@ const getAvailableRoles = (currentUserRole: AppRoles): AppRoles[] => {
             return [];
     }
 }
- 
-const RolePanel: React.FC = (props) => {
+
+interface User {
+    id: number,
+    username: string,
+    name: string,
+    surname: string,
+    verified: string,
+    roles?: string[]
+}
+
+interface UserReadModel {
+    id: number,
+    username: string,
+    name: string,
+    surname: string,
+    verified: string,
+}
+
+interface RolesPanelProps {
+    backendApi: string
+}
+
+export const getServerSideProps: GetServerSideProps<RolesPanelProps> = async (context) => {
+    return {
+        props: {
+            backendApi: process.env.BACKEND_API_URL ?? ""
+        }
+    }
+}
+
+const RolePanel: React.FC<RolesPanelProps> = (props) => {
     const classes = useStyles();
-    const [users, setUsers] = useState(
-        [
-            {id : 1, username: 'admin', fullname: 'Rostislav Statko', verified: true, roles: ['Administrator']},
-            {id : 2, username: 'Test', fullname: 'Rostislav Statko', verified: true, roles: ['Lead Manager']},
-            {id : 3, username: 'DenDeline', fullname: 'Rostislav Statko', verified: false, roles: []},
-        ]
-    );
-    const [currentUser, ] = useState(users[1]);
+    
+    const [rows, setRows] = useState<User[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    
+    useEffect(() => {
+        let active = true;
+        
+        (async () => {
+            setLoading(true);
+            
+            const usersResult = await axios.get<UserReadModel[]>( props.backendApi + "/users");
+            const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
+                const userRoles = await axios.get<string[]>(`${props.backendApi}/users/${userResult.username}/roles`);
+                return {
+                    ...userResult,
+                    roles: userRoles.data
+                };
+            }));
+            
+            if (!active){
+                return;
+            }
+            
+            setRows(usersWithRoles);
+            setLoading(false);
+        })();
+        
+        return () => {
+            active = false;
+        }
+    }, []);
+    
+    const [currentUser, ] = useState(rows[0]);
     const [permissions, ] = useState({
         editProfile: false,
         approvingDocuments: true,
@@ -85,19 +128,19 @@ const RolePanel: React.FC = (props) => {
     };
     
     const handleSaveUser = useCallback((user: any) => {
-        setUsers(users.filter(_ => _.id !== user.id).concat(user));
-    }, [users]);
+        setRows(rows.filter(_ => _.id !== user.id).concat(user));
+    }, [rows]);
     
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', disableReorder: true },
         { field: 'username', headerName: 'Username', flex: 1 },
-        { field: 'fullname', headerName: 'Full Name', flex: 1 },
+        { field: 'fullname', headerName: 'Full Name', flex: 1, renderCell: (params: GridCellParams) => `${params.row.name} ${params.row.surname}` },
         { field: 'roles', headerName: 'Roles', flex: 1, renderCell: (params: GridCellParams) => ( 
             <Grid container spacing={1}>
                 {
                     (params.value as string[]).map((item, index) => (
                         <Grid item key={index}>
-                            <Chip label={item} color={'primary'}/>
+                            <Chip label={item} color={'primary'}/>  
                         </Grid>
                     ))
                     
@@ -129,11 +172,10 @@ const RolePanel: React.FC = (props) => {
                             <Grid item container direction={'column'} className={classes.content}>
                                 <DataGrid
                                     autoHeight
-                                    rows={users}
+                                    rows={rows}
                                     columns={columns}
-                                    pagination
-                                    pageSize={30}
-                                    rowCount={10}
+                                    loading={loading}
+                                    hideFooterSelectedRowCount={true}
                                 />
                             </Grid>
                         </Grid>
