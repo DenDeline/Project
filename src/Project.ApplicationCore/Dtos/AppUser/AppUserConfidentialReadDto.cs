@@ -13,6 +13,5 @@ namespace Project.ApplicationCore.Dtos.AppUser
         public bool Verified { get; set; }
         public string ProfileImageUrl { get; set; }
         public string Birthday { get; set; }
-        public string RolesUrl { get; set; }
     }
 }
