@@ -9,6 +9,7 @@ using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Extensions;
 using Project.ApplicationCore.Interfaces;
 using Project.WebMVC.AuthServer;
+using Project.WebMVC.Models.Oauth;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
@@ -24,15 +25,9 @@ namespace Project.WebMVC.Controllers
     
     [HttpGet("/oauth2/authorize")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public IActionResult Authorize(
-      [FromQuery] string response_type,
-      [FromQuery] string client_id,
-      [FromQuery] string redirect_uri,
-      [FromQuery] string state,
-      [FromQuery] string code_challenge,
-      [FromQuery] string code_challenge_method)
+    public IActionResult Authorize([FromQuery] GetAuthorizationRequest request)
     {
-      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == client_id);
+      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
 
       // TODO: Separate class for validation required params 
       if (client is null)
@@ -40,35 +35,35 @@ namespace Project.WebMVC.Controllers
        return BadRequest();
       }
 
-      if (!client.RedirectUris.Contains(redirect_uri))
+      if (!client.RedirectUris.Contains(request.RedirectUri))
       {
         //TODO: Add error validation constant: invalid_request
         var queryBuilder = new QueryBuilder
         {
           {"error", "invalid_request"},
-          {"state", state}
+          {"state", request.State}
         };
-        return Redirect($"{redirect_uri}{queryBuilder}");
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
 
-      if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != response_type))
+      if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != request.ResponseType))
       {
         //TODO: Add error validation constant: unsupported_response_type
         var queryBuilder = new QueryBuilder
         {
         {"error", "unsupported_response_type"},
-        {"state", state}
+        {"state", request.State}
         };
-        return Redirect($"{redirect_uri}{queryBuilder}");
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
 
       var vm = new AuthorizeViewModel
       {
-        ClientId = client_id,
-        RedirectUri = redirect_uri,
-        State = state,
-        CodeChallenge = code_challenge,
-        CodeChallengeMethod = code_challenge_method
+        ClientId = request.ClientId,
+        RedirectUri = request.RedirectUri,
+        State = request.State,
+        CodeChallenge = request.CodeChallenge,
+        CodeChallengeMethod = request.CodeChallengeMethod
       };
 
       return View(vm);
@@ -76,7 +71,7 @@ namespace Project.WebMVC.Controllers
 
     [HttpPost("/oauth2/signin-code")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IActionResult> SignInCode(AuthorizeViewModel vm)
+    public async Task<IActionResult> SignInCode([FromForm] AuthorizeViewModel vm)
     {
       var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await  _userManager.FindByNameAsync(vm.Login));
 
@@ -134,27 +129,27 @@ namespace Project.WebMVC.Controllers
     [HttpPost("/oauth2/token")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> GetAccessTokenAsync(
-      [FromBody] TokenRequest vm,
+      [FromForm] GetAccessTokenRequest request,
       [FromServices] ITokenService tokenService,
       CancellationToken cts = new CancellationToken())
     {
-      if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != vm.grant_type))
+      if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
       {
         // TODO: Add validation error
         return BadRequest();
       };
 
-      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == vm.client_id);
+      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
       if (client is null)
       {
         // TODO: Add validation error
         return BadRequest();
       }
 
-      var decodedCodeToken = vm.code.AesDecrypt(client.ClientSecret);
+      var decodedCodeToken = request.Code.AesDecrypt(client.ClientSecret);
       var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
 
-      if (!codeToken.IsValid(vm.client_id, vm.redirect_uri, "S256", vm.code_verifier))
+      if (!codeToken.IsValid(request.ClientId, request.RedirectUri, "S256", request.CodeVerifier))
       {
         return BadRequest();
       };
@@ -174,7 +169,7 @@ namespace Project.WebMVC.Controllers
       return Ok(new
       {
         access_token = encodedJwtResult.Value,
-        token_type = "bearer",
+        token_type = "Bearer",
         expires_in = 3600
       });
     }
