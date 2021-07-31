@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Project.ApplicationCore.Extensions
 {
@@ -12,7 +13,7 @@ namespace Project.ApplicationCore.Extensions
             using (SHA256 sha256Hash = SHA256.Create())  
             { 
                 byte[] bytes = sha256Hash.ComputeHash(Encoding.ASCII.GetBytes(input));
-                return Convert.ToBase64String(bytes);
+                return Base64UrlEncoder.Encode(bytes);
             } 
         }
 
