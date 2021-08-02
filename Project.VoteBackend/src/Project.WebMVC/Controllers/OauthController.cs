@@ -9,7 +9,6 @@ using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Extensions;
 using Project.ApplicationCore.Interfaces;
 using Project.WebMVC.AuthServer;
-using Project.WebMVC.Models.Oauth;
 using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
@@ -27,7 +26,7 @@ namespace Project.WebMVC.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public IActionResult Authorize([FromQuery] GetAuthorizationRequest request)
     {
-      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
+      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == client_id);
 
       // TODO: Separate class for validation required params 
       if (client is null)
@@ -139,7 +138,7 @@ namespace Project.WebMVC.Controllers
         return BadRequest();
       };
 
-      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
+      var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == vm.client_id);
       if (client is null)
       {
         // TODO: Add validation error
@@ -149,7 +148,7 @@ namespace Project.WebMVC.Controllers
       var decodedCodeToken = request.Code.AesDecrypt(client.ClientSecret);
       var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
 
-      if (!codeToken.IsValid(request.ClientId, request.RedirectUri, "S256", request.CodeVerifier))
+      if (codeToken is null || !codeToken.IsValid( request.ClientId, request.RedirectUri, request.CodeVerifier))
       {
         return BadRequest();
       };

@@ -9,7 +9,7 @@ namespace Project.ApplicationCore.Entities
         public int UserId { get; set; }
         public DateTime ExpiresIn { get; } = DateTime.UtcNow.AddSeconds(60);
         public string RedirectUri { get; set; }
-        public string CodeChallenge { get; set; }
-        public string CodeChallengeMethod { get; set; }
+        public string? CodeChallenge { get; set; }
+        public string? CodeChallengeMethod { get; set; }
     }
 }
