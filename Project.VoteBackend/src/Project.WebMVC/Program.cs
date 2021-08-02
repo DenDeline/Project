@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -61,7 +62,9 @@ namespace Project.WebMVC
                     var defaultLanguage = await dbContext.Languages.FirstOrDefaultAsync(_ => _.IsDefault && _.Enabled);
                     var admin = new AppUser("admin")
                     {
-                        LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
+                      Name = "admin",
+                      Surname = "admin",
+                      LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
                     };
                     await userManager.CreateAsync(admin, "admin");
                     await userManager.AddToRoleAsync(admin, RoleConstants.Administrator);
