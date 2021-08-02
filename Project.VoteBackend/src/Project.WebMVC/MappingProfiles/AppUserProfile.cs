@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Project.ApplicationCore.Dtos.AppUser;
 using Project.ApplicationCore.Entities;
+using Project.WebMVC.Models.Api.Users;
 
 namespace Project.WebMVC.MappingProfiles
 {
@@ -8,8 +8,8 @@ namespace Project.WebMVC.MappingProfiles
     {
         public AppUserProfile()
         {
-            CreateMap<AppUser, AppUserConfidentialReadDto>();
-            CreateMap<AppUser, AppUserReadDto>();
+            CreateMap<AppUser, GetUserResponse>();
+            CreateMap<AppUser, GetCurrentUserResponse>();
         }
     }
 }

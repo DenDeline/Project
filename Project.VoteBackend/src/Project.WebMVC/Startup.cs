@@ -81,6 +81,16 @@ namespace Project.WebMVC
           };
       });
 
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("update:user:role", policy =>
+        {
+          policy.RequireAuthenticatedUser();
+          policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+          policy.RequireRole(RoleConstants.Administrator, RoleConstants.LeadManager);
+        });
+      });
+      
       services.AddCors(options =>
       {
         options.AddPolicy(NetJsClientCorsPolicy, builder =>
