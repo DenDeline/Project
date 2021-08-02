@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +14,7 @@ using Project.ApplicationCore;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Interfaces;
 using Project.Infrastructure.Data;
+using Project.WebMVC.AuthServer;
 
 namespace Project.WebMVC
 {
@@ -66,17 +69,16 @@ namespace Project.WebMVC
           config.ClientId = googleConfig["ClientId"];
           config.ClientSecret = googleConfig["ClientSecret"];
         })
-
-      .AddJwtBearer(options =>
-      {
-        var secretKey = new SigningIssuerCertificate().GetPublicKey();
-
-        options.TokenValidationParameters = new TokenValidationParameters
+        .AddJwtBearer(options =>
         {
-          ValidIssuer = "https://localhost:44307",
-          ValidAudience = "https://localhost:44307",
-          IssuerSigningKey = secretKey,
-        };
+          var secretKey = new SigningIssuerCertificate().GetPublicKey();
+
+          options.TokenValidationParameters = new TokenValidationParameters
+          {
+            ValidIssuer = "https://localhost:44307",
+            ValidAudience = "https://localhost:44307",
+            IssuerSigningKey = secretKey,
+          };
       });
 
       services.AddCors(options =>
@@ -95,6 +97,28 @@ namespace Project.WebMVC
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vote WebAPI", Version = "v1" });
+        c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme()
+        {
+          Type = SecuritySchemeType.OAuth2,
+          Flows = new OpenApiOAuthFlows()
+          {
+            AuthorizationCode = new OpenApiOAuthFlow()
+            {
+              AuthorizationUrl = new Uri("/oauth2/authorize", UriKind.Relative),
+              TokenUrl = new Uri("/oauth2/token", UriKind.Relative)
+            }
+          }
+        });
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+          {
+            new OpenApiSecurityScheme
+            {
+              Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+            },
+            new List<string>()
+          }
+        });
       });
     }
 
@@ -118,6 +142,8 @@ namespace Project.WebMVC
       app.UseSwagger();
       app.UseSwaggerUI(c =>
       {
+        c.OAuthClientId("project_swagger_3e1db73b647f43c297594797d62aec76");
+        c.OAuthUsePkce();
         c.SwaggerEndpoint("v1/swagger.json", "My API V1");
       });
       
