@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res}) => {
     
     const hash = createHash("sha256");
     hash.update(codeVerifier, "ascii");
-    const codeChallenge =  hash.digest().toString("base64");
+    const codeChallenge =  hash.digest().toString("base64url");
     
     const codeChallengeMethod = "S256";
     
