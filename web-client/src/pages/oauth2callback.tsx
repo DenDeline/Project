@@ -1,6 +1,7 @@
 ﻿import {GetServerSideProps} from "next";
 import React from "react";
 import axios from "axios";
+import querystring from "querystring"
 import cookie from "cookie";
 
 interface AccessTokenResponse {
@@ -36,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
         code_verifier: codeVerifierFromCookies
     };
     
-    const response = await axios.post<AccessTokenResponse>("https://localhost:44307/oauth2/token", postData);
+    const response = await axios.post<AccessTokenResponse>("https://localhost:44307/oauth2/token", querystring.stringify(postData));
     
     res.setHeader(
         "Set-Cookie", 
