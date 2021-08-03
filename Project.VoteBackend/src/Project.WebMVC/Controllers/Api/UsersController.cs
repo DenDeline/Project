@@ -94,11 +94,11 @@ namespace Project.WebMVC.Controllers.Api
           return Ok(roles);
         }
 
-        [Authorize(Policy = "update:user:role")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("/api/users/{username}/roles")]
         public async Task<ActionResult<IReadOnlyList<string>>> UpdateUserRolesByName(
           [FromRoute] string username, 
-          [FromBody] UpdateUserRolesRequest request,
+          [FromForm] UpdateUserRolesRequest request,
           [FromServices] IRoleService roleService,
           CancellationToken cts = new CancellationToken())
         {
@@ -108,12 +108,12 @@ namespace Project.WebMVC.Controllers.Api
           
           return this.ToActionResult(result);
         }
-        
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("/api/users/{username}/roles")]
         public async Task<ActionResult<IReadOnlyList<string>>> DeleteUserRolesByName(
           [FromRoute] string username, 
-          [FromBody] UpdateUserRolesRequest request,
+          [FromForm] DeleteUserRolesRequest request,
           [FromServices] IRoleService roleService,
           CancellationToken cts = new CancellationToken())
         {
