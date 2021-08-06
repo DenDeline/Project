@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Project.ApplicationCore.Entities;
+using Project.ApplicationCore.Aggregates;
 
 namespace Project.Infrastructure.Data.Config
 {
@@ -22,7 +22,7 @@ namespace Project.Infrastructure.Data.Config
             builder.Property(e => e.IsDefault)
                 .HasDefaultValue(false);
 
-            builder.HasMany<AppUser>().WithOne().HasForeignKey(user => user.LanguageId).IsRequired();
+            builder.HasMany<ApplicationUser>().WithOne().HasForeignKey(user => user.LanguageId).IsRequired();
         }
     }
 }

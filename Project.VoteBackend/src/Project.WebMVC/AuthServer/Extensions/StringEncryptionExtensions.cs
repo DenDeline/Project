@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Project.ApplicationCore.Extensions
+namespace Project.WebMVC.AuthServer.Extensions
 {
     public static class StringEncryptionExtensions
     {

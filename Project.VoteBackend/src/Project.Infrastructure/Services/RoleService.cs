@@ -1,43 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
-using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Interfaces;
+using Project.Infrastructure.Data;
 
-namespace Project.ApplicationCore.Services
+namespace Project.Infrastructure.Services
 {
   public class RoleService: IRoleService
   {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly RoleManager<IdentityRole<int>> _roleManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
 
     public RoleService(
-      UserManager<AppUser> userManager,
-      RoleManager<IdentityRole<int>> roleManager)
+      UserManager<ApplicationUser> userManager,
+      RoleManager<ApplicationRole> roleManager)
     {
       _userManager = userManager;
       _roleManager = roleManager;
     }
     
     public async Task<Result<IReadOnlyList<string>>> AddRolesByUserNameAsync(
-      AppUser currentUser, 
-      string username, 
+      string currentUserName, 
+      string updatingUserName, 
       IReadOnlyList<string> updatingRoles, 
       CancellationToken cts = new CancellationToken())
     {
-      var updatingUser = await _userManager.FindByNameAsync(username);
+      var currentUser = await _userManager.FindByNameAsync(currentUserName);
+      
+      if (currentUser is null)
+      {
+        return Result<IReadOnlyList<string>>.NotFound();
+      }
+      
+      var updatingUser = await _userManager.FindByNameAsync(updatingUserName);
 
       if (updatingUser is null)
       {
         return Result<IReadOnlyList<string>>.NotFound();
       }
 
-      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(currentUser, updatingRoles);
+      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(currentUser, updatingUser, updatingRoles);
 
       if (!canUpdateUserRolesResult.IsSuccess)
       {
@@ -68,19 +73,26 @@ namespace Project.ApplicationCore.Services
     }
     
     public async Task<Result<IReadOnlyList<string>>> RemoveRolesByUserNameAsync(
-      AppUser currentUser, 
-      string username, 
+      string currentUserName, 
+      string updatingUserName, 
       IReadOnlyList<string> updatingRoles, 
       CancellationToken cts = new CancellationToken())
     {
-      var updatingUser = await _userManager.FindByNameAsync(username);
+      var currentUser = await _userManager.FindByNameAsync(currentUserName);
+      
+      if (currentUser is null)
+      {
+        return Result<IReadOnlyList<string>>.NotFound();
+      }
+      
+      var updatingUser = await _userManager.FindByNameAsync(updatingUserName);
 
       if (updatingUser is null)
       {
         return Result<IReadOnlyList<string>>.NotFound();
       }
 
-      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(currentUser, updatingRoles);
+      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(currentUser,updatingUser, updatingRoles);
 
       if (!canUpdateUserRolesResult.IsSuccess)
       {
@@ -114,17 +126,17 @@ namespace Project.ApplicationCore.Services
     // PRIVATE METHODS                                                                                                                //
     // ===============================================================================================================================//
     
-    private async Task<Result<IReadOnlyList<IdentityRole<int>>>> GetIdentityRolesAsync(
+    private async Task<Result<IReadOnlyList<ApplicationRole>>> GetIdentityRolesAsync(
       IReadOnlyList<string> roleNames)
     {
-      var identityUpdatingRoles = new List<IdentityRole<int>>();
+      var identityUpdatingRoles = new List<ApplicationRole>();
 
       foreach (var roleName in roleNames)
       {
         var identityUpdatingRole = await _roleManager.FindByNameAsync(roleName);
         if (identityUpdatingRole is null)
         {
-          return Result<IReadOnlyList<IdentityRole<int>>>.Error("Role doesn't exist");
+          return Result<IReadOnlyList<ApplicationRole>>.Error("Role doesn't exist");
         }
         identityUpdatingRoles.Add(identityUpdatingRole);
       }
@@ -132,59 +144,67 @@ namespace Project.ApplicationCore.Services
       return identityUpdatingRoles.AsReadOnly();
     }
 
-    private Result<IdentityRole<int>> GetMainRole(IReadOnlyList<IdentityRole<int>> roles)
+    private Result<ApplicationRole> GetMainRole(IReadOnlyList<ApplicationRole> roles)
     {
       if (!roles.Any())
       {
-        return Result<IdentityRole<int>>.NotFound();
+        return Result<ApplicationRole>.NotFound();
       }
 
-      return roles.OrderBy(_ => _.Id).First();
+      return roles.OrderBy(_ => _.Position).Last();
     }
 
     private async Task<Result<bool>> CanUpdateUserRolesAsync(
-      AppUser currentUser,
+      ApplicationUser currentUser,
+      ApplicationUser updatingUser,
       IReadOnlyList<string> updatingRoles)
     {
       // TODO: Add fluent validation for updatingRoles
 
-      if (!updatingRoles.Any())
-      {
+      if (!updatingRoles.Any()) 
         return Result<bool>.Error();
-      }
       
-      var identityUpdatingRolesResult = await GetIdentityRolesAsync(updatingRoles);
-      if (!identityUpdatingRolesResult.IsSuccess)
-      {
-        return Result<bool>.Error(identityUpdatingRolesResult.Errors.ToArray());
-      }
-      
+      var updatingIdentityRolesResult = await GetIdentityRolesAsync(updatingRoles);
+      if (!updatingIdentityRolesResult.IsSuccess)
+        return Result<bool>.Error(updatingIdentityRolesResult.Errors.ToArray());
+
+
       var currentUserRoles = (await _userManager.GetRolesAsync(currentUser))
         .ToList()
         .AsReadOnly();
       
       if (!currentUserRoles.Any())
-      {
         return Result<bool>.Forbidden();
-      }
-      
+
       var currentUserIdentityRolesResult = await GetIdentityRolesAsync(currentUserRoles);
-      if (!identityUpdatingRolesResult.IsSuccess)
-      {
-        return Result<bool>.Error(identityUpdatingRolesResult.Errors.ToArray());
-      }
-
-      var currentUserMainRoleResult = GetMainRole(currentUserIdentityRolesResult.Value);
-      if (!currentUserMainRoleResult.IsSuccess)
+      if (!currentUserIdentityRolesResult.IsSuccess)
+        return Result<bool>.Error(currentUserIdentityRolesResult.Errors.ToArray());
+      
+      
+      if (currentUserIdentityRolesResult.Value.Max(_ => _.Position) <=
+          updatingIdentityRolesResult.Value.Max(_ => _.Position))
       {
         return Result<bool>.Forbidden();
       }
       
-      if (identityUpdatingRolesResult.Value.Any(r => r.Id < currentUserMainRoleResult.Value.Id))
-      {
-        return Result<bool>.Forbidden();
-      }
+      var updatingUserRoles = (await _userManager.GetRolesAsync(updatingUser))
+        .ToList()
+        .AsReadOnly();
 
+      if (updatingUserRoles.Any())
+      {
+        var updatingUserIdentityRolesResult = await GetIdentityRolesAsync(currentUserRoles);
+        if (!updatingUserIdentityRolesResult.IsSuccess)
+          return Result<bool>.Error(currentUserIdentityRolesResult.Errors.ToArray());
+
+        if (updatingUserIdentityRolesResult.Value.Max(_ => _.Position) >=
+            currentUserIdentityRolesResult.Value.Max(_ => _.Position))
+        {
+          return Result<bool>.Forbidden();
+        }
+      };
+
+      
       return true;
     }
   }

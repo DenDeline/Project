@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -11,11 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Project.ApplicationCore;
-using Project.ApplicationCore.Entities;
-using Project.ApplicationCore.Interfaces;
+using Project.Infrastructure;
 using Project.Infrastructure.Data;
 using Project.SharedKernel;
-
+using Project.WebMVC.Authorization.PermissionsAuthorization;
 
 namespace Project.WebMVC
 {
@@ -35,6 +35,7 @@ namespace Project.WebMVC
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddApplicationCore();
+      services.AddInfrastructure();
 
       services.AddAutoMapper(typeof(Startup).Assembly);
 
@@ -47,22 +48,27 @@ namespace Project.WebMVC
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
 
-      services.AddScoped<IDbContext, AppDbContext>();
-
-      services.AddIdentity<AppUser, IdentityRole<int>>(config =>
-      {
-        config.Password.RequireDigit = false;
-        config.Password.RequiredLength = 4;
-        config.Password.RequireLowercase = false;
-        config.Password.RequireUppercase = false;
-        config.Password.RequiredUniqueChars = 1;
-        config.Password.RequireNonAlphanumeric = false;
-      })
-        .AddDefaultUI()
+      
+      services.AddIdentityCore<ApplicationUser>(config =>
+        {
+          config.Password.RequireDigit = false;
+          config.Password.RequiredLength = 4;
+          config.Password.RequireLowercase = false;
+          config.Password.RequireUppercase = false;
+          config.Password.RequiredUniqueChars = 1;
+          config.Password.RequireNonAlphanumeric = false;
+        })
+        .AddRoles<ApplicationRole>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      services.AddSingleton<IAuthorizationPolicyProvider, PermissionsPolicyProvider>();
+      services.AddScoped<IAuthorizationHandler, PermissionsAuthorizationHandler>();
+
+      services.AddAuthentication(config =>
+        {
+          config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
         .AddGoogle(config =>
         {
           IConfigurationSection googleConfig = Configuration.GetSection("Authentication:Google");
@@ -80,16 +86,6 @@ namespace Project.WebMVC
           };
       });
 
-      services.AddAuthorization(options =>
-      {
-        options.AddPolicy("update:user:role", policy =>
-        {
-          policy.RequireAuthenticatedUser();
-          policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-          policy.RequireRole(RoleConstants.Administrator, RoleConstants.LeadManager);
-        });
-      });
-      
       services.AddCors(options =>
       {
         options.AddPolicy(NetJsClientCorsPolicy, builder =>
@@ -163,7 +159,7 @@ namespace Project.WebMVC
 
       app.UseEndpoints(endpoints =>
       {
-        endpoints.MapDefaultControllerRoute();
+        endpoints.MapControllers();
         endpoints.MapRazorPages();
       });
     }

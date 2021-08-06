@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Project.ApplicationCore.Interfaces;
-using Project.ApplicationCore.Services;
+
 
 namespace Project.ApplicationCore
 {

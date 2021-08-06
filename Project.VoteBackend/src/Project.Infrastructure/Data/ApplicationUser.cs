@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
 
-namespace Project.ApplicationCore.Entities
+namespace Project.Infrastructure.Data
 {
-    public class AppUser: IdentityUser<int>
+    public class ApplicationUser: IdentityUser
     {
-        public AppUser() { }
+        public ApplicationUser(): base() { }
         
-        public AppUser(string userName): base(userName) { }
+        public ApplicationUser(string userName): base(userName) { }
         
         public string Name { get; set; }
         public string Surname { get; set; }

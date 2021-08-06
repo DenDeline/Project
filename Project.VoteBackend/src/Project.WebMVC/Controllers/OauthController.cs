@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Project.ApplicationCore.Entities;
-using Project.ApplicationCore.Extensions;
 using Project.ApplicationCore.Interfaces;
-using Project.WebMVC.AuthServer;
+using Project.Infrastructure.Data;
+using Project.WebMVC.AuthServer.Extensions;
+using Project.WebMVC.AuthServer.Models;
 using Project.WebMVC.Models.Oauth;
 using Project.WebMVC.ViewModels;
 
@@ -16,9 +16,9 @@ namespace Project.WebMVC.Controllers
 {
   public class OauthController: Controller
   {
-    private readonly UserManager<AppUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public OauthController(UserManager<AppUser> userManager)
+    public OauthController(UserManager<ApplicationUser> userManager)
     {
       _userManager = userManager;
     }

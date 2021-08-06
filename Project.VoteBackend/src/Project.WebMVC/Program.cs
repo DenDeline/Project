@@ -1,14 +1,13 @@
 using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Project.ApplicationCore.Entities;
+using Project.ApplicationCore.Aggregates;
 using Project.Infrastructure.Data;
-using Project.WebMVC.AuthServer;
+using Project.SharedKernel.Constants;
 
 namespace Project.WebMVC
 {
@@ -20,29 +19,43 @@ namespace Project.WebMVC
 
             await using (var services = host.Services.CreateAsyncScope())
             {
-                var roleManager = services.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+                var roleManager = services.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-                if (!await roleManager.RoleExistsAsync(RoleConstants.Administrator))
+                if (!await roleManager.RoleExistsAsync(nameof(Roles.Administrator)))
                 {
-                    var adminRole = new IdentityRole<int>(RoleConstants.Administrator);
+                    var adminRole = new ApplicationRole(nameof(Roles.Administrator))
+                    {
+                      Position = 4,
+                      Permissions = Permissions.Administrator
+                    };
                     await roleManager.CreateAsync(adminRole);
                 };
                
-                if (!await roleManager.RoleExistsAsync(RoleConstants.LeadManager))
+                if (!await roleManager.RoleExistsAsync(nameof(Roles.LeadManager)))
                 {
-                    var leadManagerRole = new IdentityRole<int>(RoleConstants.LeadManager);
+                    var leadManagerRole = new ApplicationRole(nameof(Roles.LeadManager))
+                    {
+                      Position = 3,
+                      Permissions = Permissions.ManageRoles
+                    };
                     await roleManager.CreateAsync(leadManagerRole);
                 };
                 
-                if (!await roleManager.RoleExistsAsync(RoleConstants.RepresentativeAuthority))
+                if (!await roleManager.RoleExistsAsync(nameof(Roles.RepresentativeAuthority)))
                 {
-                    var representativeAuthorityRole = new IdentityRole<int>(RoleConstants.RepresentativeAuthority);
+                    var representativeAuthorityRole = new ApplicationRole(nameof(Roles.RepresentativeAuthority))
+                    {
+                      Position = 2,
+                    };
                     await roleManager.CreateAsync(representativeAuthorityRole);
                 };
                 
-                if (!await roleManager.RoleExistsAsync(RoleConstants.Authority))
+                if (!await roleManager.RoleExistsAsync(nameof(Roles.Authority)))
                 {
-                    var authority = new IdentityRole<int>(RoleConstants.Authority);
+                    var authority = new ApplicationRole(nameof(Roles.Authority))
+                    {
+                      Position = 1
+                    };
                     await roleManager.CreateAsync(authority);
                 };
                 
@@ -55,19 +68,19 @@ namespace Project.WebMVC
                     await dbContext.SaveChangesAsync();
                 }
                 
-                var userManager = services.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                var userManager = services.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 
                 if (await userManager.FindByNameAsync("admin") is null)
                 {
                     var defaultLanguage = await dbContext.Languages.FirstOrDefaultAsync(_ => _.IsDefault && _.Enabled);
-                    var admin = new AppUser("admin")
+                    var admin = new ApplicationUser("admin")
                     {
                       Name = "admin",
                       Surname = "admin",
                       LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
                     };
                     await userManager.CreateAsync(admin, "admin");
-                    await userManager.AddToRoleAsync(admin, RoleConstants.Administrator);
+                    await userManager.AddToRoleAsync(admin, nameof(Roles.Administrator));
                 }
             }
             

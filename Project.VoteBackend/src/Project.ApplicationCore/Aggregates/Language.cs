@@ -1,8 +1,10 @@
-﻿namespace Project.ApplicationCore.Entities
+﻿using Project.SharedKernel;
+using Project.SharedKernel.Interfaces;
+
+namespace Project.ApplicationCore.Aggregates
 {
-    public class Language
+    public class Language: BaseEntity<int>, IAggregateRoot
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public bool Enabled { get; set; }

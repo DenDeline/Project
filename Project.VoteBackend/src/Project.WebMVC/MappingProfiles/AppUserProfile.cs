@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Project.ApplicationCore.Entities;
+using Project.Infrastructure.Data;
 using Project.WebMVC.Models.Api.Users;
 
 namespace Project.WebMVC.MappingProfiles
@@ -8,8 +8,8 @@ namespace Project.WebMVC.MappingProfiles
     {
         public AppUserProfile()
         {
-            CreateMap<AppUser, GetUserResponse>();
-            CreateMap<AppUser, GetCurrentUserResponse>();
+            CreateMap<ApplicationUser, GetUserResponse>();
+            CreateMap<ApplicationUser, GetCurrentUserResponse>();
         }
     }
 }
