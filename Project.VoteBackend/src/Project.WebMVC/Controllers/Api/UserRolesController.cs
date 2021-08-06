@@ -46,7 +46,7 @@ namespace Project.WebMVC.Controllers.Api
       return Ok(roles);
     }
 
-    [RequirePermissions(Permissions.ManageRoles)]
+    [RequirePermissions(Permissions.ManageUserRoles)]
     [HttpPost("/api/users/{username}/roles")]
     public async Task<ActionResult<IReadOnlyList<string>>> UpdateUserRolesByName(
       [FromRoute] string username, 
@@ -64,7 +64,7 @@ namespace Project.WebMVC.Controllers.Api
       return this.ToActionResult(result);
     }
 
-    [RequirePermissions(Permissions.ManageRoles)]
+    [RequirePermissions(Permissions.ManageUserRoles)]
     [HttpDelete("/api/users/{username}/roles")]
     public async Task<ActionResult<IReadOnlyList<string>>> DeleteUserRolesByName(
       [FromRoute] string username, 

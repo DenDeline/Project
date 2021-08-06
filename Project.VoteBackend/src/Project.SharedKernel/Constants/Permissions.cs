@@ -7,7 +7,10 @@ namespace Project.SharedKernel.Constants
   {
     None = 0,
     Administrator = 1 << 0,
-    ManageRoles = 1 << 1,
-    All = Administrator | ManageRoles
+    ManageUserRoles = 1 << 1,
+    
+    
+    
+    All = Administrator | ManageUserRoles
   }
 }

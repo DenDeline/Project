@@ -36,7 +36,7 @@ namespace Project.WebMVC
                     var leadManagerRole = new ApplicationRole(nameof(Roles.LeadManager))
                     {
                       Position = 3,
-                      Permissions = Permissions.ManageRoles
+                      Permissions = Permissions.ManageUserRoles
                     };
                     await roleManager.CreateAsync(leadManagerRole);
                 };
