@@ -130,7 +130,7 @@ namespace Project.WebMVC.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> GetAccessTokenAsync(
       [FromForm] GetAccessTokenRequest request,
-      [FromServices] ITokenService tokenService,
+      [FromServices] IIdentityTokenClaimService tokenService,
       CancellationToken cts = new CancellationToken())
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
@@ -154,21 +154,19 @@ namespace Project.WebMVC.Controllers
         return BadRequest();
       };
 
-      var certificate = new SigningIssuerCertificate();
 
-      var encodedJwtResult = await tokenService.CreateAccessTokenAsync(
-      codeToken.UserId, 
-      certificate.GetPrivateKey(),
-      cts);
+      var user = await _userManager.FindByIdAsync(codeToken.UserId);
 
-      if (!encodedJwtResult.IsSuccess)
+      if (user is null)
       {
-        return BadRequest();
+        return NotFound();
       }
+
+      var token = await tokenService.GetTokenAsync(user.Name);
 
       return Ok(new
       {
-        access_token = encodedJwtResult.Value,
+        access_token = token,
         token_type = "Bearer",
         expires_in = 3600
       });

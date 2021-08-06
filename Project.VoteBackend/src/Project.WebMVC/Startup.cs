@@ -14,7 +14,8 @@ using Project.ApplicationCore;
 using Project.ApplicationCore.Entities;
 using Project.ApplicationCore.Interfaces;
 using Project.Infrastructure.Data;
-using Project.WebMVC.AuthServer;
+using Project.SharedKernel;
+
 
 namespace Project.WebMVC
 {
@@ -71,13 +72,11 @@ namespace Project.WebMVC
         })
         .AddJwtBearer(options =>
         {
-          var secretKey = new SigningIssuerCertificate().GetPublicKey();
-
           options.TokenValidationParameters = new TokenValidationParameters
           {
             ValidIssuer = "https://localhost:44307",
             ValidAudience = "https://localhost:44307",
-            IssuerSigningKey = secretKey,
+            IssuerSigningKey = new SigningIssuerCertificate().GetPublicKey()
           };
       });
 

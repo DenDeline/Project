@@ -9,8 +9,6 @@ namespace Project.ApplicationCore
     {
         public static IServiceCollection AddApplicationCore(this IServiceCollection services)
         {
-            services.TryAddScoped<ITokenService, TokenService>();
-            services.TryAddScoped<IRoleService, RoleService>();
             
             return services;
         }
