@@ -15,12 +15,14 @@
     "@reduxjs/toolkit": "^1.6.0",
     "axios": "^0.21.1",
     "cookie": "^0.4.1",
-    "jose": "^3.14.0",
+    "formik": "^2.2.9",
     "next": "11.0.1",
+    "next-redux-wrapper": "^7.0.2",
     "randexp": "^0.5.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-redux": "^7.2.4"
+    "react-redux": "^7.2.4",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.1",
