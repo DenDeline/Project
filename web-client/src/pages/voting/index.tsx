@@ -25,6 +25,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Navbar from "../../components/Navbar";
 import {FiberManualRecord, FileCopyOutlined, FormatListBulleted} from "@material-ui/icons";
 import theme from "../../theme";
+import {AuthProps, withAuth} from "../../lib/auth";
+import Layout from "../../components/Layout";
 
 const AccordionSummary = withStyles({
     root: {
@@ -62,7 +64,15 @@ interface UserVote {
     voteTypeId: number
 }
 
-const Voting: React.FC = () => {
+export const getServerSideProps = withAuth( async ({req}) => {
+    return {
+        props: {
+
+        }
+    }
+}, {withRedirect: true})
+
+const Voting: React.FC<AuthProps> = (props) => {
 
     const voteTypes = [
         {
@@ -145,132 +155,136 @@ const Voting: React.FC = () => {
     }, [answers]);
     
     const classes = useStyles();
-    
+
+
     return (
-        <Container maxWidth={'xl'}>
-            <Typography component={'div'}>
-                <Navbar/>
-                
-                {
-                    questions.map((question, index) => (
-                        <Accordion variant={'outlined'} key={index} expanded={question.expanded}>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />} >
-                                <Grid container justifyContent={'space-between'}>
-                                    <Grid item>
-                                        <Typography>{ question.name }</Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        { voteTypes.find(voteType => answers.find(_ => _.voteId === question.id)?.voteTypeId === voteType.id)?.name }
-                                    </Grid>
-                                </Grid>
-                                
-                            </AccordionSummary>
+        <Layout title={'Current voting'} user={props.data?.user}>
 
-                            <AccordionDetails>
-                                <Grid container direction={'column'}>
-                                    <Grid item>
-                                        <Typography>
-                                            {question.description}
-                                        </Typography>
+            <Container maxWidth={'xl'}>
+                <Typography component={'div'}>
+                    <Navbar/>
+                    {
+                        questions.map((question, index) => (
+                            <Accordion variant={'outlined'} key={index} expanded={question.expanded}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+                                    <Grid container justifyContent={'space-between'}>
+                                        <Grid item>
+                                            <Typography>{ question.name }</Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            { voteTypes.find(voteType => answers.find(_ => _.voteId === question.id)?.voteTypeId === voteType.id)?.name }
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <ol>
-                                            { 
-                                                question.files.map((file, index) => (
-                                                    <li className={classes.fileListItem} key={index}>
-                                                        <Grid container direction={'row'} spacing={1}>
-                                                            <Grid item>
-                                                                <FileCopyOutlined/>
-                                                            </Grid>
-                                                            <Grid item>
-                                                                <Link href={file.link} passHref={true}>
-                                                                    <MaterialLink color={'inherit'} aria-label={'Download file'}>
-                                                                        <Typography variant={'subtitle1'}>
-                                                                            { file.name }
-                                                                        </Typography>
-                                                                    </MaterialLink>
-                                                                </Link>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </li>
-                                                ))
-                                            } 
-                                        </ol>
-                                    </Grid>
-                                    <Grid item style={{marginInline: 'auto'}}>
-                                        <ButtonGroup>
-                                            { voteTypes.map((item, index) => (<Button key={index} onClick={() => handleVoting(question.id, item.id)}>{ item.name }</Button>)) }
-                                        </ButtonGroup>
-                                    </Grid>
-                                </Grid>
-                            </AccordionDetails>
-                        </Accordion>
-                    ))
-                }
 
-                <Accordion variant={'outlined'} >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} >
-                        <Typography>Confirmation</Typography>
-                    </AccordionSummary>
+                                </AccordionSummary>
 
-                    <AccordionDetails>
-                        <Container maxWidth={'xl'}>
-                            <Grid container direction={'column'} spacing={3}>
-                                <Grid item>
-                                    <TableContainer component={props => <Paper variant={'outlined'}>{props.children}</Paper>}>
-                                        <Table size={'small'}>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        Question
-                                                    </TableCell>
-                                                    <TableCell align={'right'}>
-                                                        Your vote
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
+                                <AccordionDetails>
+                                    <Grid container direction={'column'}>
+                                        <Grid item>
+                                            <Typography>
+                                                {question.description}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <ol>
                                                 {
-                                                    answers.map((answer, index) => (
-                                                        <TableRow key={index}>
-                                                            <TableCell>
-                                                                { questions.find( _ => _.id === answer.voteId)?.name ?? "" }
-                                                            </TableCell>
-                                                            <TableCell align={'right'}>
-                                                                { voteTypes.find(_ => _.id === answer.voteTypeId )?.name ?? "" }
-                                                            </TableCell>
-                                                        </TableRow>)
-                                                    )
+                                                    question.files.map((file, index) => (
+                                                        <li className={classes.fileListItem} key={index}>
+                                                            <Grid container direction={'row'} spacing={1}>
+                                                                <Grid item>
+                                                                    <FileCopyOutlined/>
+                                                                </Grid>
+                                                                <Grid item>
+                                                                    <Link href={file.link} passHref={true}>
+                                                                        <MaterialLink color={'inherit'} aria-label={'Download file'}>
+                                                                            <Typography variant={'subtitle1'}>
+                                                                                { file.name }
+                                                                            </Typography>
+                                                                        </MaterialLink>
+                                                                    </Link>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </li>
+                                                    ))
                                                 }
-                                                
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </Grid>
-                                <Grid item container spacing={1} justifyContent={'space-between'}>
-                                    <Grid item>
-                                        <Typography>
-                                            Authorize votes: { answers.length } (
-                                            <Link href={'/'} passHref={true}>
-                                                <MaterialLink>
-                                                    details
-                                                </MaterialLink>
-                                            </Link>
-                                            )
-                                        </Typography>
+                                            </ol>
+                                        </Grid>
+                                        <Grid item style={{marginInline: 'auto'}}>
+                                            <ButtonGroup>
+                                                { voteTypes.map((item, index) => (<Button key={index} onClick={() => handleVoting(question.id, item.id)}>{ item.name }</Button>)) }
+                                            </ButtonGroup>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <Button variant={'contained'} color={'primary'}>Confirm and submit my votes</Button>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Container>
-                    </AccordionDetails>
-                </Accordion>
+                                </AccordionDetails>
+                            </Accordion>
+                        ))
+                    }
 
-               
-            </Typography>
-        </Container>
+                    <Accordion variant={'outlined'} >
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+                            <Typography>Confirmation</Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails>
+                            <Container maxWidth={'xl'}>
+                                <Grid container direction={'column'} spacing={3}>
+                                    <Grid item>
+                                        <TableContainer component={props => <Paper variant={'outlined'}>{props.children}</Paper>}>
+                                            <Table size={'small'}>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>
+                                                            Question
+                                                        </TableCell>
+                                                        <TableCell align={'right'}>
+                                                            Your vote
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {
+                                                        answers.map((answer, index) => (
+                                                            <TableRow key={index}>
+                                                                <TableCell>
+                                                                    { questions.find( _ => _.id === answer.voteId)?.name ?? "" }
+                                                                </TableCell>
+                                                                <TableCell align={'right'}>
+                                                                    { voteTypes.find(_ => _.id === answer.voteTypeId )?.name ?? "" }
+                                                                </TableCell>
+                                                            </TableRow>)
+                                                        )
+                                                    }
+
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Grid>
+                                    <Grid item container spacing={1} justifyContent={'space-between'}>
+                                        <Grid item>
+                                            <Typography>
+                                                Authorize votes: { answers.length } (
+                                                <Link href={'/'} passHref={true}>
+                                                    <MaterialLink>
+                                                        details
+                                                    </MaterialLink>
+                                                </Link>
+                                                )
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant={'contained'} color={'primary'}>Confirm and submit my votes</Button>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Container>
+                        </AccordionDetails>
+                    </Accordion>
+
+
+                </Typography>
+            </Container>
+        </Layout>
+
     );
 }
 
