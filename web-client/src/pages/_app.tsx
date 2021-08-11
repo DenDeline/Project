@@ -3,8 +3,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../theme';
-import App, {AppContext, AppProps} from "next/app";
-import Layout from "../components/Layout";
+import {AppProps} from "next/app";
 
 export default function MyApp(props: AppProps) {
     const { Component, pageProps } = props;
@@ -24,9 +23,7 @@ export default function MyApp(props: AppProps) {
             </Head>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
+                <Component {...pageProps} />
             </ThemeProvider>
         </React.Fragment>
     );
