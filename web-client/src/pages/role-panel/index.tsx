@@ -8,6 +8,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import ConfigureUserDialog from "../../components/ConfigureUserDialog";
 import axios from "axios"
 import {GetServerSideProps} from "next";
+import {withAuth} from "../../lib/auth";
 
 const useStyles = makeStyles(theme => 
     createStyles({
@@ -65,13 +66,13 @@ interface RolesPanelProps {
     backendApi: string
 }
 
-export const getServerSideProps: GetServerSideProps<RolesPanelProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps = withAuth<RolesPanelProps>(async (context) => {
     return {
         props: {
             backendApi: process.env.BACKEND_API_URL ?? ""
         }
     }
-}
+}, { withRedirect: true })
 
 const RolePanel: React.FC<RolesPanelProps> = (props) => {
     const classes = useStyles();
