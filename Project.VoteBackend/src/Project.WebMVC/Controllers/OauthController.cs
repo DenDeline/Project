@@ -162,7 +162,7 @@ namespace Project.WebMVC.Controllers
         return NotFound();
       }
 
-      var token = await tokenService.GetTokenAsync(user.Name);
+      var token = await tokenService.GetTokenAsync(user.UserName);
 
       return Ok(new
       {

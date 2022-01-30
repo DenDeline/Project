@@ -19,9 +19,9 @@ namespace Project.Infrastructure.Services
     
     public async Task<Result<Permissions>> GetPermissionsByUsernameAsync(string username)
     {
-      var user =  await _appDbContext.Set<ApplicationUser>()
-        .AsNoTracking()
+      var user =  await _appDbContext.Users
         .Where(_ => _.UserName == username)
+        .Select(_ => new { _.Id })
         .FirstOrDefaultAsync();
 
       if (user is null)
@@ -29,11 +29,9 @@ namespace Project.Infrastructure.Services
         return Result<Permissions>.NotFound();
       }
 
-      var roles = _appDbContext.Set<ApplicationRole>()
-        .AsNoTracking();
+      var roles = _appDbContext.Set<ApplicationRole>();
 
       var rolePermissions = await _appDbContext.UserRoles
-        .AsNoTracking()
         .Where(_ => _.UserId == user.Id)
         .Join(roles, role => role.RoleId, applicationRole => applicationRole.Id,
           (role, applicationRole) => applicationRole.Permissions)
@@ -41,12 +39,7 @@ namespace Project.Infrastructure.Services
 
       var permissions = rolePermissions.Aggregate((current, rolePermission) => current | rolePermission);
 
-      if ((permissions & Permissions.Administrator) == Permissions.Administrator)
-      {
-        return Permissions.All;
-      }
-      
-      return permissions;
+      return (permissions & Permissions.Administrator) == Permissions.Administrator ? Permissions.All : permissions;
     }
   }
 }

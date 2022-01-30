@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Project.SharedKernel.Constants;
+using Project.SharedKernel.Interfaces;
 
 namespace Project.Infrastructure.Data
 {
-  public class ApplicationRole: IdentityRole
+  public class ApplicationRole: IdentityRole, IAggregateRoot
   {
     public ApplicationRole(): base()
     {

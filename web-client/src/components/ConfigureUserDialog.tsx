@@ -17,7 +17,8 @@ interface ConfigureUserDialogProps {
     selectedUser?: {
         id: number,
         username: string,
-        fullname: string,
+        name: string,
+        surname: string,
         verified: boolean
         roles: string[]
     },
@@ -107,7 +108,10 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
                         <TextField label={"Username"} value={props.selectedUser?.username} disabled/>
                     </Grid>
                     <Grid item>
-                        <TextField label={"Full name"} value={props.selectedUser?.fullname} disabled/>
+                        <TextField label={"Name"} value={props.selectedUser?.name} disabled/>
+                    </Grid>
+                    <Grid item>
+                        <TextField label={"Name"} value={props.selectedUser?.surname} disabled/>
                     </Grid>
                     <Grid item>
                         <DialogContentText>

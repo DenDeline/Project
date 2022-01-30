@@ -8,7 +8,8 @@ import ClearIcon from '@material-ui/icons/Clear';
 import ConfigureUserDialog from "../../components/ConfigureUserDialog";
 import axios from "axios"
 import {GetServerSideProps} from "next";
-import {withAuth} from "../../lib/auth";
+import {AuthProps, withAuth} from "../../lib/auth";
+import Layout from "../../components/Layout";
 
 const useStyles = makeStyles(theme => 
     createStyles({
@@ -74,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = withAuth<RolesPanelProps>(
     }
 }, { withRedirect: true })
 
-const RolePanel: React.FC<RolesPanelProps> = (props) => {
+const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
     const classes = useStyles();
     
     const [rows, setRows] = useState<User[]>([]);
@@ -86,15 +87,16 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
         (async () => {
             setLoading(true);
             
-            const usersResult = await axios.get<UserReadModel[]>( props.backendApi + "/users");
+            const usersResult = await axios.get<UserReadModel[]>( data?.backendApi + "/users");
+
             const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
-                const userRoles = await axios.get<string[]>(`${props.backendApi}/users/${userResult.username}/roles`);
+                const userRoles = await axios.get<{ roles: string[] }>(`${data?.backendApi}/users/${userResult.username}/roles`);
                 return {
                     ...userResult,
-                    roles: userRoles.data
+                    roles: userRoles.data.roles
                 };
             }));
-            
+
             if (!active){
                 return;
             }
@@ -107,12 +109,11 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
             active = false;
         }
     }, []);
-    
-    const [currentUser, ] = useState(rows[0]);
+
     const [permissions, ] = useState({
         editProfile: false,
         approvingDocuments: true,
-        availableRoles: getAvailableRoles(AppRoles.LeadManager)
+        availableRoles: getAvailableRoles(AppRoles.Administrator)
     });
     
     const [selectedUser, setSelectedUser] = useState(undefined);
@@ -137,10 +138,11 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
         { field: 'id', headerName: 'ID', disableReorder: true },
         { field: 'username', headerName: 'Username', flex: 1 },
         { field: 'fullname', headerName: 'Full Name', flex: 1, renderCell: (params: GridCellParams) => `${params.row.name} ${params.row.surname}` },
-        { field: 'roles', headerName: 'Roles', flex: 1, renderCell: (params: GridCellParams) => ( 
+        { field: 'roles', headerName: 'Roles', flex: 1, renderCell: function RolesGrid(params: GridCellParams){
+            return (
             <Grid container spacing={1}>
                 {
-                    (params.value as string[]).map((item, index) => (
+                    (params.value as string[])?.map((item, index) => (
                         <Grid item key={index}>
                             <Chip label={item} color={'primary'}/>  
                         </Grid>
@@ -148,7 +150,7 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
                     
                 }
             </Grid>
-            ) },
+            ) }},
         { field: 'verified', flex: 1, headerName: 'Documents approved', renderCell: params => (params.value ? <CheckIcon color={'primary'}/> : <ClearIcon color={'primary'}/>)},
         { field: 'actions', flex: 1, headerName: 'Actions', renderCell: (params: GridCellParams) => (
             <Grid container>
@@ -160,7 +162,7 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
     ];
     
     return (
-        <>
+        <Layout title={'Role panel'} user={data?.user}>
             <Container maxWidth={'xl'}>
                 <Typography component={'div'}>
                     <Navbar/>
@@ -191,7 +193,7 @@ const RolePanel: React.FC<RolesPanelProps> = (props) => {
                     />
                 </Typography>
             </Container>
-        </>
+        </Layout>
     );
 }
 

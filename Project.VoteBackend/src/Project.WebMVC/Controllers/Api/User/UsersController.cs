@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,9 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project.Infrastructure.Data;
-using Project.WebMVC.Models.Api.Users;
+using Project.WebMVC.Models.Api.User;
 
-namespace Project.WebMVC.Controllers.Api
+namespace Project.WebMVC.Controllers.Api.User
 {
     [ApiController]
     public class UsersController: ControllerBase
@@ -38,11 +37,16 @@ namespace Project.WebMVC.Controllers.Api
         [HttpGet("/api/user")]
         public async Task<ActionResult<GetCurrentUserResponse>> GetCurrentUser()
         {
-            var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
+          if (User.Identity.Name is null)
+          {
+            return Forbid();
+          }
+          
+          var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            var dto = _mapper.Map<GetCurrentUserResponse>(user);
+          var dto = _mapper.Map<GetCurrentUserResponse>(user);
 
-            return Ok(dto);
+          return Ok(dto);
         }
         
         [HttpGet("/api/users/{username}")]

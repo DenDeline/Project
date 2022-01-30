@@ -6,17 +6,16 @@ using Ardalis.Result;
 namespace Project.ApplicationCore.Interfaces
 {
   public interface IRoleService
-  { 
-    Task<Result<IReadOnlyList<string>>> AddRolesByUserNameAsync(
-      string currentUserName, 
-      string updatingUserName, 
+  {
+    Task<Result<IReadOnlyList<string>>> UpdateRolesByUsernameAsync(
+      string currentUsername,  
+      string updatingUsername, 
       IReadOnlyList<string> updatingRoles,
-      CancellationToken cts);
+      CancellationToken cancellationToken = default);
 
-    Task<Result<IReadOnlyList<string>>> RemoveRolesByUserNameAsync(
-      string currentUserName, 
-      string updatingUserName, 
-      IReadOnlyList<string> updatingRoles,
-      CancellationToken cts = new CancellationToken());
+    Task<Result<IReadOnlyList<string>>> DeleteUserRolesByUsernameAsync(
+      string currentUsername, 
+      string updatingUsername,
+      CancellationToken cancellationToken = default);
   }
 }

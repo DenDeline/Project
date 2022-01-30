@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Project.WebMVC.Models.Api.Users
+namespace Project.WebMVC.Models.Api.User
 {
   public class GetUserResponse
   {
@@ -10,7 +10,6 @@ namespace Project.WebMVC.Models.Api.Users
     public string Surname { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool Verified { get; set; }
-    public string ProfileImageUrl { get; set; }
     public string Birthday { get; set; }
   }
 }

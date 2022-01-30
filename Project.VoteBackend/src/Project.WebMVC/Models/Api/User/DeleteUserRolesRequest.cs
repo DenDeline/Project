@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Project.WebMVC.Models.Api.Users
+namespace Project.WebMVC.Models.Api.User
 {
-  public class UpdateUserRolesRequest
+  public class DeleteUserRolesRequest
   {
     public IReadOnlyList<string> Roles { get; set; }
   }
