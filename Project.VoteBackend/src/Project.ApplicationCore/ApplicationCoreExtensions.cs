@@ -3,12 +3,12 @@
 
 namespace Project.ApplicationCore
 {
-    public static class ApplicationCoreExtensions
+  public static class ApplicationCoreExtensions
+  {
+    public static IServiceCollection AddApplicationCore(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplicationCore(this IServiceCollection services)
-        {
-            
-            return services;
-        }
+
+      return services;
     }
+  }
 }

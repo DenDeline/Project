@@ -8,7 +8,7 @@ using Project.SharedKernel.Constants;
 
 namespace Project.Infrastructure.Services
 {
-  public class PermissionsService: IPermissionsService
+  public class PermissionsService : IPermissionsService
   {
     private readonly AppDbContext _appDbContext;
 
@@ -16,10 +16,10 @@ namespace Project.Infrastructure.Services
     {
       _appDbContext = appDbContext;
     }
-    
+
     public async Task<Result<Permissions>> GetPermissionsByUsernameAsync(string username)
     {
-      var user =  await _appDbContext.Users
+      var user = await _appDbContext.Users
         .Where(_ => _.UserName == username)
         .Select(_ => new { _.Id })
         .FirstOrDefaultAsync();

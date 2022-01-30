@@ -12,7 +12,7 @@ using Project.WebMVC.Models.Api.User;
 namespace Project.WebMVC.Controllers.Api.User
 {
   [ApiController]
-  public class UserVerificationController: ControllerBase
+  public class UserVerificationController : ControllerBase
   {
     private readonly IUserVerificationService _userVerificationService;
 
@@ -20,7 +20,7 @@ namespace Project.WebMVC.Controllers.Api.User
     {
       _userVerificationService = userVerificationService;
     }
-    
+
     [Authorize]
     [HttpGet("/api/user/profileImage")]
     public async Task<ActionResult<string>> GetCurrentUserProfileImage()
@@ -29,9 +29,9 @@ namespace Project.WebMVC.Controllers.Api.User
       {
         return Forbid();
       }
-      
+
       var profileImageResult = await _userVerificationService.GetProfileImageByUsernameAsync(User.Identity.Name);
-      
+
       if (!profileImageResult.IsSuccess)
       {
         return NotFound();
@@ -39,14 +39,14 @@ namespace Project.WebMVC.Controllers.Api.User
 
       return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
     }
-    
-    
+
+
     [Authorize]
     [HttpGet("/api/users/{username}/profileImage")]
     public async Task<ActionResult<string>> GetUserProfileImageByUsername(string username)
     {
       var profileImageResult = await _userVerificationService.GetProfileImageByUsernameAsync(username);
-      
+
       if (!profileImageResult.IsSuccess)
       {
         return NotFound();
@@ -54,7 +54,7 @@ namespace Project.WebMVC.Controllers.Api.User
 
       return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
     }
-    
+
     [Authorize]
     [HttpPost("/api/user/profileImage")]
     public async Task<ActionResult> UpdateUserProfileImage([FromForm] UpdateProfileImageRequest request)
@@ -65,18 +65,18 @@ namespace Project.WebMVC.Controllers.Api.User
       }
       await using MemoryStream memoryStream = new MemoryStream();
       await request.FormFile.CopyToAsync(memoryStream);
-      
+
       if (memoryStream.Length >= 2097152)
       {
         return BadRequest();
       }
-      
+
       var result = await _userVerificationService.UpdateProfileImageByUsernameAsync(
-        User.Identity.Name, 
+        User.Identity.Name,
         request.FormFile.FileName,
         memoryStream.ToArray(),
         request.FormFile.ContentType);
-        
+
       if (result.Status == ResultStatus.NotFound)
       {
         return NotFound();
@@ -95,7 +95,7 @@ namespace Project.WebMVC.Controllers.Api.User
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("/api/users/{username}/verify")]
     public async Task<ActionResult> UpdateUserVerification(
-      [FromRoute] string username, 
+      [FromRoute] string username,
       [FromBody] UpdateUserVerificationRequest request)
     {
       if (User.Identity?.Name is null)
@@ -104,8 +104,8 @@ namespace Project.WebMVC.Controllers.Api.User
       }
 
       var result = await _userVerificationService.UpdateUserVerificationByUsernameAsync(
-        User.Identity.Name, 
-        username, 
+        User.Identity.Name,
+        username,
         request.Verified);
 
       return result.Status switch

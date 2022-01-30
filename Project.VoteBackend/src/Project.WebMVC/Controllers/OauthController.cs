@@ -14,7 +14,7 @@ using Project.WebMVC.ViewModels;
 
 namespace Project.WebMVC.Controllers
 {
-  public class OauthController: Controller
+  public class OauthController : Controller
   {
     private readonly UserManager<AppUser> _userManager;
 
@@ -22,7 +22,7 @@ namespace Project.WebMVC.Controllers
     {
       _userManager = userManager;
     }
-    
+
     [HttpGet("/oauth2/authorize")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public IActionResult Authorize([FromQuery] GetAuthorizationRequest request)
@@ -32,7 +32,7 @@ namespace Project.WebMVC.Controllers
       // TODO: Separate class for validation required params 
       if (client is null)
       {
-       return BadRequest();
+        return BadRequest();
       }
 
       if (!client.RedirectUris.Contains(request.RedirectUri))
@@ -73,7 +73,7 @@ namespace Project.WebMVC.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> SignInCode([FromForm] AuthorizeViewModel vm)
     {
-      var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await  _userManager.FindByNameAsync(vm.Login));
+      var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await _userManager.FindByNameAsync(vm.Login));
 
       if (user is null)
       {
@@ -82,7 +82,7 @@ namespace Project.WebMVC.Controllers
         return View("Authorize", vm);
       }
 
-      var isPasswordValid =  await _userManager.CheckPasswordAsync(user, vm.Password);
+      var isPasswordValid = await _userManager.CheckPasswordAsync(user, vm.Password);
 
       if (!isPasswordValid)
       {
@@ -90,7 +90,7 @@ namespace Project.WebMVC.Controllers
         ModelState.AddModelError(vm.Password, "");
         return View("Authorize", vm);
       }
-      
+
       // TODO: Move out code token generation
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == vm.ClientId);
 
@@ -117,7 +117,7 @@ namespace Project.WebMVC.Controllers
       // TODO: Create separate class for building redirectUrl
       var queryBuilder = new QueryBuilder
       {
-        {"code", encodedCodeToken}, 
+        {"code", encodedCodeToken},
         {"state", vm.State}
       };
 
@@ -149,7 +149,7 @@ namespace Project.WebMVC.Controllers
       var decodedCodeToken = request.Code.AesDecrypt(client.ClientSecret);
       var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
 
-      if (codeToken is null || !codeToken.IsValid( request.ClientId, request.RedirectUri, request.CodeVerifier))
+      if (codeToken is null || !codeToken.IsValid(request.ClientId, request.RedirectUri, request.CodeVerifier))
       {
         return BadRequest();
       }

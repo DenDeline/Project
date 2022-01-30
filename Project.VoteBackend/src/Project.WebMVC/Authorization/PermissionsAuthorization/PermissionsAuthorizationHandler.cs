@@ -4,7 +4,7 @@ using Project.ApplicationCore.Interfaces;
 
 namespace Project.WebMVC.Authorization.PermissionsAuthorization
 {
-  internal class PermissionsAuthorizationHandler: AuthorizationHandler<PermissionsRequirement>
+  internal class PermissionsAuthorizationHandler : AuthorizationHandler<PermissionsRequirement>
   {
     private readonly IPermissionsService _permissionsService;
 
@@ -12,7 +12,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
     {
       _permissionsService = permissionsService;
     }
-    
+
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionsRequirement requirement)
     {
       if (context.User.Identity?.Name is null)

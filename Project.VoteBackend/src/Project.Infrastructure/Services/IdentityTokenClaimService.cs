@@ -9,10 +9,10 @@ using Project.SharedKernel;
 
 namespace Project.Infrastructure.Services
 {
-  public class IdentityTokenClaimService: IIdentityTokenClaimService
+  public class IdentityTokenClaimService : IIdentityTokenClaimService
   {
 
-    public async Task<string> GetTokenAsync(string username)
+    public Task<string> GetTokenAsync(string username)
     {
       var tokenHandler = new JwtSecurityTokenHandler();
       var key = new SigningIssuerCertificate().GetPrivateKey();
@@ -26,7 +26,7 @@ namespace Project.Infrastructure.Services
         SigningCredentials = key
       };
       var token = tokenHandler.CreateToken(tokenDescriptor);
-      return tokenHandler.WriteToken(token);
+      return Task.FromResult(tokenHandler.WriteToken(token));
     }
   }
 }

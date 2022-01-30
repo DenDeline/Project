@@ -5,7 +5,7 @@ using Project.SharedKernel.Constants;
 
 namespace Project.WebMVC.Authorization.PermissionsAuthorization
 {
-  internal class RequirePermissionsAttribute: AuthorizeAttribute
+  internal class RequirePermissionsAttribute : AuthorizeAttribute
   {
     private const string PolicyPrefix = "RequirePermissions";
 
@@ -24,7 +24,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
       }
       set
       {
-        Policy = $"{PolicyPrefix}:{((int) value).ToString()}";
+        Policy = $"{PolicyPrefix}:{((int)value).ToString()}";
       }
     }
   }

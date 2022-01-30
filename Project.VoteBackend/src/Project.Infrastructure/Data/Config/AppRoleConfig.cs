@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Project.Infrastructure.Data.Config;
 
-public class ApplicationRoleConfig: IEntityTypeConfiguration<AppRole>
+public class ApplicationRoleConfig : IEntityTypeConfiguration<AppRole>
 {
   public void Configure(EntityTypeBuilder<AppRole> builder)
   {

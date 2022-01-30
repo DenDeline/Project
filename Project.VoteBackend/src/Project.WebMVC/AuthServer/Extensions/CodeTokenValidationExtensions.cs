@@ -7,7 +7,7 @@ namespace Project.WebMVC.AuthServer.Extensions
   public static class CodeTokenValidationExtensions
   {
     public static Result<bool> IsValid(
-      this CodeToken codeToken, 
+      this CodeToken codeToken,
       string clientId,
       string redirectUri,
       string codeVerifier)

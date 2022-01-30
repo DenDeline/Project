@@ -17,8 +17,8 @@ namespace Project.Infrastructure
 
       services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
-      services.AddScoped<MockDatabase>(); 
-      
+      services.AddScoped<MockDatabase>();
+
       return services;
     }
   }

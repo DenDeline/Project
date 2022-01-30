@@ -12,13 +12,13 @@ namespace Project.SharedKernel.Constants
     VerifyUsers = 1 << 3,
     ManageVotingSessions = 1 << 4,
     ViewVotingSessions = 1 << 5,
-    
-    All = Administrator | 
+
+    All = Administrator |
           ManageUserRoles |
-          BanUsers | 
+          BanUsers |
           VerifyUsers |
-          ManageUserRoles | 
-          ManageVotingSessions | 
+          ManageUserRoles |
+          ManageVotingSessions |
           ViewVotingSessions
   }
 }

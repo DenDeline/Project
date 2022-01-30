@@ -6,10 +6,10 @@ using Project.SharedKernel.Constants;
 
 namespace Project.WebMVC.Authorization.PermissionsAuthorization
 {
-  public class PermissionsPolicyProvider: IAuthorizationPolicyProvider
+  public class PermissionsPolicyProvider : IAuthorizationPolicyProvider
   {
     public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
-    
+
     public PermissionsPolicyProvider(IOptions<AuthorizationOptions> options)
     {
       FallbackPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
@@ -23,7 +23,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
       if (policyName.StartsWith("RequirePermissions", StringComparison.OrdinalIgnoreCase))
       {
         var requirePermissions = Enum.Parse<Permissions>(policyName.Split(":")[1]);
-        
+
         var policy = new AuthorizationPolicyBuilder();
         policy.AddRequirements(new PermissionsRequirement(requirePermissions));
         return Task.FromResult<AuthorizationPolicy?>(policy.Build());

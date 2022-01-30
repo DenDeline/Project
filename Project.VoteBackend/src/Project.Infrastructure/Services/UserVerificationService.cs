@@ -8,7 +8,7 @@ using Project.Infrastructure.Data;
 
 namespace Project.Infrastructure.Services
 {
-  public class UserVerificationService: IUserVerificationService
+  public class UserVerificationService : IUserVerificationService
   {
     private readonly AppDbContext _context;
 
@@ -33,11 +33,11 @@ namespace Project.Infrastructure.Services
 
       return profileImage;
     }
-    
+
     public async Task<Result<bool>> UpdateProfileImageByUsernameAsync(
-      string username, 
-      string untrustedFileName, 
-      byte[] content, 
+      string username,
+      string untrustedFileName,
+      byte[] content,
       string contentType)
     {
       var user = await _context.Users
@@ -48,18 +48,18 @@ namespace Project.Infrastructure.Services
       {
         return Result<bool>.NotFound();
       }
-      
+
       var image = new AppFile(untrustedFileName, content, contentType);
       user.ProfileImage = image;
 
       _context.Users.Update(user);
       await _context.SaveChangesAsync();
-      
+
       return true;
     }
 
     public async Task<Result<bool>> UpdateUserVerificationByUsernameAsync(
-      string currentUsername, 
+      string currentUsername,
       string username,
       bool verified)
     {
@@ -67,13 +67,13 @@ namespace Project.Infrastructure.Services
         .Where(_ => _.UserName == username)
         .FirstOrDefaultAsync();
 
-      if (updatingUser is null) 
+      if (updatingUser is null)
         return Result<bool>.NotFound();
 
       var currentUser = await _context.Users
         .Where(_ => _.UserName == currentUsername)
         .FirstOrDefaultAsync();
-      
+
       if (currentUser is null)
         return Result<bool>.NotFound();
 
@@ -83,7 +83,7 @@ namespace Project.Infrastructure.Services
       {
         return Result<bool>.Forbidden();
       }
-      
+
       if (updatingUser.Verified == verified)
         return true;
 
@@ -96,22 +96,22 @@ namespace Project.Infrastructure.Services
     }
 
     private async Task<bool> CanUpdateUserVerificationAsync(
-      AppUser currentUser, 
+      AppUser currentUser,
       AppUser updatingUser)
     {
       var roles = _context.Roles;
 
-      var currentUserRolePositions =  await _context.UserRoles
+      var currentUserRolePositions = await _context.UserRoles
         .Where(_ => _.UserId == currentUser.Id)
         .Join(roles, nav => nav.RoleId, role => role.Id, (nav, role) => role.Position)
         .ToListAsync();
-      
-      var updatingUserRolePositions =  await _context.UserRoles
+
+      var updatingUserRolePositions = await _context.UserRoles
         .Where(_ => _.UserId == updatingUser.Id)
         .Join(roles, nav => nav.RoleId, role => role.Id, (nav, role) => role.Position)
         .ToListAsync();
-      
-      return (currentUserRolePositions.Any() && !updatingUserRolePositions.Any()) || 
+
+      return (currentUserRolePositions.Any() && !updatingUserRolePositions.Any()) ||
              currentUserRolePositions.Max() > updatingUserRolePositions.Max();
     }
   }

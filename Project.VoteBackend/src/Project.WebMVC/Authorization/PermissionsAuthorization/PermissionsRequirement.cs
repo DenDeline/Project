@@ -3,7 +3,7 @@ using Project.SharedKernel.Constants;
 
 namespace Project.WebMVC.Authorization.PermissionsAuthorization
 {
-  internal class PermissionsRequirement: IAuthorizationRequirement
+  internal class PermissionsRequirement : IAuthorizationRequirement
   {
     public Permissions Permissions { get; }
 

@@ -15,7 +15,7 @@ using Project.WebMVC.Models.Api.User;
 namespace Project.WebMVC.Controllers.Api.User
 {
   [ApiController]
-  public class UserRolesController: ControllerBase
+  public class UserRolesController : ControllerBase
   {
     private readonly UserManager<AppUser> _userManager;
     private readonly IRoleService _roleService;
@@ -27,7 +27,7 @@ namespace Project.WebMVC.Controllers.Api.User
       _userManager = userManager;
       _roleService = roleService;
     }
-    
+
     [Authorize]
     [HttpGet("/api/user/roles")]
     public async Task<ActionResult<GetUserRolesResponse>> GetCurrentUserRoles()
@@ -36,11 +36,11 @@ namespace Project.WebMVC.Controllers.Api.User
       {
         return Forbid();
       }
-      
+
       var user = await _userManager.FindByNameAsync(User.Identity.Name);
       var roles = await _userManager.GetRolesAsync(user);
-      
-      return Ok(new GetUserRolesResponse{ Roles = roles});
+
+      return Ok(new GetUserRolesResponse { Roles = roles });
     }
 
     [HttpGet("/api/users/{username}/roles")]
@@ -52,13 +52,13 @@ namespace Project.WebMVC.Controllers.Api.User
         return NotFound();
       }
       var roles = (await _userManager.GetRolesAsync(user)).ToList();
-      return Ok(new GetUserRolesResponse{ Roles = roles});
+      return Ok(new GetUserRolesResponse { Roles = roles });
     }
 
     [RequirePermissions(Permissions.ManageUserRoles)]
     [HttpPost("/api/users/{username}/roles")]
     public async Task<ActionResult<UpdateUserRolesResponse>> UpdateUserRolesByName(
-      [FromRoute] string username, 
+      [FromRoute] string username,
       [FromBody] UpdateUserRolesRequest request,
       CancellationToken cancellationToken)
     {
@@ -66,23 +66,23 @@ namespace Project.WebMVC.Controllers.Api.User
       {
         return Forbid();
       }
-      
+
       var result = await _roleService.UpdateRolesByUsernameAsync(
-        User.Identity.Name, 
-        username, request.Roles, 
+        User.Identity.Name,
+        username, request.Roles,
         cancellationToken);
-      
+
       return result.Status switch
       {
         ResultStatus.Forbidden => Forbid(),
         ResultStatus.Error => BadRequest(result.Errors),
         ResultStatus.NotFound => NotFound(),
         ResultStatus.Invalid => BadRequest(result.ValidationErrors),
-        ResultStatus.Ok => Ok(new UpdateUserRolesResponse{Roles = result.Value}),
+        ResultStatus.Ok => Ok(new UpdateUserRolesResponse { Roles = result.Value }),
         _ => BadRequest()
       };
     }
-    
+
     [RequirePermissions(Permissions.ManageUserRoles)]
     [HttpDelete("/api/users/{username}/roles")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -90,16 +90,16 @@ namespace Project.WebMVC.Controllers.Api.User
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteUserRolesByName(
-      [FromRoute] string username, 
+      [FromRoute] string username,
       CancellationToken cancellationToken)
     {
       if (User.Identity?.Name is null)
-      { 
+      {
         return Forbid();
       }
-      
+
       var result = await _roleService.DeleteUserRolesByUsernameAsync(User.Identity.Name, username, cancellationToken);
-      
+
       return result.Status switch
       {
         ResultStatus.Forbidden => Forbid(),

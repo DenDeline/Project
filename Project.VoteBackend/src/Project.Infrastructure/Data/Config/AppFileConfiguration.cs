@@ -4,7 +4,7 @@ using Project.ApplicationCore.Aggregates;
 
 namespace Project.Infrastructure.Data.Config
 {
-  public class AppFileConfiguration: IEntityTypeConfiguration<AppFile>
+  public class AppFileConfiguration : IEntityTypeConfiguration<AppFile>
   {
     public void Configure(EntityTypeBuilder<AppFile> builder)
     {
@@ -12,12 +12,12 @@ namespace Project.Infrastructure.Data.Config
         .Property(_ => _.ContentType)
         .HasMaxLength(256)
         .IsRequired();
-      
+
       builder
         .Property(_ => _.UntrustedName)
         .HasMaxLength(256)
         .IsRequired();
-      
+
       builder
         .Property(_ => _.Content)
         .HasColumnType("varbinary(max)")

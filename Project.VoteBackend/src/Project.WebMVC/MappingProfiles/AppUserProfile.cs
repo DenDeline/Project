@@ -4,12 +4,12 @@ using Project.WebMVC.Models.Api.User;
 
 namespace Project.WebMVC.MappingProfiles
 {
-    public class AppUserProfile: Profile
+  public class AppUserProfile : Profile
+  {
+    public AppUserProfile()
     {
-        public AppUserProfile()
-        {
-            CreateMap<AppUser, GetUserResponse>();
-            CreateMap<AppUser, GetCurrentUserResponse>();
-        }
+      CreateMap<AppUser, GetUserResponse>();
+      CreateMap<AppUser, GetCurrentUserResponse>();
     }
+  }
 }

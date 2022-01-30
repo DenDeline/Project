@@ -5,7 +5,7 @@ using Project.ApplicationCore.Aggregates;
 
 namespace Project.Infrastructure.Data
 {
-  public class AppUser: IdentityUser
+  public class AppUser : IdentityUser
   {
     public AppUser() : base() { }
 
@@ -18,13 +18,13 @@ namespace Project.Infrastructure.Data
     public AppFile? ProfileImage { get; set; }
     public string? ProfileImageId { get; set; }
     public DateTime Birthday { get; private set; }
-    
+
     public int LanguageId { get; set; }
 
     public void UpdateProfileInfo(string name, string surname)
     {
-      
-      Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));;
+
+      Name = Guard.Against.NullOrWhiteSpace(name, nameof(name)); ;
       Surname = Guard.Against.NullOrWhiteSpace(surname, nameof(surname));
     }
 

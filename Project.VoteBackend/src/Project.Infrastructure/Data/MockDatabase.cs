@@ -14,7 +14,7 @@ namespace Project.Infrastructure.Data
     private readonly AppDbContext _context;
 
     public MockDatabase(
-      UserManager<AppUser> userManager, 
+      UserManager<AppUser> userManager,
       RoleManager<AppRole> roleManager,
       AppDbContext context)
     {
@@ -34,7 +34,7 @@ namespace Project.Infrastructure.Data
         };
         await _roleManager.CreateAsync(adminRole);
       }
-               
+
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.LeadManager)))
       {
         var leadManagerRole = new AppRole(nameof(Roles.LeadManager))
@@ -44,7 +44,7 @@ namespace Project.Infrastructure.Data
         };
         await _roleManager.CreateAsync(leadManagerRole);
       }
-                
+
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.RepresentativeAuthority)))
       {
         var representativeAuthorityRole = new AppRole(nameof(Roles.RepresentativeAuthority))
@@ -54,7 +54,7 @@ namespace Project.Infrastructure.Data
         };
         await _roleManager.CreateAsync(representativeAuthorityRole);
       }
-                
+
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.Authority)))
       {
         var authority = new AppRole(nameof(Roles.Authority))
@@ -70,7 +70,7 @@ namespace Project.Infrastructure.Data
     {
       if (await _context.Languages.CountAsync() == 0)
       {
-        var language = new Language {Name = "English", Code = "en", Enabled = true, IsDefault = true};
+        var language = new Language { Name = "English", Code = "en", Enabled = true, IsDefault = true };
         await _context.Languages.AddAsync(language);
         await _context.SaveChangesAsync();
       }
@@ -79,20 +79,20 @@ namespace Project.Infrastructure.Data
     public async Task MockUsersAsync()
     {
       var defaultLanguage = await _context.Languages.FirstOrDefaultAsync(_ => _.IsDefault && _.Enabled);
-      
+
       if (await _userManager.FindByNameAsync("admin") is null)
       {
-          var admin = new AppUser("admin")
-          {
-            LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
-          };
-          admin.UpdateProfileInfo("admin","admin");
-          admin.UpdateVerification(true);
-          
-          await _userManager.CreateAsync(admin, "admin");
-          await _userManager.AddToRoleAsync(admin, nameof(Roles.Administrator));
+        var admin = new AppUser("admin")
+        {
+          LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
+        };
+        admin.UpdateProfileInfo("admin", "admin");
+        admin.UpdateVerification(true);
+
+        await _userManager.CreateAsync(admin, "admin");
+        await _userManager.AddToRoleAsync(admin, nameof(Roles.Administrator));
       }
-      
+
       if (await _userManager.FindByNameAsync("test_LM") is null)
       {
         var leadManager = new AppUser("test_LM")
@@ -104,7 +104,7 @@ namespace Project.Infrastructure.Data
         await _userManager.CreateAsync(leadManager, "test_LM");
         await _userManager.AddToRoleAsync(leadManager, nameof(Roles.LeadManager));
       }
-      
+
       if (await _userManager.FindByNameAsync("test_RA") is null)
       {
         var representativeAuthority = new AppUser("test_RA")
@@ -116,7 +116,7 @@ namespace Project.Infrastructure.Data
         await _userManager.CreateAsync(representativeAuthority, "test_RA");
         await _userManager.AddToRoleAsync(representativeAuthority, nameof(Roles.RepresentativeAuthority));
       }
-      
+
       if (await _userManager.FindByNameAsync("test_A") is null)
       {
         var representativeAuthority = new AppUser("test_A")
@@ -128,15 +128,15 @@ namespace Project.Infrastructure.Data
         await _userManager.CreateAsync(representativeAuthority, "test_A");
         await _userManager.AddToRoleAsync(representativeAuthority, nameof(Roles.Authority));
       }
-      
+
       if (await _userManager.FindByNameAsync("defUser") is null)
       {
         var representativeAuthority = new AppUser("defUser")
         {
           LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
         };
-        representativeAuthority.UpdateProfileInfo( "Kenny", "Railway");
-        
+        representativeAuthority.UpdateProfileInfo("Kenny", "Railway");
+
         await _userManager.CreateAsync(representativeAuthority, "defUser");
       }
     }

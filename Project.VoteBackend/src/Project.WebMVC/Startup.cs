@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -53,7 +53,7 @@ namespace Project.WebMVC
         services.AddDatabaseDeveloperPageExceptionFilter();
       }
 
-      
+
       services.AddIdentityCore<AppUser>(config =>
         {
           config.Password.RequireDigit = false;
@@ -89,7 +89,7 @@ namespace Project.WebMVC
             ValidAudience = "https://localhost:44307",
             IssuerSigningKey = new SigningIssuerCertificate().GetPublicKey()
           };
-      });
+        });
 
       services.AddCors(options =>
       {
@@ -142,7 +142,7 @@ namespace Project.WebMVC
       else
       {
         app.UseExceptionHandler("/Home/Error");
-        app.UseHsts();  
+        app.UseHsts();
       }
       app.UseHttpsRedirection();
       app.UseStaticFiles();
@@ -157,7 +157,7 @@ namespace Project.WebMVC
         c.OAuthUsePkce();
         c.SwaggerEndpoint("v1/swagger.json", "My API V1");
       });
-      
+
       app.UseRouting();
 
       app.UseAuthentication();
