@@ -22,8 +22,8 @@ namespace Project.Infrastructure.Data
     public string Surname { get; private set; }
     public DateTime CreatedAt { get; }
     public bool Verified { get; private set; }
-    public AppFile ProfileImage { get; set; }
-    public string ProfileImageId { get; set; }
+    public AppFile? ProfileImage { get; set; }
+    public string? ProfileImageId { get; set; }
     public DateTime Birthday { get; private set; }
     
     public int LanguageId { get; set; }
