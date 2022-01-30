@@ -15,7 +15,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
     
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionsRequirement requirement)
     {
-      if (context.User?.Identity.Name is null)
+      if (context.User.Identity?.Name is null)
       {
         return;
       }

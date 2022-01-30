@@ -15,7 +15,7 @@ namespace Project.Infrastructure.Services
     public UserVerificationService(
       AppDbContext context)
     {
-      _context = context;;
+      _context = context;
     }
 
     public async Task<Result<AppFile>> GetProfileImageByUsernameAsync(string username)

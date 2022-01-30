@@ -48,6 +48,11 @@ namespace Project.WebMVC
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
 
+      if (Environment.IsDevelopment())
+      {
+        services.AddDatabaseDeveloperPageExceptionFilter();
+      }
+
       
       services.AddIdentityCore<ApplicationUser>(config =>
         {
@@ -132,7 +137,7 @@ namespace Project.WebMVC
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
-        app.UseDatabaseErrorPage();
+        app.UseMigrationsEndPoint();
       }
       else
       {

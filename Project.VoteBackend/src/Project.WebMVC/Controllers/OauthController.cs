@@ -137,7 +137,7 @@ namespace Project.WebMVC.Controllers
       {
         // TODO: Add validation error
         return BadRequest();
-      };
+      }
 
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
       if (client is null)
@@ -152,7 +152,7 @@ namespace Project.WebMVC.Controllers
       if (codeToken is null || !codeToken.IsValid( request.ClientId, request.RedirectUri, request.CodeVerifier))
       {
         return BadRequest();
-      };
+      }
 
 
       var user = await _userManager.FindByIdAsync(codeToken.UserId);

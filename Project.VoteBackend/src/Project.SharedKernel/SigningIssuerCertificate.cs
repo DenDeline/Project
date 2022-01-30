@@ -23,7 +23,7 @@ namespace Project.SharedKernel
 
         public void Dispose()
         {
-            _rsa?.Dispose();
+          _rsa.Dispose();
         }
     }
 }

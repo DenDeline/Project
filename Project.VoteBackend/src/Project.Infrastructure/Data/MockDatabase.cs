@@ -33,7 +33,7 @@ namespace Project.Infrastructure.Data
           Permissions = Permissions.Administrator
         };
         await _roleManager.CreateAsync(adminRole);
-      };
+      }
                
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.LeadManager)))
       {
@@ -43,7 +43,7 @@ namespace Project.Infrastructure.Data
           Permissions = Permissions.ManageUserRoles | Permissions.VerifyUsers | Permissions.ManageVotingSessions | Permissions.ViewVotingSessions
         };
         await _roleManager.CreateAsync(leadManagerRole);
-      };
+      }
                 
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.RepresentativeAuthority)))
       {
@@ -53,7 +53,7 @@ namespace Project.Infrastructure.Data
           Permissions = Permissions.ViewVotingSessions
         };
         await _roleManager.CreateAsync(representativeAuthorityRole);
-      };
+      }
                 
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.Authority)))
       {

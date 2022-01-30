@@ -25,7 +25,7 @@ namespace Project.WebMVC.Controllers.Api.User
     [HttpGet("/api/user/profileImage")]
     public async Task<ActionResult<string>> GetCurrentUserProfileImage()
     {
-      if (User.Identity.Name is null)
+      if (User.Identity?.Name is null)
       {
         return Forbid();
       }
@@ -59,7 +59,7 @@ namespace Project.WebMVC.Controllers.Api.User
     [HttpPost("/api/user/profileImage")]
     public async Task<ActionResult> UpdateUserProfileImage([FromForm] UpdateProfileImageRequest request)
     {
-      if (User.Identity.Name is null)
+      if (User.Identity?.Name is null)
       {
         return Forbid();
       }
@@ -98,7 +98,7 @@ namespace Project.WebMVC.Controllers.Api.User
       [FromRoute] string username, 
       [FromBody] UpdateUserVerificationRequest request)
     {
-      if (User.Identity.Name is null)
+      if (User.Identity?.Name is null)
       {
         return Forbid();
       }

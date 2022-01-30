@@ -37,7 +37,7 @@ namespace Project.WebMVC.Controllers.Api.User
         [HttpGet("/api/user")]
         public async Task<ActionResult<GetCurrentUserResponse>> GetCurrentUser()
         {
-          if (User.Identity.Name is null)
+          if (User.Identity?.Name is null)
           {
             return Forbid();
           }

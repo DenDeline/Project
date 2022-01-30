@@ -32,7 +32,7 @@ namespace Project.WebMVC.Controllers.Api.User
     [HttpGet("/api/user/roles")]
     public async Task<ActionResult<GetUserRolesResponse>> GetCurrentUserRoles()
     {
-      if (User.Identity.Name is null)
+      if (User.Identity?.Name is null)
       {
         return Forbid();
       }
@@ -62,7 +62,7 @@ namespace Project.WebMVC.Controllers.Api.User
       [FromBody] UpdateUserRolesRequest request,
       CancellationToken cancellationToken)
     {
-      if (User.Identity.Name is null)
+      if (User.Identity?.Name is null)
       {
         return Forbid();
       }
@@ -93,8 +93,8 @@ namespace Project.WebMVC.Controllers.Api.User
       [FromRoute] string username, 
       CancellationToken cancellationToken)
     {
-      if (User.Identity.Name is null)
-      {
+      if (User.Identity?.Name is null)
+      { 
         return Forbid();
       }
       

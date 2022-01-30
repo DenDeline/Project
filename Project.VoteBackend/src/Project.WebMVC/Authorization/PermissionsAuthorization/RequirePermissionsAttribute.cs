@@ -15,7 +15,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
     {
       get
       {
-        if (Enum.TryParse(Policy.Split(':')[1], out Permissions permissions))
+        if (Enum.TryParse(Policy?.Split(':')[1], out Permissions permissions))
         {
           return permissions;
         }

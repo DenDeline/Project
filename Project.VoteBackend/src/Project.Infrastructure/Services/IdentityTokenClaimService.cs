@@ -16,7 +16,7 @@ namespace Project.Infrastructure.Services
     {
       var tokenHandler = new JwtSecurityTokenHandler();
       var key = new SigningIssuerCertificate().GetPrivateKey();
-      var claims = new List<Claim> { new Claim(ClaimTypes.Name, username) };
+      var claims = new List<Claim> { new(ClaimTypes.Name, username) };
       var tokenDescriptor = new SecurityTokenDescriptor
       {
         Issuer = "https://localhost:44307",

@@ -16,9 +16,9 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
     }
 
     public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
-    public Task<AuthorizationPolicy> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetFallbackPolicyAsync();
+    public Task<AuthorizationPolicy?> GetFallbackPolicyAsync() => FallbackPolicyProvider.GetFallbackPolicyAsync();
 
-    public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
+    public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
       if (policyName.StartsWith("RequirePermissions", StringComparison.OrdinalIgnoreCase))
       {
@@ -26,7 +26,7 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
         
         var policy = new AuthorizationPolicyBuilder();
         policy.AddRequirements(new PermissionsRequirement(requirePermissions));
-        return Task.FromResult(policy.Build());
+        return Task.FromResult<AuthorizationPolicy?>(policy.Build());
       }
 
       return FallbackPolicyProvider.GetPolicyAsync(policyName);
