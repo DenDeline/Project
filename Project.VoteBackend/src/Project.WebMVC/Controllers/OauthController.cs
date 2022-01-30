@@ -16,9 +16,9 @@ namespace Project.WebMVC.Controllers
 {
   public class OauthController: Controller
   {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
 
-    public OauthController(UserManager<ApplicationUser> userManager)
+    public OauthController(UserManager<AppUser> userManager)
     {
       _userManager = userManager;
     }

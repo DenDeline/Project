@@ -54,7 +54,7 @@ namespace Project.WebMVC
       }
 
       
-      services.AddIdentityCore<ApplicationUser>(config =>
+      services.AddIdentityCore<AppUser>(config =>
         {
           config.Password.RequireDigit = false;
           config.Password.RequiredLength = 4;
@@ -63,7 +63,7 @@ namespace Project.WebMVC
           config.Password.RequiredUniqueChars = 1;
           config.Password.RequireNonAlphanumeric = false;
         })
-        .AddRoles<ApplicationRole>()
+        .AddRoles<AppRole>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 

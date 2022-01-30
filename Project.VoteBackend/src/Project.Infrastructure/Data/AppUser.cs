@@ -2,25 +2,18 @@
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Identity;
 using Project.ApplicationCore.Aggregates;
-using Project.SharedKernel.Interfaces;
 
 namespace Project.Infrastructure.Data
 {
-  public class ApplicationUser: IdentityUser, IAggregateRoot
+  public class AppUser: IdentityUser
   {
-    public ApplicationUser() : base()
-    {
-      CreatedAt = DateTime.UtcNow;
-    }
+    public AppUser() : base() { }
 
-    public ApplicationUser(string userName) : base(userName)
-    {
-      CreatedAt = DateTime.UtcNow;
-    }
+    public AppUser(string userName) : base(userName) { }
 
     public string Name { get; private set; }
     public string Surname { get; private set; }
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; } = DateTime.UtcNow;
     public bool Verified { get; private set; }
     public AppFile? ProfileImage { get; set; }
     public string? ProfileImageId { get; set; }
@@ -42,7 +35,7 @@ namespace Project.Infrastructure.Data
 
     public void UpdateBirthday(DateTime birthday)
     {
-      Birthday = Guard.Against.Default(birthday, nameof(birthday));
+      Birthday = Guard.Against.OutOfSQLDateRange(birthday, nameof(birthday));
     }
   }
 }

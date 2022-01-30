@@ -96,8 +96,8 @@ namespace Project.Infrastructure.Services
     }
 
     private async Task<bool> CanUpdateUserVerificationAsync(
-      ApplicationUser currentUser, 
-      ApplicationUser updatingUser)
+      AppUser currentUser, 
+      AppUser updatingUser)
     {
       var roles = _context.Roles;
 

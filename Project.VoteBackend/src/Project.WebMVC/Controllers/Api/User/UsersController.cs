@@ -15,11 +15,11 @@ namespace Project.WebMVC.Controllers.Api.User
     [ApiController]
     public class UsersController: ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
         public UsersController(
-            UserManager<ApplicationUser> userManager,
+            UserManager<AppUser> userManager,
             IMapper mapper)
         {
             _userManager = userManager;

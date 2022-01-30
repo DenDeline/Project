@@ -29,7 +29,7 @@ namespace Project.Infrastructure.Services
         return Result<Permissions>.NotFound();
       }
 
-      var roles = _appDbContext.Set<ApplicationRole>();
+      var roles = _appDbContext.Set<AppRole>();
 
       var rolePermissions = await _appDbContext.UserRoles
         .Where(_ => _.UserId == user.Id)

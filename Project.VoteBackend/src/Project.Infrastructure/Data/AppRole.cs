@@ -4,14 +4,14 @@ using Project.SharedKernel.Interfaces;
 
 namespace Project.Infrastructure.Data
 {
-  public class ApplicationRole: IdentityRole, IAggregateRoot
+  public class AppRole: IdentityRole
   {
-    public ApplicationRole(): base()
+    public AppRole(): base()
     {
       
     }
     
-    public ApplicationRole(string roleName) : base(roleName)
+    public AppRole(string roleName) : base(roleName)
     {
       
     }

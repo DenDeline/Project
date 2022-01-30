@@ -9,13 +9,13 @@ namespace Project.Infrastructure.Data
 {
   public class MockDatabase
   {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly RoleManager<AppRole> _roleManager;
     private readonly AppDbContext _context;
 
     public MockDatabase(
-      UserManager<ApplicationUser> userManager, 
-      RoleManager<ApplicationRole> roleManager,
+      UserManager<AppUser> userManager, 
+      RoleManager<AppRole> roleManager,
       AppDbContext context)
     {
       _userManager = userManager;
@@ -27,7 +27,7 @@ namespace Project.Infrastructure.Data
     {
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.Administrator)))
       {
-        var adminRole = new ApplicationRole(nameof(Roles.Administrator))
+        var adminRole = new AppRole(nameof(Roles.Administrator))
         {
           Position = 4,
           Permissions = Permissions.Administrator
@@ -37,7 +37,7 @@ namespace Project.Infrastructure.Data
                
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.LeadManager)))
       {
-        var leadManagerRole = new ApplicationRole(nameof(Roles.LeadManager))
+        var leadManagerRole = new AppRole(nameof(Roles.LeadManager))
         {
           Position = 3,
           Permissions = Permissions.ManageUserRoles | Permissions.VerifyUsers | Permissions.ManageVotingSessions | Permissions.ViewVotingSessions
@@ -47,7 +47,7 @@ namespace Project.Infrastructure.Data
                 
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.RepresentativeAuthority)))
       {
-        var representativeAuthorityRole = new ApplicationRole(nameof(Roles.RepresentativeAuthority))
+        var representativeAuthorityRole = new AppRole(nameof(Roles.RepresentativeAuthority))
         {
           Position = 2,
           Permissions = Permissions.ViewVotingSessions
@@ -57,7 +57,7 @@ namespace Project.Infrastructure.Data
                 
       if (!await _roleManager.RoleExistsAsync(nameof(Roles.Authority)))
       {
-        var authority = new ApplicationRole(nameof(Roles.Authority))
+        var authority = new AppRole(nameof(Roles.Authority))
         {
           Position = 1,
           Permissions = Permissions.ViewVotingSessions
@@ -82,7 +82,7 @@ namespace Project.Infrastructure.Data
       
       if (await _userManager.FindByNameAsync("admin") is null)
       {
-          var admin = new ApplicationUser("admin")
+          var admin = new AppUser("admin")
           {
             LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
           };
@@ -95,7 +95,7 @@ namespace Project.Infrastructure.Data
       
       if (await _userManager.FindByNameAsync("test_LM") is null)
       {
-        var leadManager = new ApplicationUser("test_LM")
+        var leadManager = new AppUser("test_LM")
         {
           LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
         };
@@ -107,7 +107,7 @@ namespace Project.Infrastructure.Data
       
       if (await _userManager.FindByNameAsync("test_RA") is null)
       {
-        var representativeAuthority = new ApplicationUser("test_RA")
+        var representativeAuthority = new AppUser("test_RA")
         {
           LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
         };
@@ -119,7 +119,7 @@ namespace Project.Infrastructure.Data
       
       if (await _userManager.FindByNameAsync("test_A") is null)
       {
-        var representativeAuthority = new ApplicationUser("test_A")
+        var representativeAuthority = new AppUser("test_A")
         {
           LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
         };
@@ -131,7 +131,7 @@ namespace Project.Infrastructure.Data
       
       if (await _userManager.FindByNameAsync("defUser") is null)
       {
-        var representativeAuthority = new ApplicationUser("defUser")
+        var representativeAuthority = new AppUser("defUser")
         {
           LanguageId = defaultLanguage?.Id ?? throw new NullReferenceException()
         };

@@ -17,11 +17,11 @@ namespace Project.WebMVC.Controllers.Api.User
   [ApiController]
   public class UserRolesController: ControllerBase
   {
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly IRoleService _roleService;
 
     public UserRolesController(
-      UserManager<ApplicationUser> userManager,
+      UserManager<AppUser> userManager,
       IRoleService roleService)
     {
       _userManager = userManager;

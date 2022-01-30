@@ -4,7 +4,7 @@ using Project.ApplicationCore.Aggregates;
 
 namespace Project.Infrastructure.Data
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {  }
         

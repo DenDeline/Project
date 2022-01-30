@@ -22,7 +22,7 @@ namespace Project.Infrastructure.Data.Config
             builder.Property(e => e.IsDefault)
                 .HasDefaultValue(false);
 
-            builder.HasMany<ApplicationUser>().WithOne().HasForeignKey(user => user.LanguageId).IsRequired();
+            builder.HasMany<AppUser>().WithOne().HasForeignKey(user => user.LanguageId).IsRequired();
         }
     }
 }

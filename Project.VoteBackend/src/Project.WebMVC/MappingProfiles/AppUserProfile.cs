@@ -8,8 +8,8 @@ namespace Project.WebMVC.MappingProfiles
     {
         public AppUserProfile()
         {
-            CreateMap<ApplicationUser, GetUserResponse>();
-            CreateMap<ApplicationUser, GetCurrentUserResponse>();
+            CreateMap<AppUser, GetUserResponse>();
+            CreateMap<AppUser, GetCurrentUserResponse>();
         }
     }
 }
