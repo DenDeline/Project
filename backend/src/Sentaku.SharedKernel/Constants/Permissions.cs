@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Project.SharedKernel.Constants
+namespace Sentaku.SharedKernel.Constants
 {
   [Flags]
   public enum Permissions

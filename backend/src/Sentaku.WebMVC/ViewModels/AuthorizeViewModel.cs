@@ -1,4 +1,4 @@
-﻿namespace Project.WebMVC.ViewModels
+﻿namespace Sentaku.WebMVC.ViewModels
 {
   public class AuthorizeViewModel
   {

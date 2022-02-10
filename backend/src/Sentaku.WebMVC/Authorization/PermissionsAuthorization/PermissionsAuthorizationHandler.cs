@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Project.ApplicationCore.Interfaces;
+using Sentaku.ApplicationCore.Interfaces;
 
-namespace Project.WebMVC.Authorization.PermissionsAuthorization
+namespace Sentaku.WebMVC.Authorization.PermissionsAuthorization
 {
   internal class PermissionsAuthorizationHandler : AuthorizationHandler<PermissionsRequirement>
   {

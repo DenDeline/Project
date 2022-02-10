@@ -1,4 +1,4 @@
-﻿namespace Project.SharedKernel.Interfaces
+﻿namespace Sentaku.SharedKernel.Interfaces
 {
   public interface IAggregateRoot
   {

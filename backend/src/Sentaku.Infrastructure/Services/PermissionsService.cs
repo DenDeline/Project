@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using Project.ApplicationCore.Interfaces;
-using Project.Infrastructure.Data;
-using Project.SharedKernel.Constants;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.Infrastructure.Services
+namespace Sentaku.Infrastructure.Services
 {
   public class PermissionsService : IPermissionsService
   {

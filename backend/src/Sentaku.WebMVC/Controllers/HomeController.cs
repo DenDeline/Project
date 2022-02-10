@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using Project.WebMVC.ViewModels;
+using Sentaku.WebMVC.ViewModels;
 
-namespace Project.WebMVC.Controllers
+namespace Sentaku.WebMVC.Controllers
 {
   public class HomeController : Controller
   {

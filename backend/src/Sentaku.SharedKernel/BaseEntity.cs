@@ -1,4 +1,4 @@
-﻿namespace Project.SharedKernel
+﻿namespace Sentaku.SharedKernel
 {
   public class BaseEntity<TId>
   {

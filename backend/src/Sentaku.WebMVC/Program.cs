@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Project.Infrastructure.Data;
+using Sentaku.Infrastructure.Data;
 
-namespace Project.WebMVC
+namespace Sentaku.WebMVC
 {
   public class Program
   {

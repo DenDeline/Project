@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Project.ApplicationCore.Interfaces;
-using Project.Infrastructure.Data;
-using Project.Infrastructure.Services;
-using Project.SharedKernel.Interfaces;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.Infrastructure.Data;
+using Sentaku.Infrastructure.Services;
+using Sentaku.SharedKernel.Interfaces;
 
-namespace Project.Infrastructure
+namespace Sentaku.Infrastructure
 {
   public static class InfrastructureExtensions
   {

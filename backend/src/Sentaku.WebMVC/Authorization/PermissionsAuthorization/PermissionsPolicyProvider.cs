@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Project.SharedKernel.Constants;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.WebMVC.Authorization.PermissionsAuthorization
+namespace Sentaku.WebMVC.Authorization.PermissionsAuthorization
 {
   public class PermissionsPolicyProvider : IAuthorizationPolicyProvider
   {

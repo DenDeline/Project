@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Project.WebMVC.AuthServer.Models
+namespace Sentaku.WebMVC.AuthServer.Models
 {
   public class Client
   {

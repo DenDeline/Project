@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Project.SharedKernel
+namespace Sentaku.SharedKernel
 {
   public class SigningIssuerCertificate : IDisposable
   {

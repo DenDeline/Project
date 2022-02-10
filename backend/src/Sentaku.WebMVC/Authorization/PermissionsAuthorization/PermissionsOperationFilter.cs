@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using Project.SharedKernel.Constants;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Project.WebMVC.Authorization.PermissionsAuthorization;
+namespace Sentaku.WebMVC.Authorization.PermissionsAuthorization;
 
 public class PermissionsOperationFilter: IOperationFilter
 {

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.Result;
-using Project.ApplicationCore.Aggregates;
+using Sentaku.ApplicationCore.Aggregates;
 
-namespace Project.ApplicationCore.Interfaces
+namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IUserVerificationService
   {

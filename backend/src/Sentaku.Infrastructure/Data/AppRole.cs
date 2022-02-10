@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Project.SharedKernel.Constants;
-using Project.SharedKernel.Interfaces;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.Infrastructure.Data
+namespace Sentaku.Infrastructure.Data
 {
   public class AppRole : IdentityRole
   {

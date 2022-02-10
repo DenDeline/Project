@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Project.ApplicationCore.Aggregates;
+using Sentaku.ApplicationCore.Aggregates;
 
-namespace Project.Infrastructure.Data
+namespace Sentaku.Infrastructure.Data
 {
   public class AppDbContext : IdentityDbContext<AppUser, AppRole, string>
   {

@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Project.ApplicationCore.Aggregates;
-using Project.SharedKernel.Constants;
+using Sentaku.ApplicationCore.Aggregates;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.Infrastructure.Data
+namespace Sentaku.Infrastructure.Data
 {
   public class MockDatabase
   {

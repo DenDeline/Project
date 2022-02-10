@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Project.SharedKernel.Constants;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.WebMVC.Authorization.PermissionsAuthorization
+namespace Sentaku.WebMVC.Authorization.PermissionsAuthorization
 {
   internal class PermissionsRequirement : IAuthorizationRequirement
   {

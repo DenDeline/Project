@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Project.ApplicationCore.Interfaces;
-using Project.Infrastructure.Data;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.Infrastructure.Data;
 
-namespace Project.Infrastructure.Services
+namespace Sentaku.Infrastructure.Services
 {
   public class RoleService : IRoleService
   {

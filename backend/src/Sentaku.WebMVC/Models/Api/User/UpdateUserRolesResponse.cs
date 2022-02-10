@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Project.WebMVC.Models.Api.User
+namespace Sentaku.WebMVC.Models.Api.User
 {
   public class UpdateUserRolesResponse
   {

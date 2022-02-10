@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Project.Infrastructure.Data.Config
+namespace Sentaku.Infrastructure.Data.Config
 {
   public class ApplicationUserConfiguration : IEntityTypeConfiguration<AppUser>
   {

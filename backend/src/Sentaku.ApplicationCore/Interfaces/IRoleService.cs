@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 
-namespace Project.ApplicationCore.Interfaces
+namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IRoleService
   {

@@ -11,13 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Project.ApplicationCore;
-using Project.Infrastructure;
-using Project.Infrastructure.Data;
-using Project.SharedKernel;
-using Project.WebMVC.Authorization.PermissionsAuthorization;
+using Sentaku.ApplicationCore;
+using Sentaku.Infrastructure;
+using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel;
+using Sentaku.WebMVC.Authorization.PermissionsAuthorization;
 
-namespace Project.WebMVC
+namespace Sentaku.WebMVC
 {
   public class Startup
   {

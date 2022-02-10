@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Project.ApplicationCore.Aggregates;
+using Sentaku.ApplicationCore.Aggregates;
 
-namespace Project.Infrastructure.Data.Config
+namespace Sentaku.Infrastructure.Data.Config
 {
   public class AppFileConfiguration : IEntityTypeConfiguration<AppFile>
   {

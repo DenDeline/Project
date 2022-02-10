@@ -1,9 +1,9 @@
 ﻿using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Identity;
-using Project.ApplicationCore.Aggregates;
+using Sentaku.ApplicationCore.Aggregates;
 
-namespace Project.Infrastructure.Data
+namespace Sentaku.Infrastructure.Data
 {
   public class AppUser : IdentityUser
   {

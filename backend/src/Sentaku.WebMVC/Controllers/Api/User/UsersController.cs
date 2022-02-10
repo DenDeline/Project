@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Project.Infrastructure.Data;
-using Project.WebMVC.Models.Api.User;
+using Sentaku.Infrastructure.Data;
+using Sentaku.WebMVC.Models.Api.User;
 
-namespace Project.WebMVC.Controllers.Api.User
+namespace Sentaku.WebMVC.Controllers.Api.User
 {
   [ApiController]
   public class UsersController : ControllerBase

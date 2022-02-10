@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Project.ApplicationCore.Interfaces
+namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IIdentityTokenClaimService
   {

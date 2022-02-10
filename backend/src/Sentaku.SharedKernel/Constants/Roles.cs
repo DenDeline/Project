@@ -1,4 +1,4 @@
-﻿namespace Project.SharedKernel.Constants
+﻿namespace Sentaku.SharedKernel.Constants
 {
   public enum Roles
   {

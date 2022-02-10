@@ -1,7 +1,7 @@
-﻿using Project.SharedKernel;
-using Project.SharedKernel.Interfaces;
+﻿using Sentaku.SharedKernel;
+using Sentaku.SharedKernel.Interfaces;
 
-namespace Project.ApplicationCore.Aggregates.VoteSessionAggregate
+namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
 {
   public class VoteSession : BaseEntity<int>, IAggregateRoot
   {

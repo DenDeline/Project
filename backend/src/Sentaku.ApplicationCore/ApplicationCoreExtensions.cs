@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-
-namespace Project.ApplicationCore
+namespace Sentaku.ApplicationCore
 {
   public static class ApplicationCoreExtensions
   {

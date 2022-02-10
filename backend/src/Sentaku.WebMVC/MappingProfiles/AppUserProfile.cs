@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Project.Infrastructure.Data;
-using Project.WebMVC.Models.Api.User;
+using Sentaku.Infrastructure.Data;
+using Sentaku.WebMVC.Models.Api.User;
 
-namespace Project.WebMVC.MappingProfiles
+namespace Sentaku.WebMVC.MappingProfiles
 {
   public class AppUserProfile : Profile
   {

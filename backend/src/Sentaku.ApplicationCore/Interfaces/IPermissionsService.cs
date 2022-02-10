@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Ardalis.Result;
-using Project.SharedKernel.Constants;
+using Sentaku.SharedKernel.Constants;
 
-namespace Project.ApplicationCore.Interfaces
+namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IPermissionsService
   {

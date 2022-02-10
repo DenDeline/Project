@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace Project.WebMVC.Models.Api.User
+namespace Sentaku.WebMVC.Models.Api.User
 {
   public class UpdateProfileImageRequest
   {

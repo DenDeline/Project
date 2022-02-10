@@ -1,4 +1,4 @@
-﻿namespace Project.WebMVC.AuthServer
+﻿namespace Sentaku.WebMVC.AuthServer
 {
   public static class AuthServerConstants
   {

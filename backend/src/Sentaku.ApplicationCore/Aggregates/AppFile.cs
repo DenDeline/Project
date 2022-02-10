@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
 using Ardalis.GuardClauses;
-using Project.SharedKernel;
-using Project.SharedKernel.Interfaces;
+using Sentaku.SharedKernel;
+using Sentaku.SharedKernel.Interfaces;
 
-namespace Project.ApplicationCore.Aggregates
+namespace Sentaku.ApplicationCore.Aggregates
 {
   public class AppFile : BaseEntity<string>, IAggregateRoot
   {

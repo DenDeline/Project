@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Project.WebMVC.AuthServer;
-using Project.WebMVC.AuthServer.Models;
+using Sentaku.WebMVC.AuthServer;
+using Sentaku.WebMVC.AuthServer.Models;
 
-namespace Project.WebMVC
+namespace Sentaku.WebMVC
 {
   public static class AuthServerConfig
   {

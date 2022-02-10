@@ -4,10 +4,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
-using Project.ApplicationCore.Interfaces;
-using Project.SharedKernel;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.SharedKernel;
 
-namespace Project.Infrastructure.Services
+namespace Sentaku.Infrastructure.Services
 {
   public class IdentityTokenClaimService : IIdentityTokenClaimService
   {

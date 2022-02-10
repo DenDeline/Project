@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Project.ApplicationCore.Interfaces;
-using Project.Infrastructure.Data;
-using Project.SharedKernel.Constants;
-using Project.WebMVC.Authorization.PermissionsAuthorization;
-using Project.WebMVC.Models.Api.User;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel.Constants;
+using Sentaku.WebMVC.Authorization.PermissionsAuthorization;
+using Sentaku.WebMVC.Models.Api.User;
 
-namespace Project.WebMVC.Controllers.Api.User
+namespace Sentaku.WebMVC.Controllers.Api.User
 {
   [ApiController]
   public class UserRolesController : ControllerBase

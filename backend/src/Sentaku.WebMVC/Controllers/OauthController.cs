@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Project.ApplicationCore.Interfaces;
-using Project.Infrastructure.Data;
-using Project.WebMVC.AuthServer.Extensions;
-using Project.WebMVC.AuthServer.Models;
-using Project.WebMVC.Models.Oauth;
-using Project.WebMVC.ViewModels;
+using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.Infrastructure.Data;
+using Sentaku.WebMVC.AuthServer.Extensions;
+using Sentaku.WebMVC.AuthServer.Models;
+using Sentaku.WebMVC.Models.Oauth;
+using Sentaku.WebMVC.ViewModels;
 
-namespace Project.WebMVC.Controllers
+namespace Sentaku.WebMVC.Controllers
 {
   public class OauthController : Controller
   {

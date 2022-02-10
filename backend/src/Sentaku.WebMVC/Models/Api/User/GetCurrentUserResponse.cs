@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Project.WebMVC.Models.Api.User
+namespace Sentaku.WebMVC.Models.Api.User
 {
   public class GetCurrentUserResponse
   {

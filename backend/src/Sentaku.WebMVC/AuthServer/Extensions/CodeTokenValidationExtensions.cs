@@ -1,8 +1,8 @@
 ﻿using System;
 using Ardalis.Result;
-using Project.WebMVC.AuthServer.Models;
+using Sentaku.WebMVC.AuthServer.Models;
 
-namespace Project.WebMVC.AuthServer.Extensions
+namespace Sentaku.WebMVC.AuthServer.Extensions
 {
   public static class CodeTokenValidationExtensions
   {
