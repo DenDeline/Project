@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Project.SharedKernel\Project.SharedKernel.csproj" />
+      <ProjectReference Include="..\Sentaku.SharedKernel\Sentaku.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>

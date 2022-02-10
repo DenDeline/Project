@@ -14,6 +14,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Project.ApplicationCore\Project.ApplicationCore.csproj" />
+      <ProjectReference Include="..\Sentaku.ApplicationCore\Sentaku.ApplicationCore.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\MigraionScripts" />
     </ItemGroup>
 </Project>
