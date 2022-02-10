@@ -25,15 +25,12 @@ namespace Project.Infrastructure.Services
         .FirstOrDefaultAsync();
 
       if (user is null)
-      {
         return Result<Permissions>.NotFound();
-      }
-
-      var roles = _appDbContext.Set<AppRole>();
 
       var rolePermissions = await _appDbContext.UserRoles
         .Where(_ => _.UserId == user.Id)
-        .Join(roles, role => role.RoleId, applicationRole => applicationRole.Id,
+        .AsSplitQuery()
+        .Join(_appDbContext.Roles, role => role.RoleId, applicationRole => applicationRole.Id,
           (role, applicationRole) => applicationRole.Permissions)
         .ToListAsync();
 

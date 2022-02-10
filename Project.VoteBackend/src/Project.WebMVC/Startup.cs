@@ -42,18 +42,13 @@ namespace Project.WebMVC
       services.AddDbContext<AppDbContext>(options =>
       {
         if (Environment.IsDevelopment())
-        {
           options.EnableSensitiveDataLogging();
-        }
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
 
       if (Environment.IsDevelopment())
-      {
         services.AddDatabaseDeveloperPageExceptionFilter();
-      }
-
-
+      
       services.AddIdentityCore<AppUser>(config =>
         {
           config.Password.RequireDigit = false;
@@ -107,12 +102,12 @@ namespace Project.WebMVC
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vote WebAPI", Version = "v1" });
-        c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme()
+        c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
           Type = SecuritySchemeType.OAuth2,
-          Flows = new OpenApiOAuthFlows()
+          Flows = new OpenApiOAuthFlows
           {
-            AuthorizationCode = new OpenApiOAuthFlow()
+            AuthorizationCode = new OpenApiOAuthFlow
             {
               AuthorizationUrl = new Uri("/oauth2/authorize", UriKind.Relative),
               TokenUrl = new Uri("/oauth2/token", UriKind.Relative)
@@ -129,6 +124,7 @@ namespace Project.WebMVC
             new List<string>()
           }
         });
+        c.OperationFilter<PermissionsOperationFilter>();
       });
     }
 

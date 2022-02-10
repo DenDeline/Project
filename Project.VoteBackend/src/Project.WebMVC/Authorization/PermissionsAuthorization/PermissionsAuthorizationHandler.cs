@@ -16,15 +16,13 @@ namespace Project.WebMVC.Authorization.PermissionsAuthorization
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionsRequirement requirement)
     {
       if (context.User.Identity?.Name is null)
-      {
         return;
-      }
 
-      var permissions = await _permissionsService.GetPermissionsByUsernameAsync(context.User.Identity.Name);
+      var permissionsResult = await _permissionsService.GetPermissionsByUsernameAsync(context.User.Identity.Name);
 
-      if (permissions.IsSuccess)
+      if (permissionsResult.IsSuccess)
       {
-        if ((permissions & requirement.Permissions) == requirement.Permissions)
+        if ((permissionsResult.Value & requirement.Permissions) == requirement.Permissions)
         {
           context.Succeed(requirement);
         }

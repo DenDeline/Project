@@ -82,12 +82,10 @@ namespace Project.WebMVC.Controllers.Api.User
         _ => BadRequest()
       };
     }
-
+    
     [RequirePermissions(Permissions.ManageUserRoles)]
     [HttpDelete("/api/users/{username}/roles")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> DeleteUserRolesByName(
       [FromRoute] string username,
