@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.ApplicationCore", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.Infrastructure", "src\Sentaku.Infrastructure\Sentaku.Infrastructure.csproj", "{10130B3D-D20A-4D4B-9E3D-90141982052C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.WebMVC", "src\Sentaku.WebMVC\Sentaku.WebMVC.csproj", "{D7C079AE-D9DA-47AD-A0B4-CF7D22E2F8ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.WebApi", "src\Sentaku.WebApi\Sentaku.WebApi.csproj", "{D7C079AE-D9DA-47AD-A0B4-CF7D22E2F8ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.SharedKernel", "src\Sentaku.SharedKernel\Sentaku.SharedKernel.csproj", "{0D39A676-6EA2-436D-B3DC-7E24EECD73D3}"
 EndProject
