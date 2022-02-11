@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Sentaku.AuthServer.AuthServer.Extensions
+namespace Sentaku.AuthServer.AuthServer
 {
   public static class StringEncryption
   {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sentaku.ApplicationCore.Interfaces;
-using Sentaku.AuthServer.AuthServer.Extensions;
+using Sentaku.AuthServer.AuthServer;
 using Sentaku.AuthServer.AuthServer.Models;
 using Sentaku.AuthServer.Models.Oauth;
 using Sentaku.AuthServer.ViewModels;
@@ -29,15 +29,19 @@ public class OauthController : Controller
       // TODO: Separate class for validation required params 
       if (client is null)
       {
-        return BadRequest();
+        var queryBuilder = new QueryBuilder
+        {
+          {"error", AuthServerConstants.ErrorResponseTypes.InvalidClient},
+          {"state", request.State}
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
 
       if (!client.RedirectUris.Contains(request.RedirectUri))
       {
-        //TODO: Add error validation constant: invalid_request
         var queryBuilder = new QueryBuilder
         {
-          {"error", "invalid_request"},
+          {"error", AuthServerConstants.ErrorResponseTypes.InvalidRequest},
           {"state", request.State}
         };
         return Redirect($"{request.RedirectUri}{queryBuilder}");
@@ -45,10 +49,9 @@ public class OauthController : Controller
 
       if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != request.ResponseType))
       {
-        //TODO: Add error validation constant: unsupported_response_type
         var queryBuilder = new QueryBuilder
         {
-          {"error", "unsupported_response_type"},
+          {"error", AuthServerConstants.ErrorResponseTypes.UnsupportedGrantType},
           {"state", request.State}
         };
         return Redirect($"{request.RedirectUri}{queryBuilder}");
@@ -132,30 +135,58 @@ public class OauthController : Controller
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
       {
-        // TODO: Add validation error
-        return BadRequest();
+        var queryBuilder = new QueryBuilder
+        {
+          { "error", AuthServerConstants.ErrorResponseTypes.UnsupportedGrantType }
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
 
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
       
       if (client is null)
       {
-        // TODO: Add validation error
-        return BadRequest();
+        var queryBuilder = new QueryBuilder
+        {
+          { "error", AuthServerConstants.ErrorResponseTypes.InvalidClient }
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
 
       var decodedCodeToken = await StringEncryption.AesDecryptAsync(request.Code, client.ClientSecret);
       var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
 
-      if (codeToken is null || !codeToken.IsValid(request.ClientId, request.RedirectUri, request.CodeVerifier).Value)
+      if (codeToken is null)
       {
-        return BadRequest();
+        var queryBuilder = new QueryBuilder
+        {
+          { "error", AuthServerConstants.ErrorResponseTypes.InvalidGrant }
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
-      
+
+      var codeTokenValidationResult = codeToken.Validate(request.ClientId, request.RedirectUri, request.CodeVerifier);
+
+      if (!codeTokenValidationResult.IsValid)
+      {
+        var queryBuilder = new QueryBuilder
+        {
+          {"error", codeTokenValidationResult.Error},
+          {"error_description", codeTokenValidationResult.ErrorDescription}
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
+      }
+
       var user = await _userManager.FindByIdAsync(codeToken.UserId);
 
       if (user is null)
-        return NotFound();
+      {
+        var queryBuilder = new QueryBuilder
+        {
+          { "error", AuthServerConstants.ErrorResponseTypes.InvalidRequest }
+        };
+        return Redirect($"{request.RedirectUri}{queryBuilder}");
+      }
 
       var token = await tokenService.GetTokenAsync(
         user.UserName, 
