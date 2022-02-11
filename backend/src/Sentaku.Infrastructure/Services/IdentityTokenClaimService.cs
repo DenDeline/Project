@@ -11,20 +11,26 @@ namespace Sentaku.Infrastructure.Services
 {
   public class IdentityTokenClaimService : IIdentityTokenClaimService
   {
-
-    public Task<string> GetTokenAsync(string username)
+    public Task<string> GetTokenAsync(string username, string issuer, string audience)
     {
       var tokenHandler = new JwtSecurityTokenHandler();
       var key = new SigningIssuerCertificate().GetPrivateKey();
-      var claims = new List<Claim> { new(ClaimTypes.Name, username) };
+      
+      var claims = new List<Claim>
+      {
+        new(ClaimTypes.Name, username)
+      };
+      
       var tokenDescriptor = new SecurityTokenDescriptor
       {
-        Issuer = "https://localhost:44307",
-        Audience = "https://localhost:44307",
-        Subject = new ClaimsIdentity(claims.ToArray()),
+        Issuer = issuer,
+        Audience = audience,
+        Subject = new ClaimsIdentity(claims),
         Expires = DateTime.UtcNow.AddHours(1),
+        IssuedAt = DateTime.UtcNow,
         SigningCredentials = key
       };
+
       var token = tokenHandler.CreateToken(tokenDescriptor);
       return Task.FromResult(tokenHandler.WriteToken(token));
     }

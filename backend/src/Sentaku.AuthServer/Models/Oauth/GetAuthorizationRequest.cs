@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Sentaku.WebApi.Models.Oauth
+namespace Sentaku.AuthServer.Models.Oauth
 {
   public class GetAuthorizationRequest
   {

@@ -17,7 +17,6 @@ namespace Sentaku.SharedKernel.Constants
           ManageUserRoles |
           BanUsers |
           VerifyUsers |
-          ManageUserRoles |
           ManageVotingSessions |
           ViewVotingSessions
   }

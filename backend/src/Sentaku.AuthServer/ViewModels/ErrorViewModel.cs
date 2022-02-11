@@ -1,4 +1,4 @@
-﻿namespace Sentaku.WebApi.ViewModels
+﻿namespace Sentaku.AuthServer.ViewModels
 {
   public class ErrorViewModel
   {

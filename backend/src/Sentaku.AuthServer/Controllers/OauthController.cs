@@ -1,20 +1,17 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sentaku.ApplicationCore.Interfaces;
+using Sentaku.AuthServer.AuthServer.Extensions;
+using Sentaku.AuthServer.AuthServer.Models;
+using Sentaku.AuthServer.Models.Oauth;
+using Sentaku.AuthServer.ViewModels;
 using Sentaku.Infrastructure.Data;
-using Sentaku.WebApi.AuthServer.Extensions;
-using Sentaku.WebApi.AuthServer.Models;
-using Sentaku.WebApi.Models.Oauth;
-using Sentaku.WebApi.ViewModels;
 
-namespace Sentaku.WebApi.Controllers
-{
-  public class OauthController : Controller
+namespace Sentaku.AuthServer.Controllers;
+
+public class OauthController : Controller
   {
     private readonly UserManager<AppUser> _userManager;
 
@@ -51,8 +48,8 @@ namespace Sentaku.WebApi.Controllers
         //TODO: Add error validation constant: unsupported_response_type
         var queryBuilder = new QueryBuilder
         {
-        {"error", "unsupported_response_type"},
-        {"state", request.State}
+          {"error", "unsupported_response_type"},
+          {"state", request.State}
         };
         return Redirect($"{request.RedirectUri}{queryBuilder}");
       }
@@ -112,7 +109,7 @@ namespace Sentaku.WebApi.Controllers
 
       var jsonCodeToken = JsonConvert.SerializeObject(codeToken);
 
-      var encodedCodeToken = jsonCodeToken.AesEncrypt(client.ClientSecret);
+      var encodedCodeToken = await StringEncryption.AesEncryptAsync(jsonCodeToken, client.ClientSecret);
 
       // TODO: Create separate class for building redirectUrl
       var queryBuilder = new QueryBuilder
@@ -131,7 +128,7 @@ namespace Sentaku.WebApi.Controllers
     public async Task<IActionResult> GetAccessTokenAsync(
       [FromForm] GetAccessTokenRequest request,
       [FromServices] IIdentityTokenClaimService tokenService,
-      CancellationToken cts = new CancellationToken())
+      CancellationToken cancellationToken)
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
       {
@@ -140,29 +137,30 @@ namespace Sentaku.WebApi.Controllers
       }
 
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
+      
       if (client is null)
       {
         // TODO: Add validation error
         return BadRequest();
       }
 
-      var decodedCodeToken = request.Code.AesDecrypt(client.ClientSecret);
-      var codeToken = JsonConvert.DeserializeObject<CodeToken>(decodedCodeToken);
+      var decodedCodeToken = await StringEncryption.AesDecryptAsync(request.Code, client.ClientSecret);
+      var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
 
-      if (codeToken is null || !codeToken.IsValid(request.ClientId, request.RedirectUri, request.CodeVerifier))
+      if (codeToken is null || !codeToken.IsValid(request.ClientId, request.RedirectUri, request.CodeVerifier).Value)
       {
         return BadRequest();
       }
-
-
+      
       var user = await _userManager.FindByIdAsync(codeToken.UserId);
 
       if (user is null)
-      {
         return NotFound();
-      }
 
-      var token = await tokenService.GetTokenAsync(user.UserName);
+      var token = await tokenService.GetTokenAsync(
+        user.UserName, 
+        "https://localhost:7045", 
+        "https://localhost:5001");
 
       return Ok(new
       {
@@ -172,4 +170,3 @@ namespace Sentaku.WebApi.Controllers
       });
     }
   }
-}

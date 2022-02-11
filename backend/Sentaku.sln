@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.WebApi", "src\Senta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.SharedKernel", "src\Sentaku.SharedKernel\Sentaku.SharedKernel.csproj", "{0D39A676-6EA2-436D-B3DC-7E24EECD73D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentaku.AuthServer", "src\Sentaku.AuthServer\Sentaku.AuthServer.csproj", "{42A7CC52-4C14-4298-9F30-CC8FDE628144}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{0D39A676-6EA2-436D-B3DC-7E24EECD73D3}.Release|x64.Build.0 = Release|Any CPU
 		{0D39A676-6EA2-436D-B3DC-7E24EECD73D3}.Release|x86.ActiveCfg = Release|Any CPU
 		{0D39A676-6EA2-436D-B3DC-7E24EECD73D3}.Release|x86.Build.0 = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|x64.Build.0 = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Debug|x86.Build.0 = Debug|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|x64.ActiveCfg = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|x64.Build.0 = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|x86.ActiveCfg = Release|Any CPU
+		{42A7CC52-4C14-4298-9F30-CC8FDE628144}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

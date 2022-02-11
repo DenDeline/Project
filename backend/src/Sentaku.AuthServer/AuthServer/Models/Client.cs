@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sentaku.WebApi.AuthServer.Models
+﻿namespace Sentaku.AuthServer.AuthServer.Models
 {
   public class Client
   {

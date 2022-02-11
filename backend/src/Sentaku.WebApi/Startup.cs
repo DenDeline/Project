@@ -51,12 +51,15 @@ namespace Sentaku.WebApi
       
       services.AddIdentityCore<AppUser>(config =>
         {
-          config.Password.RequireDigit = false;
-          config.Password.RequiredLength = 4;
-          config.Password.RequireLowercase = false;
-          config.Password.RequireUppercase = false;
-          config.Password.RequiredUniqueChars = 1;
-          config.Password.RequireNonAlphanumeric = false;
+          if (Environment.IsDevelopment())
+          {
+            config.Password.RequireDigit = false;
+            config.Password.RequiredLength = 4;
+            config.Password.RequireLowercase = false;
+            config.Password.RequireUppercase = false;
+            config.Password.RequiredUniqueChars = 1;
+            config.Password.RequireNonAlphanumeric = false;
+          }
         })
         .AddRoles<AppRole>()
         .AddEntityFrameworkStores<AppDbContext>()
@@ -65,26 +68,16 @@ namespace Sentaku.WebApi
       services.AddSingleton<IAuthorizationPolicyProvider, PermissionsPolicyProvider>();
       services.AddScoped<IAuthorizationHandler, PermissionsAuthorizationHandler>();
 
-      services.AddAuthentication(config =>
-        {
-          config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddGoogle(config =>
-        {
-          IConfigurationSection googleConfig = Configuration.GetSection("Authentication:Google");
-
-          config.ClientId = googleConfig["ClientId"];
-          config.ClientSecret = googleConfig["ClientSecret"];
-        })
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
           options.TokenValidationParameters = new TokenValidationParameters
           {
-            ValidIssuer = "https://localhost:44307",
-            ValidAudience = "https://localhost:44307",
+            ValidIssuer = "https://localhost:7045",
+            ValidAudience = "https://localhost:5001",
             IssuerSigningKey = new SigningIssuerCertificate().GetPublicKey()
           };
-        });
+        }); 
 
       services.AddCors(options =>
       {
@@ -96,8 +89,7 @@ namespace Sentaku.WebApi
         });
       });
 
-      services.AddControllersWithViews();
-      services.AddRazorPages();
+      services.AddControllers();
 
       services.AddSwaggerGen(c =>
       {
@@ -109,8 +101,8 @@ namespace Sentaku.WebApi
           {
             AuthorizationCode = new OpenApiOAuthFlow
             {
-              AuthorizationUrl = new Uri("/oauth2/authorize", UriKind.Relative),
-              TokenUrl = new Uri("/oauth2/token", UriKind.Relative)
+              AuthorizationUrl = new Uri("https://localhost:7045/oauth2/authorize"),
+              TokenUrl = new Uri("https://localhost:7045/oauth2/token")
             }
           }
         });
@@ -141,7 +133,6 @@ namespace Sentaku.WebApi
         app.UseHsts();
       }
       app.UseHttpsRedirection();
-      app.UseStaticFiles();
 
       app.UseCors(NetJsClientCorsPolicy);
 
@@ -162,7 +153,6 @@ namespace Sentaku.WebApi
       app.UseEndpoints(endpoints =>
       {
         endpoints.MapControllers();
-        endpoints.MapRazorPages();
       });
     }
   }
