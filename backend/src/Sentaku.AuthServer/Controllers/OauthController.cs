@@ -27,34 +27,13 @@ public class OauthController : Controller
 
       // TODO: Separate class for validation required params 
       if (client is null)
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", AuthServerConstants.ErrorResponseTypes.InvalidClient},
-          {"state", request.State}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidClient(request.RedirectUri, state: request.State);
 
       if (!client.RedirectUris.Contains(request.RedirectUri))
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", AuthServerConstants.ErrorResponseTypes.InvalidRequest},
-          {"state", request.State}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidRequest(request.RedirectUri, state: request.State);
 
       if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != request.ResponseType))
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", AuthServerConstants.ErrorResponseTypes.UnsupportedGrantType},
-          {"state", request.State}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.UnsupportedGrantType(request.RedirectUri, state: request.State);
 
       var vm = new AuthorizeViewModel
       {
@@ -131,59 +110,28 @@ public class OauthController : Controller
       CancellationToken cancellationToken)
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          { "error", AuthServerConstants.ErrorResponseTypes.UnsupportedGrantType }
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.UnsupportedGrantType(request.RedirectUri);
 
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
       
       if (client is null)
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          { "error", AuthServerConstants.ErrorResponseTypes.InvalidClient }
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidClient(request.RedirectUri);
 
       var decodedCodeToken = await StringEncryption.AesDecryptAsync(request.Code, client.ClientSecret);
       var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
 
       if (codeToken is null)
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          { "error", AuthServerConstants.ErrorResponseTypes.InvalidGrant }
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidGrant(request.RedirectUri);
 
       var codeTokenValidationResult = codeToken.Validate(request.ClientId, request.RedirectUri, request.CodeVerifier);
 
       if (!codeTokenValidationResult.IsValid)
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", codeTokenValidationResult.Error},
-          {"error_description", codeTokenValidationResult.ErrorDescription}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.ErrorResponse(request.RedirectUri, codeTokenValidationResult.Error, codeTokenValidationResult.ErrorDescription);
 
       var user = await _userManager.FindByIdAsync(codeToken.UserId);
 
       if (user is null)
-      {
-        var queryBuilder = new QueryBuilder
-        {
-          { "error", AuthServerConstants.ErrorResponseTypes.InvalidRequest }
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidRequest(request.RedirectUri);
 
       var token = await tokenService.GetTokenAsync(
         user.UserName, 
