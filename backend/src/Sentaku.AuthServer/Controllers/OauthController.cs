@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sentaku.ApplicationCore.Interfaces;
-using Sentaku.AuthServer.AuthServer.Extensions;
 using Sentaku.AuthServer.AuthServer.Models;
 using Sentaku.AuthServer.Models.Oauth;
 using Sentaku.AuthServer.ViewModels;
@@ -21,38 +22,19 @@ public class OauthController : Controller
     }
 
     [HttpGet("/oauth2/authorize")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public IActionResult Authorize([FromQuery] GetAuthorizationRequest request)
     {
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
 
       // TODO: Separate class for validation required params 
       if (client is null)
-      {
-        return BadRequest();
-      }
+        return ResponseHelper.InvalidClient(request.RedirectUri, state: request.State);
 
       if (!client.RedirectUris.Contains(request.RedirectUri))
-      {
-        //TODO: Add error validation constant: invalid_request
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", "invalid_request"},
-          {"state", request.State}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.InvalidRequest(request.RedirectUri, state: request.State);
 
       if (AuthServerConfig.SupportedResponseTypes.All(_ => _ != request.ResponseType))
-      {
-        //TODO: Add error validation constant: unsupported_response_type
-        var queryBuilder = new QueryBuilder
-        {
-          {"error", "unsupported_response_type"},
-          {"state", request.State}
-        };
-        return Redirect($"{request.RedirectUri}{queryBuilder}");
-      }
+        return ResponseHelper.UnsupportedGrantType(request.RedirectUri, state: request.State);
 
       var vm = new AuthorizeViewModel
       {
@@ -67,8 +49,9 @@ public class OauthController : Controller
     }
 
     [HttpPost("/oauth2/signin-code")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public async Task<IActionResult> SignInCode([FromForm] AuthorizeViewModel vm)
+    public async Task<IActionResult> SignInCode(
+      [FromForm] AuthorizeViewModel vm,
+      [FromServices] IDataProtectionProvider provider)
     {
       var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await _userManager.FindByNameAsync(vm.Login));
 
@@ -109,7 +92,11 @@ public class OauthController : Controller
 
       var jsonCodeToken = JsonConvert.SerializeObject(codeToken);
 
-      var encodedCodeToken = await StringEncryption.AesEncryptAsync(jsonCodeToken, client.ClientSecret);
+      var protector =  provider
+        .CreateProtector("AuthServer.Oauth2.SecureCodeToken")
+        .ToTimeLimitedDataProtector();
+      
+      var encodedCodeToken = protector.Protect(jsonCodeToken, TimeSpan.FromMinutes(5));
 
       // TODO: Create separate class for building redirectUrl
       var queryBuilder = new QueryBuilder
@@ -124,38 +111,49 @@ public class OauthController : Controller
 
 
     [HttpPost("/oauth2/token")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> GetAccessTokenAsync(
       [FromForm] GetAccessTokenRequest request,
       [FromServices] IIdentityTokenClaimService tokenService,
+      [FromServices] IDataProtectionProvider provider,
       CancellationToken cancellationToken)
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
-      {
-        // TODO: Add validation error
-        return BadRequest();
-      }
+        return ResponseHelper.UnsupportedGrantType(request.RedirectUri);
 
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
       
       if (client is null)
-      {
-        // TODO: Add validation error
-        return BadRequest();
+        return ResponseHelper.InvalidClient(request.RedirectUri);
+
+      var protector =  provider
+        .CreateProtector("AuthServer.Oauth2.SecureCodeToken")
+        .ToTimeLimitedDataProtector();
+
+      string decodedCodeToken;
+      
+      try
+      { 
+        decodedCodeToken = protector.Unprotect(request.Code);
       }
-
-      var decodedCodeToken = await StringEncryption.AesDecryptAsync(request.Code, client.ClientSecret);
-      var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
-
-      if (codeToken is null || !codeToken.IsValid(request.ClientId, request.RedirectUri, request.CodeVerifier).Value)
+      catch (CryptographicException e)
       {
-        return BadRequest();
+        return ResponseHelper.InvalidGrant(request.RedirectUri, e.Message);
       }
       
+      var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
+
+      if (codeToken is null)
+        return ResponseHelper.InvalidGrant(request.RedirectUri);
+
+      var codeTokenValidationResult = codeToken.Validate(request.ClientId, request.RedirectUri, request.CodeVerifier);
+
+      if (!codeTokenValidationResult.IsValid)
+        return ResponseHelper.ErrorResponse(request.RedirectUri, codeTokenValidationResult.Error, codeTokenValidationResult.ErrorDescription);
+
       var user = await _userManager.FindByIdAsync(codeToken.UserId);
 
       if (user is null)
-        return NotFound();
+        return ResponseHelper.InvalidRequest(request.RedirectUri);
 
       var token = await tokenService.GetTokenAsync(
         user.UserName, 
