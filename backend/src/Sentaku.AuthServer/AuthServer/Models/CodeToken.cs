@@ -30,7 +30,7 @@
           when CodeChallenge == codeVerifier => CodeTokenValidationResult.Valid(),
         AuthServerConstants.CodeChallengeMethods.S256 
           when CodeChallenge == StringEncryption.Base64UrlEncodedSha256(codeVerifier) => CodeTokenValidationResult.Valid(),
-        _ => CodeTokenValidationResult.InvalidCodeChallenge()
+        _ => CodeTokenValidationResult.InvalidCodeChallengeEquality()
       };
     }
   }
