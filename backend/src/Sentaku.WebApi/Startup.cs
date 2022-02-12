@@ -140,7 +140,6 @@ namespace Sentaku.WebApi
       app.UseSwaggerUI(c =>
       {
         c.OAuthClientId("project_swagger_3e1db73b647f43c297594797d62aec76");
-        c.OAuthClientSecret("d555704f7f0f460ab46284b22bcd1bdb");
         c.OAuthUsePkce();
         c.SwaggerEndpoint("v1/swagger.json", "My API V1");
       });
