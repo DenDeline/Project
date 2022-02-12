@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sentaku.ApplicationCore.Interfaces;
-using Sentaku.AuthServer.AuthServer;
 using Sentaku.AuthServer.AuthServer.Models;
 using Sentaku.AuthServer.Models.Oauth;
 using Sentaku.AuthServer.ViewModels;
@@ -48,7 +49,9 @@ public class OauthController : Controller
     }
 
     [HttpPost("/oauth2/signin-code")]
-    public async Task<IActionResult> SignInCode([FromForm] AuthorizeViewModel vm)
+    public async Task<IActionResult> SignInCode(
+      [FromForm] AuthorizeViewModel vm,
+      [FromServices] IDataProtectionProvider provider)
     {
       var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await _userManager.FindByNameAsync(vm.Login));
 
@@ -89,7 +92,11 @@ public class OauthController : Controller
 
       var jsonCodeToken = JsonConvert.SerializeObject(codeToken);
 
-      var encodedCodeToken = await StringEncryption.AesEncryptAsync(jsonCodeToken, client.ClientSecret);
+      var protector =  provider
+        .CreateProtector("AuthServer.Oauth2.SecureCodeToken")
+        .ToTimeLimitedDataProtector();
+      
+      var encodedCodeToken = protector.Protect(jsonCodeToken, TimeSpan.FromMinutes(5));
 
       // TODO: Create separate class for building redirectUrl
       var queryBuilder = new QueryBuilder
@@ -107,6 +114,7 @@ public class OauthController : Controller
     public async Task<IActionResult> GetAccessTokenAsync(
       [FromForm] GetAccessTokenRequest request,
       [FromServices] IIdentityTokenClaimService tokenService,
+      [FromServices] IDataProtectionProvider provider,
       CancellationToken cancellationToken)
     {
       if (AuthServerConfig.SupportedGrantTypes.All(_ => _ != request.GrantType))
@@ -117,7 +125,21 @@ public class OauthController : Controller
       if (client is null)
         return ResponseHelper.InvalidClient(request.RedirectUri);
 
-      var decodedCodeToken = await StringEncryption.AesDecryptAsync(request.Code, client.ClientSecret);
+      var protector =  provider
+        .CreateProtector("AuthServer.Oauth2.SecureCodeToken")
+        .ToTimeLimitedDataProtector();
+
+      string decodedCodeToken;
+      
+      try
+      { 
+        decodedCodeToken = protector.Unprotect(request.Code);
+      }
+      catch (CryptographicException e)
+      {
+        return ResponseHelper.InvalidGrant(request.RedirectUri, e.Message);
+      }
+      
       var codeToken = JsonConvert.DeserializeObject<CodeToken?>(decodedCodeToken);
 
       if (codeToken is null)

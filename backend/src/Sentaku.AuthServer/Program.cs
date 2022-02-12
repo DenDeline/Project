@@ -18,6 +18,8 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddScoped<IIdentityTokenClaimService, IdentityTokenClaimService>();
 
+builder.Services.AddDataProtection();
+
 builder.Services.AddAuthentication();
   // .AddGoogle(config =>
   // {
