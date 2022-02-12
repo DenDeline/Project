@@ -21,7 +21,6 @@ public class OauthController : Controller
     }
 
     [HttpGet("/oauth2/authorize")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public IActionResult Authorize([FromQuery] GetAuthorizationRequest request)
     {
       var client = AuthServerConfig.InMemoryClients.FirstOrDefault(_ => _.ClientId == request.ClientId);
@@ -70,7 +69,6 @@ public class OauthController : Controller
     }
 
     [HttpPost("/oauth2/signin-code")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> SignInCode([FromForm] AuthorizeViewModel vm)
     {
       var user = (await _userManager.FindByEmailAsync(vm.Login)) ?? (await _userManager.FindByNameAsync(vm.Login));
@@ -127,7 +125,6 @@ public class OauthController : Controller
 
 
     [HttpPost("/oauth2/token")]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> GetAccessTokenAsync(
       [FromForm] GetAccessTokenRequest request,
       [FromServices] IIdentityTokenClaimService tokenService,
