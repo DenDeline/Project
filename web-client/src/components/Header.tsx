@@ -1,46 +1,54 @@
-import React from "react";
+import React from "react"
 import {
-    AppBar,
-    createStyles,
-    makeStyles,
-    Theme,
-    Toolbar,
-    Typography
-} from "@material-ui/core";
+  AppBar,
+  createStyles,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Typography
+} from "@material-ui/core"
 
-export interface HeaderProps{
-    position: 'static' | 'sticky',
+export interface HeaderProps {
+  position: 'static' | 'sticky',
 }
 
 const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        navbar: {
-            marginBottom: theme.spacing(2)
-        },
-        title: {
-            flexGrow: 1
-        }
-    })
-);
+  createStyles({
+    navbar: {
+      marginBottom: theme.spacing(2)
+    },
+    title: {
+      flexGrow: 1
+    }
+  })
+)
 
 
-const Header: React.FC<HeaderProps> = ({position,children}) => {
-    const classes = useStyles();
-    return (
-        <AppBar position={position} color={'inherit'} className={classes.navbar}>
-            <Toolbar>
-                <Typography variant={'h3'} noWrap className={classes.title}>
-                    Vote
-                </Typography>
-                <div style={{marginLeft: "auto"}}>
-                    {
-                        children
-                    }
-                </div>
+const Header: React.FC<HeaderProps> = ({position, children}) => {
+  const classes = useStyles()
+  return (
+    <AppBar
+      position={position}
+      color={'inherit'}
+      className={classes.navbar}
+    >
+      <Toolbar>
+        <Typography
+          variant={'h3'}
+          noWrap
+          className={classes.title}
+        >
+          Vote
+        </Typography>
+        <div
+          style={{marginLeft: "auto"}}
+        >
+          {children}
+        </div>
 
-            </Toolbar>
-        </AppBar>
-    )
+      </Toolbar>
+    </AppBar>
+  )
 }
 
- export default Header;
+export default Header

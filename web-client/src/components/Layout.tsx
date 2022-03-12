@@ -1,58 +1,56 @@
-﻿import React, {useCallback} from "react";
+﻿import React, {useCallback} from "react"
 import {
-    Button,
-    createStyles,
-    makeStyles,
-    Theme
-} from "@material-ui/core";
-import Header from "./Header";
-import SignInUserBadge from "./SignInUserBadge";
-import {useRouter} from "next/router";
+  Button,
+  createStyles,
+  makeStyles,
+  Theme
+} from "@material-ui/core"
+import Header from "./Header"
+import SignInUserBadge from "./SignInUserBadge"
+import {useRouter} from "next/router"
 
 
-const useStyles = makeStyles((theme: Theme) => 
-    createStyles({
-        app: {
-            minHeight: '100vh'
-        }
-    })
-);
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    app: {
+      minHeight: '100vh'
+    }
+  })
+)
 
 interface LayoutProps {
-    user?: {
-        username: string
-        name?: string
-        role?: string
-    },
-    title: string
+  user?: {
+    username: string
+    name?: string
+    role?: string
+  },
+  title: string
 }
 
-const Layout: React.FC<LayoutProps> = ({user,title, children}) => {
-    const classes = useStyles();
-    const router = useRouter();
+const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
+  const classes = useStyles()
+  const router = useRouter()
 
-    const handleLoginClick = useCallback(async () => {
-        await router.push('/sign-in');
-    }, [router]);
-    
-    return(
-        <>
-            <div className={classes.app}>
-                <Header position={'static'}>
-                    {
-                        user ? <SignInUserBadge user={user}/> : <Button onClick={handleLoginClick}>Login</Button>
-                    }
-                </Header>
-                <div>
-                    {
-                        children
-                    }
-                </div>
-            </div>
-        </>
-    );
+  const handleLoginClick = useCallback(async () => {
+    await router.push('/sign-in')
+  }, [router])
+
+  return (
+    <>
+      <div className={classes.app}>
+        <Header position={'static'}>
+          {user
+            ? <SignInUserBadge user={user}/>
+            : <Button onClick={handleLoginClick}>Login</Button>
+          }
+        </Header>
+        <div>
+          {children}
+        </div>
+      </div>
+    </>
+  )
 }
 
 
-
-export default Layout;
+export default Layout
