@@ -15,7 +15,13 @@
     "jsx": "preserve",
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@sentaku/lib": [ "lib/" ],
+      "@sentaku/constants" : [ "constants/" ],
+      "@sentaku/components": [ "components/" ]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules "]
