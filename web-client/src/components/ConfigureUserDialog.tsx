@@ -53,7 +53,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
 
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null)
-  }, [setAnchorEl])
+  }, [])
 
   const handleMenuClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -94,7 +94,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
       setUserRoles(props.selectedUser?.roles.slice() ?? [])
       setUserVerified(props.selectedUser?.verified ?? false)
     }
-  }, [props.open])
+  }, [props.open, props.selectedUser?.roles, props.selectedUser?.verified])
 
   return (
     <Dialog
