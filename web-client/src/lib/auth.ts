@@ -1,30 +1,41 @@
-import {GetServerSidePropsContext, GetServerSidePropsResult} from "next"
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult
+} from "next"
+
+import staticAxios from 'axios'
+
+import { Permissions } from '@sentaku/constants'
+
 import {ApplicationUser} from "../models/user"
-import axios from "axios"
+import { apiAxios } from './defaults'
 
 export interface AuthConfig {
   withRedirect: boolean,
-  roles: string[]
+  roles: string[],
+  permissions: Permissions
 }
 
 export interface AuthProps<P = {}> {
   data?: { user: ApplicationUser } & P
   error?: {
-    status: number,
+    status?: string,
     message: string
   }
 }
 
-export type GetServerSidePropsContextWithUser = GetServerSidePropsContext & { req: { user: ApplicationUser } }
+export type GetServerSidePropsContextWithUser = GetServerSidePropsContext & { req: { user?: ApplicationUser } }
 export type Callback<P> = (context: GetServerSidePropsContextWithUser) => Promise<GetServerSidePropsResult<P>>
 
+
 export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>) => {
-  return async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<AuthProps<P>>> => {
+  return async (context: GetServerSidePropsContextWithUser): Promise<GetServerSidePropsResult<AuthProps<P>>> => {
     try {
       const accessToken = context.req.cookies.access_token
 
       if (!accessToken) {
         //TODO: Implement refresh token
+        context.req.user = undefined
         if (config?.withRedirect) {
           return {
             redirect: {
@@ -37,43 +48,48 @@ export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>)
             props: {
               error: {
                 message: 'Forbidden',
-                status: 403
+                status: '403'
               }
             }
           }
         }
       }
 
-      let {data: user} = await axios.get<ApplicationUser>('https://localhost:5001/api/user', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
+      apiAxios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
-      context.req = Object.defineProperty(context.req, 'user', {value: user})
+      if (context.req.user === undefined) {
+        let {data: user} = await apiAxios.get<ApplicationUser>('/user')
+        context.req = Object.defineProperty(context.req, 'user', {value: user})
+      }
 
-      const callbackResult = await callback(context as GetServerSidePropsContextWithUser)
-
+      const callbackResult = await callback(context)
+      
       if ('props' in callbackResult) {
         return {
           props: {
             data: {
-              ...callbackResult.props,
-              user
+              user: context.req.user as ApplicationUser,
+              ...callbackResult.props
             }
           }
         }
       }
+
       return callbackResult
-    } catch ({response: {status, data}}) {
-      return {
-        props: {
-          error: {
-            status,
-            message: data
+
+    } catch (err) {
+      if (staticAxios.isAxiosError(err)) {
+        return {
+          props: {
+            error: {
+              status: err.code,
+              message: err.message
+            }
           }
         }
       }
+
+      throw err
     }
   }
 }
