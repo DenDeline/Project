@@ -1,7 +1,8 @@
 ﻿import {GetServerSideProps} from "next"
 import React from "react"
-import axios from "axios"
-import querystring from "querystring"
+
+import { authAxios } from '@sentaku/lib'
+
 import cookie from "cookie"
 
 interface AccessTokenResponse {
@@ -9,7 +10,6 @@ interface AccessTokenResponse {
   token_type: string,
   expires_in: number
 }
-
 
 export const getServerSideProps: GetServerSideProps = async ({req, res, query}) => {
 
@@ -33,20 +33,28 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     return {
       redirect: {
         statusCode: 302,
-        destination: "http://localhost:3000"
+        destination: "/"
       }
     }
   }
 
-  const postData = {
+  if(process.env.REDIRECT_URI === undefined) {
+    throw Error('env REDIRECT_URI is undefined')
+  }
+
+  if(process.env.CLIENT_ID === undefined) {
+    throw Error('env CLIENT_ID is undefined')
+  }
+
+  const postData: Record<string, string> = {
     grant_type: "authorization_code",
     code: codeToken,
-    redirect_uri: process.env.REDIRECT_URI ?? "",
+    redirect_uri: process.env.REDIRECT_URI,
     client_id: process.env.CLIENT_ID,
     code_verifier: codeVerifierFromCookies
   }
 
-  const response = await axios.post<AccessTokenResponse>("https://localhost:7045/oauth2/token", querystring.stringify(postData))
+  const response = await authAxios.post<AccessTokenResponse>("/oauth2/token", new URLSearchParams(postData).toString())
 
   res.setHeader(
     "Set-Cookie",
@@ -65,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
   return {
     redirect: {
       statusCode: 302,
-      destination: "http://localhost:3000"
+      destination: "/"
     }
   }
 }
