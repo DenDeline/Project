@@ -1,7 +1,7 @@
-import React from "react"
-import {createStyles, Grid, Link as MaterialLink, makeStyles, Theme, Typography} from "@material-ui/core"
-import {AccountCircle} from "@material-ui/icons"
-import Link from "next/link"
+import React from 'react'
+import {createStyles, Grid, Link as MaterialLink, makeStyles, Theme, Typography} from '@material-ui/core'
+import {AccountCircle} from '@material-ui/icons'
+import Link from 'next/link'
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -33,7 +33,7 @@ const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
           Hello, {user.name || user.username} {user.role && (<>({user.role})</>)}
         </Typography>
         <br/>
-        <Link href={`/settings/profile`} passHref={true}>
+        <Link href={'/settings/profile'} passHref={true}>
           <MaterialLink>
             My profile
           </MaterialLink>

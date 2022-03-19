@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 import {
   AppBar,
   createStyles,
@@ -6,7 +6,7 @@ import {
   Theme,
   Toolbar,
   Typography
-} from "@material-ui/core"
+} from '@material-ui/core'
 
 export interface HeaderProps {
   position: 'static' | 'sticky',
@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({position, children}) => {
           Vote
         </Typography>
         <div
-          style={{marginLeft: "auto"}}
+          style={{marginLeft: 'auto'}}
         >
           {children}
         </div>

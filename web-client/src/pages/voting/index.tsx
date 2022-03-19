@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useState} from "react"
+﻿import React, {useCallback, useState} from 'react'
 import {
   Accordion,
   AccordionDetails,
@@ -19,14 +19,14 @@ import {
   ButtonGroup,
   makeStyles,
   createStyles
-} from "@material-ui/core"
+} from '@material-ui/core'
 import Link from 'next/link'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import Navbar from "../../components/Navbar"
-import {FiberManualRecord, FileCopyOutlined, FormatListBulleted} from "@material-ui/icons"
-import theme from "../../theme"
-import {AuthProps, withAuth} from "../../lib/auth"
-import Layout from "../../components/Layout"
+import Navbar from '../../components/Navbar'
+import {FiberManualRecord, FileCopyOutlined, FormatListBulleted} from '@material-ui/icons'
+import theme from '../../theme'
+import {AuthProps, withAuth} from '../../lib/auth'
+import Layout from '../../components/Layout'
 
 const AccordionSummary = withStyles({
   root: {
@@ -75,17 +75,17 @@ const Voting: React.FC<AuthProps> = (props) => {
   const voteTypes = [
     {
       id: 1,
-      name: "Vote for",
+      name: 'Vote for',
       color: theme.palette.success
     },
     {
       id: 2,
-      name: "Vote against",
+      name: 'Vote against',
       color: theme.palette.success
     },
     {
       id: 3,
-      name: "Abstain",
+      name: 'Abstain',
       color: theme.palette.success
     }
   ]
@@ -93,36 +93,36 @@ const Voting: React.FC<AuthProps> = (props) => {
   const [questions, setQuestions] = useState([
     {
       id: 1,
-      name: "Question 1",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget.",
+      name: 'Question 1',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget.',
       files: [
         {
           id: 1,
-          name: "Qwerty.pdf",
-          link: "https://localhost:3000"
+          name: 'Qwerty.pdf',
+          link: 'https://localhost:3000'
         },
         {
           id: 2,
-          name: "Qwerty.docx",
-          link: "https://localhost:3000"
+          name: 'Qwerty.docx',
+          link: 'https://localhost:3000'
         },
         {
           id: 3,
-          name: "Qwerty.xml",
-          link: "https://localhost:3000"
+          name: 'Qwerty.xml',
+          link: 'https://localhost:3000'
         }
       ],
       expanded: true
     },
     {
       id: 2,
-      name: "Question 2",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget.",
+      name: 'Question 2',
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus exsit amet blandit leo lobortis eget.',
       files: [
         {
           id: 4,
-          name: "Qwerty.pdf",
-          link: "https://localhost:3000"
+          name: 'Qwerty.pdf',
+          link: 'https://localhost:3000'
         }
       ],
       expanded: true
@@ -249,10 +249,10 @@ const Voting: React.FC<AuthProps> = (props) => {
                           {answers.map((answer, index) => (
                             <TableRow key={index}>
                               <TableCell>
-                                {questions.find(_ => _.id === answer.voteId)?.name ?? ""}
+                                {questions.find(_ => _.id === answer.voteId)?.name ?? ''}
                               </TableCell>
                               <TableCell align={'right'}>
-                                {voteTypes.find(_ => _.id === answer.voteTypeId)?.name ?? ""}
+                                {voteTypes.find(_ => _.id === answer.voteTypeId)?.name ?? ''}
                               </TableCell>
                             </TableRow>)
                           )}

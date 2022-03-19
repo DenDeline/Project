@@ -1,4 +1,4 @@
-﻿import React, {useCallback, useEffect, useState} from "react"
+﻿import React, {useCallback, useEffect, useState} from 'react'
 import {
   Button, Checkbox, Chip, CircularProgress, createStyles,
   Dialog,
@@ -7,9 +7,9 @@ import {
   DialogContentText,
   DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Input, makeStyles, Menu, MenuItem, Paper,
   TextField, Theme
-} from "@material-ui/core"
+} from '@material-ui/core'
 import Link from 'next/link'
-import {Add} from "@material-ui/icons"
+import {Add} from '@material-ui/icons'
 
 
 interface ConfigureUserDialogProps {
@@ -101,10 +101,10 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
       fullWidth={true}
       maxWidth={'sm'}
       open={props.open}
-      aria-labelledby={"dialog-title"}
+      aria-labelledby={'dialog-title'}
       onClose={props.onClose}
     >
-      <DialogTitle id={"dialog-title"}>
+      <DialogTitle id={'dialog-title'}>
         Configure user: {props.selectedUser?.username}
       </DialogTitle>
       <DialogContent>
@@ -118,21 +118,21 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
         >
           <Grid item>
             <TextField
-              label={"Username"}
+              label={'Username'}
               value={props.selectedUser?.username}
               disabled
             />
           </Grid>
           <Grid item>
             <TextField
-              label={"Name"}
+              label={'Name'}
               value={props.selectedUser?.name}
               disabled
             />
           </Grid>
           <Grid item>
             <TextField
-              label={"Name"}
+              label={'Name'}
               value={props.selectedUser?.surname}
               disabled
             />
@@ -145,7 +145,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
             <FormControlLabel
               control={<Checkbox checked={userVerified}/>}
               onClick={() => handleUserVerification(!userVerified)}
-              label={"Documents approved"}
+              label={'Documents approved'}
               disabled={!props.permissions.approvingDocuments}
             />
           </Grid>
@@ -183,7 +183,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
                     <Chip
                       aria-controls="user-roles-menu"
                       icon={<Add fontSize={'small'}/>}
-                      label={"Add role"}
+                      label={'Add role'}
                       color={'default'}
                       onClick={handleMenuClick}
                       className={classes.chip}/>

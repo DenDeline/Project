@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 import {AuthProps, withAuth} from '@sentaku/lib'
 

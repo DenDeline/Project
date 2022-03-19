@@ -1,6 +1,6 @@
-﻿import React from "react"
-import {createStyles, Grid, Link as MaterialLink, makeStyles, Paper} from "@material-ui/core"
-import Link from "next/link"
+﻿import React from 'react'
+import {createStyles, Grid, Link as MaterialLink, makeStyles, Paper} from '@material-ui/core'
+import Link from 'next/link'
 
 const useStyles = makeStyles(theme =>
   createStyles({

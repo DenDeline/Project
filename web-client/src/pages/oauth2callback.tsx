@@ -1,9 +1,9 @@
-﻿import {GetServerSideProps} from "next"
-import React from "react"
+﻿import {GetServerSideProps} from 'next'
+import React from 'react'
 
 import { authAxios } from '@sentaku/lib'
 
-import cookie from "cookie"
+import cookie from 'cookie'
 
 interface AccessTokenResponse {
   access_token: string,
@@ -23,17 +23,17 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     // TODO: Create endpoint for error messages
 
     res.setHeader(
-      "Set-Cookie",
+      'Set-Cookie',
       [
-        cookie.serialize("state", "", {maxAge: 0}),
-        cookie.serialize("code_verifier", "", {maxAge: 0})
+        cookie.serialize('state', '', {maxAge: 0}),
+        cookie.serialize('code_verifier', '', {maxAge: 0})
       ]
     )
 
     return {
       redirect: {
         statusCode: 302,
-        destination: "/"
+        destination: '/'
       }
     }
   }
@@ -47,33 +47,33 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
   }
 
   const postData: Record<string, string> = {
-    grant_type: "authorization_code",
+    grant_type: 'authorization_code',
     code: codeToken,
     redirect_uri: process.env.REDIRECT_URI,
     client_id: process.env.CLIENT_ID,
     code_verifier: codeVerifierFromCookies
   }
 
-  const response = await authAxios.post<AccessTokenResponse>("/oauth2/token", new URLSearchParams(postData).toString())
+  const response = await authAxios.post<AccessTokenResponse>('/oauth2/token', new URLSearchParams(postData).toString())
 
   res.setHeader(
-    "Set-Cookie",
+    'Set-Cookie',
     [
-      cookie.serialize("access_token", response.data.access_token, {
+      cookie.serialize('access_token', response.data.access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
+        secure: process.env.NODE_ENV !== 'development',
         maxAge: response.data.expires_in,
-        path: "/"
+        path: '/'
       }),
-      cookie.serialize("state", "", {maxAge: 0}),
-      cookie.serialize("code_verifier", "", {maxAge: 0})
+      cookie.serialize('state', '', {maxAge: 0}),
+      cookie.serialize('code_verifier', '', {maxAge: 0})
     ]
   )
 
   return {
     redirect: {
       statusCode: 302,
-      destination: "/"
+      destination: '/'
     }
   }
 }

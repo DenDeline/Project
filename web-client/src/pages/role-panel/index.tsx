@@ -1,12 +1,12 @@
-﻿import React, {useCallback, useEffect, useState} from "react"
-import {GetServerSideProps} from "next"
-import axios from "axios"
+﻿import React, {useCallback, useEffect, useState} from 'react'
+import {GetServerSideProps} from 'next'
+import axios from 'axios'
 
 import { AuthProps, withAuth } from '@sentaku/lib'
-import { Permissions } from "@sentaku/constants"
+import { Permissions } from '@sentaku/constants'
 
 import {DataGrid, GridCellParams, GridColDef} from '@material-ui/data-grid'
-import {Button, Chip, Container, createStyles, Grid, makeStyles, Paper, Typography} from "@material-ui/core"
+import {Button, Chip, Container, createStyles, Grid, makeStyles, Paper, Typography} from '@material-ui/core'
 
 import { Navbar, ConfigureUserDialog, Layout } from '@sentaku/components'
 
@@ -73,7 +73,7 @@ interface RolesPanelProps {
 export const getServerSideProps: GetServerSideProps = withAuth<RolesPanelProps>(async (context) => {
   return {
     props: {
-      backendApi: process.env.BACKEND_API_URL ?? ""
+      backendApi: process.env.BACKEND_API_URL ?? ''
     }
   }
 }, {withRedirect: true, permissions: Permissions.ManageUserRoles })
@@ -90,7 +90,7 @@ const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
     (async () => {
       setLoading(true)
 
-      const usersResult = await axios.get<UserReadModel[]>(data?.backendApi + "/users")
+      const usersResult = await axios.get<UserReadModel[]>(data?.backendApi + '/users')
 
       const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
         const userRoles = await axios.get<{ roles: string[] }>(`${data?.backendApi}/users/${userResult.username}/roles`)

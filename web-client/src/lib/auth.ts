@@ -1,13 +1,13 @@
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult
-} from "next"
+} from 'next'
 
 import staticAxios from 'axios'
 
 import { Permissions } from '@sentaku/constants'
 
-import {ApplicationUser} from "../models/user"
+import {ApplicationUser} from '../models/user'
 import { apiAxios } from './defaults'
 
 export interface AuthConfig {
