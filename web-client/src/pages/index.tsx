@@ -1,9 +1,10 @@
-import Head from 'next/head'
 import React from "react"
-import Layout from "../components/Layout"
-import {AuthProps, withAuth} from "../lib/auth"
-import Navbar from "../components/Navbar"
-import {Container} from "@material-ui/core"
+
+import Head from 'next/head'
+
+import {Layout, Navbar} from '@sentaku/components'
+
+import {AuthProps, withAuth} from '@sentaku/lib'
 
 export const getServerSideProps = withAuth(async () => {
   return {
