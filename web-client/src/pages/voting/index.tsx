@@ -1,4 +1,9 @@
 ﻿import React, {useCallback, useState} from 'react'
+
+import {AuthProps, withAuth} from '@sentaku/lib'
+
+import Link from 'next/link'
+
 import {
   Accordion,
   AccordionDetails,
@@ -20,13 +25,13 @@ import {
   makeStyles,
   createStyles
 } from '@material-ui/core'
-import Link from 'next/link'
+
+import { Navbar, Layout } from '@sentaku/components'
+
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import Navbar from '../../components/Navbar'
 import {FiberManualRecord, FileCopyOutlined, FormatListBulleted} from '@material-ui/icons'
+
 import theme from '../../theme'
-import {AuthProps, withAuth} from '../../lib/auth'
-import Layout from '../../components/Layout'
 
 const AccordionSummary = withStyles({
   root: {
