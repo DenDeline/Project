@@ -1,18 +1,17 @@
 ﻿import React, {useCallback, useEffect, useState} from "react"
 import {GetServerSideProps} from "next"
+import axios from "axios"
+
+import { AuthProps, withAuth } from '@sentaku/lib'
+import { Permissions } from "@sentaku/constants"
 
 import {DataGrid, GridCellParams, GridColDef} from '@material-ui/data-grid'
 import {Button, Chip, Container, createStyles, Grid, makeStyles, Paper, Typography} from "@material-ui/core"
-import Navbar from "../../components/Navbar"
-import ConfigureUserDialog from "../../components/ConfigureUserDialog"
-import Layout from "../../components/Layout"
+
+import { Navbar, ConfigureUserDialog, Layout } from '@sentaku/components'
 
 import CheckIcon from '@material-ui/icons/Check'
 import ClearIcon from '@material-ui/icons/Clear'
-
-import axios from "axios"
-
-import {AuthProps, withAuth} from "../../lib/auth"
 
 
 const useStyles = makeStyles(theme =>
@@ -77,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = withAuth<RolesPanelProps>(
       backendApi: process.env.BACKEND_API_URL ?? ""
     }
   }
-}, {withRedirect: true})
+}, {withRedirect: true, permissions: Permissions.ManageUserRoles })
 
 const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
   const classes = useStyles()
