@@ -33,7 +33,7 @@ const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
           Hello, {user.name || user.username} {user.role && (<>({user.role})</>)}
         </Typography>
         <br/>
-        <Link href={`/${user.username}/profile`} passHref={true}>
+        <Link href={`/settings/profile`} passHref={true}>
           <MaterialLink>
             My profile
           </MaterialLink>
