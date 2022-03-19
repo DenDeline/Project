@@ -1,6 +1,8 @@
-import {AuthProps, withAuth} from "../../lib/auth"
 import React from "react"
-import Layout from "../../components/Layout"
+
+import {AuthProps, withAuth} from '@sentaku/lib'
+
+import { Layout } from '@sentaku/components'
 
 export const getServerSideProps = withAuth(async () => {
   return {
