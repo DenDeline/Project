@@ -68,19 +68,15 @@ interface UserReadModel {
   verified: string,
 }
 
-interface RolesPanelProps {
-  backendApi: string
-}
-
-export const getServerSideProps: GetServerSideProps = withAuth<RolesPanelProps>(async (context) => {
+export const getServerSideProps: GetServerSideProps = withAuth(async (context) => {
   return {
     props: {
-      backendApi: process.env.BACKEND_API_URL ?? ''
+
     }
   }
 }, {withRedirect: true, permissions: Permissions.ManageUserRoles })
 
-const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
+const RolePanel: React.FC<AuthProps> = ({data, error}) => {
   const classes = useStyles()
 
   const [rows, setRows] = useState<User[]>([])
@@ -92,10 +88,10 @@ const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
     (async () => {
       setLoading(true)
 
-      const usersResult = await axios.get<UserReadModel[]>(data?.backendApi + '/users')
+      const usersResult = await axios.get<UserReadModel[]>(process.env.NEXT_PUBLIC_API_URL + '/users')
 
       const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
-        const userRoles = await axios.get<{ roles: string[] }>(`${data?.backendApi}/users/${userResult.username}/roles`)
+        const userRoles = await axios.get<{ roles: string[] }>(`${process.env.NEXT_PUBLIC_API_URL}/users/${userResult.username}/roles`)
         return {
           ...userResult,
           roles: userRoles.data.roles
@@ -113,7 +109,7 @@ const RolePanel: React.FC<AuthProps<RolesPanelProps>> = ({data, error}) => {
     return () => {
       active = false
     }
-  }, [data?.backendApi])
+  }, [])
 
   const [permissions,] = useState({
     editProfile: false,
