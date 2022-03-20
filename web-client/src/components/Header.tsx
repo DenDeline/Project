@@ -1,28 +1,31 @@
 import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+const PREFIX = 'Header'
+
+const classes = {
+  navbar: `${PREFIX}-navbar`,
+  title: `${PREFIX}-title`
+}
+
+const StyledAppBar = styled(AppBar)(({theme}) => ({
+  [`&.${classes.navbar}`]: {
+    marginBottom: theme.spacing(2)
+  },
+
+  [`& .${classes.title}`]: {
+    flexGrow: 1
+  }
+}))
 
 export interface HeaderProps {
   position: 'static' | 'sticky',
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    navbar: {
-      marginBottom: theme.spacing(2)
-    },
-    title: {
-      flexGrow: 1
-    }
-  })
-)
-
-
 const Header: React.FC<HeaderProps> = ({position, children}) => {
-  const classes = useStyles()
+
   return (
-    <AppBar
+    <StyledAppBar
       position={position}
       color={'inherit'}
       className={classes.navbar}
@@ -42,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({position, children}) => {
         </div>
 
       </Toolbar>
-    </AppBar>
+    </StyledAppBar>
   )
 }
 

@@ -2,22 +2,29 @@
 
 import Link from 'next/link'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+import { styled } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme =>
-  createStyles({
-    navbar: {
-      padding: theme.spacing(1.5),
-      marginBottom: theme.spacing(2)
-    }
-  })
-)
+const PREFIX = 'Navbar'
+
+const classes = {
+  navbar: `${PREFIX}-navbar`
+}
+
+const StyledPaper = styled(Paper)((
+  {
+    theme
+  }
+) => ({
+  [`&.${classes.navbar}`]: {
+    padding: theme.spacing(1.5),
+    marginBottom: theme.spacing(2)
+  }
+}))
 
 const Navbar: React.FC = () => {
-  const classes = useStyles()
+
   return (
-    <Paper variant={'outlined'} className={classes.navbar}>
+    <StyledPaper variant={'outlined'} className={classes.navbar}>
       <Grid container spacing={3}>
         <Grid item>
           <Link href={'/voting'} passHref={true}>
@@ -41,7 +48,7 @@ const Navbar: React.FC = () => {
           </Link>
         </Grid>
       </Grid>
-    </Paper>
+    </StyledPaper>
   )
 }
 

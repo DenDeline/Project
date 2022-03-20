@@ -21,8 +21,33 @@ import {useCallback, useEffect, useState} from 'react'
 import { Add } from '@mui/icons-material'
 import Link from 'next/link'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+import { styled } from '@mui/material/styles'
+
+const PREFIX = 'ConfigureUserDialog'
+
+const classes = {
+  root: `${PREFIX}-root`,
+  chip: `${PREFIX}-chip`
+}
+
+const StyledDialog = styled(Dialog)((
+  {
+    theme: Theme
+  }
+) => ({
+  [`& .${classes.root}`]: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    listStyle: 'none',
+    padding: Theme.spacing(0.5),
+    margin: 0,
+  },
+
+  [`& .${classes.chip}`]: {
+    margin: Theme.spacing(0.5),
+  }
+}))
+
 interface ConfigureUserDialogProps {
   open: boolean,
   selectedUser?: {
@@ -42,23 +67,8 @@ interface ConfigureUserDialogProps {
   onClose: () => void
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      listStyle: 'none',
-      padding: theme.spacing(0.5),
-      margin: 0,
-    },
-    chip: {
-      margin: theme.spacing(0.5),
-    },
-  }),
-)
-
 const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
-  const classes = useStyles()
+
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -108,7 +118,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
   }, [props.open, props.selectedUser?.roles, props.selectedUser?.verified])
 
   return (
-    <Dialog
+    <StyledDialog
       fullWidth={true}
       maxWidth={'sm'}
       open={props.open}
@@ -249,7 +259,7 @@ const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
           Save
         </Button>
       </DialogActions>
-    </Dialog>
+    </StyledDialog>
   )
 }
 

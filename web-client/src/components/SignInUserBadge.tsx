@@ -3,17 +3,24 @@ import { Grid, Link as MaterialLink, Theme, Typography } from '@mui/material'
 import {AccountCircle} from '@mui/icons-material'
 import Link from 'next/link'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+import { styled } from '@mui/material/styles'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    userAvatar: {
-      margin: 'auto',
-      height: '100%'
-    }
-  })
-)
+const PREFIX = 'SignInUserBadge'
+
+const classes = {
+  userAvatar: `${PREFIX}-userAvatar`
+}
+
+const StyledGrid = styled(Grid)((
+  {
+    theme: Theme
+  }
+) => ({
+  [`& .${classes.userAvatar}`]: {
+    margin: 'auto',
+    height: '100%'
+  }
+}))
 
 export interface SignInUserBadgeProps {
   user: {
@@ -24,9 +31,9 @@ export interface SignInUserBadgeProps {
 }
 
 const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
-  const classes = useStyles()
+
   return (
-    <Grid container spacing={1}>
+    <StyledGrid container spacing={1}>
       <Grid item>
         <AccountCircle className={classes.userAvatar}/>
       </Grid>
@@ -41,7 +48,7 @@ const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
           </MaterialLink>
         </Link>
       </Grid>
-    </Grid>
+    </StyledGrid>
   )
 }
 

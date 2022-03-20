@@ -13,21 +13,30 @@ import {Permissions} from '@sentaku/constants'
 
 import axios from 'axios'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+import { styled } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme =>
-  createStyles({
-    title: {
-      padding: theme.spacing(2),
-      backgroundColor: 'rgba(0, 0, 0, .03)',
-      borderBottom: '1px solid rgba(0, 0, 0, .125)',
-    },
-    content: {
-      padding: theme.spacing(2)
-    }
-  })
-)
+const PREFIX = 'RolePanel'
+
+const classes = {
+  title: `${PREFIX}-title`,
+  content: `${PREFIX}-content`
+}
+
+const StyledLayout = styled(Layout)((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.title}`]: {
+    padding: theme.spacing(2),
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+  },
+
+  [`& .${classes.content}`]: {
+    padding: theme.spacing(2)
+  }
+}))
 
 enum AppRoles {
   Administrator = 'Administrator',
@@ -77,7 +86,7 @@ export const getServerSideProps: GetServerSideProps = withAuth(async (context) =
 }, {withRedirect: true, permissions: Permissions.ManageUserRoles })
 
 const RolePanel: React.FC<AuthProps> = ({data, error}) => {
-  const classes = useStyles()
+
 
   const [rows, setRows] = useState<User[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -175,18 +184,21 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
   ]
 
   return (
-    <Layout title={'Role panel'} user={data?.user}>
+    <Layout
+      title={'Role panel'}
+      user={data?.user}
+    >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
           <Navbar/>
           <Paper variant={'outlined'}>
             <Grid container direction={'column'}>
-              <Grid item className={classes.title}>
+              <Grid item sx={{ p: theme => theme.spacing(2), backgroundColor: 'rgba(0, 0, 0, .03)', borderBottom: '1px solid rgba(0, 0, 0, .125)' }}>
                 <Typography variant={'h5'}>
                   Configure roles
                 </Typography>
               </Grid>
-              <Grid item container direction={'column'} className={classes.content}>
+              <Grid item container direction={'column'} sx={{ p: theme => theme.spacing(2) }}>
                 <DataGrid
                   autoHeight
                   rows={rows}

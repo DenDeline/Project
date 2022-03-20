@@ -26,36 +26,29 @@ import {FileCopyOutlined} from '@mui/icons-material'
 
 import Link from 'next/link'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
-import theme from '../../theme'
-import withStyles from '@mui/styles/withStyles'
+import { accordionSummaryClasses } from '@mui/material/AccordionSummary'
 
-const AccordionSummary = withStyles({
-  root: {
+import { lightTheme } from '@sentaku/styles/theme'
+
+import { styled } from '@mui/material/styles'
+
+
+const AccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
+  [`& .${accordionSummaryClasses['root']}`]: {
     backgroundColor: 'rgba(0, 0, 0, .03)',
     borderBottom: '1px solid rgba(0, 0, 0, .125)',
     marginBottom: -1,
     minHeight: 56,
-    '&$expanded': {
+    [`&. ${accordionSummaryClasses['expanded']}`]: {
       minHeight: 56,
     },
   },
-  content: {
-    '&$expanded': {
-      margin: '12px 0',
-    },
-  },
-  expanded: {},
-})(MuiAccordionSummary)
-
-const useStyles = makeStyles(theme =>
-  createStyles({
-    fileListItem: {
-      padding: theme.spacing(1)
+  [`& .${accordionSummaryClasses['content']}`]: {
+    [`& .${accordionSummaryClasses['expanded']}`]: {
+      margin: theme.spacing(2, 0),
     }
-  })
-)
+  }
+}))
 
 interface VoteType {
   id: number,
@@ -79,17 +72,17 @@ const Voting: React.FC<AuthProps> = (props) => {
     {
       id: 1,
       name: 'Vote for',
-      color: theme.palette.success
+      color: lightTheme.palette.success
     },
     {
       id: 2,
       name: 'Vote against',
-      color: theme.palette.success
+      color: lightTheme.palette.success
     },
     {
       id: 3,
       name: 'Abstain',
-      color: theme.palette.success
+      color: lightTheme.palette.success
     }
   ]
 
@@ -152,12 +145,11 @@ const Voting: React.FC<AuthProps> = (props) => {
     }
   }, [answers])
 
-  const classes = useStyles()
-
-
   return (
-    <Layout title={'Current voting'} user={props.data?.user}>
-
+    <Layout
+      title={'Current voting'}
+      user={props.data?.user}
+    >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
           <Navbar/>
@@ -187,7 +179,7 @@ const Voting: React.FC<AuthProps> = (props) => {
                       <ol>
                         {
                           question.files.map((file, index) => (
-                            <li className={classes.fileListItem} key={index}>
+                            <li key={index}>
                               <Grid container direction={'row'} spacing={1}>
                                 <Grid item>
                                   <FileCopyOutlined/>
@@ -289,7 +281,6 @@ const Voting: React.FC<AuthProps> = (props) => {
         </Typography>
       </Container>
     </Layout>
-
   )
 }
 

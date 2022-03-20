@@ -4,19 +4,27 @@ import { Button, Theme } from '@mui/material'
 import Header from './Header'
 import SignInUserBadge from './SignInUserBadge'
 
-import createStyles from '@mui/styles/createStyles'
-import makeStyles from '@mui/styles/makeStyles'
+import { styled } from '@mui/material/styles'
+
 import {useCallback} from 'react'
 import {useRouter} from 'next/router'
 
+const PREFIX = 'Layout'
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    app: {
-      minHeight: '100vh'
-    }
-  })
-)
+const classes = {
+  app: `${PREFIX}-app`
+}
+
+// TODO jss-to-styled codemod: The Fragment root was replaced by div. Change the tag if needed.
+const Root = styled('div')((
+  {
+    theme
+  }
+) => ({
+  [`& .${classes.app}`]: {
+    minHeight: '100vh'
+  }
+}))
 
 interface LayoutProps {
   user?: {
@@ -28,7 +36,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
-  const classes = useStyles()
+
   const router = useRouter()
 
   const handleLoginClick = useCallback(async () => {
@@ -36,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
   }, [router])
 
   return (
-    <>
+    (<Root>
       <div className={classes.app}>
         <Header position={'static'}>
           {user
@@ -48,7 +56,7 @@ const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
           {children}
         </div>
       </div>
-    </>
+    </Root>)
   )
 }
 
