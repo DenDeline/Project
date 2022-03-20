@@ -14,13 +14,15 @@
   Paper,
   TextField,
   Theme,
-  createStyles, makeStyles
-} from '@material-ui/core'
+} from '@mui/material'
 
 import {useCallback, useEffect, useState} from 'react'
 
-import { Add } from '@material-ui/icons'
+import { Add } from '@mui/icons-material'
 import Link from 'next/link'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 interface ConfigureUserDialogProps {
   open: boolean,
   selectedUser?: {

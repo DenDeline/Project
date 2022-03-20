@@ -1,11 +1,7 @@
-import {
-  AppBar,
-  Theme,
-  Toolbar,
-  Typography,
-  createStyles,
-  makeStyles
-} from '@material-ui/core'
+import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 export interface HeaderProps {
   position: 'static' | 'sticky',

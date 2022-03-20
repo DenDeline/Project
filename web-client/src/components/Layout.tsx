@@ -1,12 +1,11 @@
 ﻿
-import {
-  Button,
-  Theme,
-  createStyles,
-  makeStyles
-} from '@material-ui/core'
+import { Button, Theme } from '@mui/material'
+
 import Header from './Header'
 import SignInUserBadge from './SignInUserBadge'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import {useCallback} from 'react'
 import {useRouter} from 'next/router'
 

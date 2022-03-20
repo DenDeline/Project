@@ -1,6 +1,10 @@
-import {Grid, Link as MaterialLink, Theme, Typography, createStyles, makeStyles} from '@material-ui/core'
-import {AccountCircle} from '@material-ui/icons'
+import { Grid, Link as MaterialLink, Theme, Typography } from '@mui/material'
+
+import {AccountCircle} from '@mui/icons-material'
 import Link from 'next/link'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

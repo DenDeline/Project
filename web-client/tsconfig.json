@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "lib": ["ES6", "dom", "dom.iterable", "esnext"],
+    "lib": [
+      "ES6",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,11 +23,24 @@
     "strictNullChecks": true,
     "baseUrl": "./src",
     "paths": {
-      "@sentaku/lib": [ "lib/" ],
-      "@sentaku/constants" : [ "constants/" ],
-      "@sentaku/components": [ "components/" ]
-    }
+      "@sentaku/lib": [
+        "lib/"
+      ],
+      "@sentaku/constants": [
+        "constants/"
+      ],
+      "@sentaku/components": [
+        "components/"
+      ]
+    },
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules "]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules "
+  ]
 }

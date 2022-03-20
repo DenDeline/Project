@@ -1,5 +1,9 @@
-﻿import {Grid, Link as MaterialLink, Paper, createStyles, makeStyles} from '@material-ui/core'
+﻿import { Grid, Link as MaterialLink, Paper } from '@mui/material'
+
 import Link from 'next/link'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 const useStyles = makeStyles(theme =>
   createStyles({

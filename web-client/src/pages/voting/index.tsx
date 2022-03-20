@@ -15,21 +15,21 @@
   TableHead,
   TableRow,
   Typography,
-  createStyles,
-  makeStyles,
-  withStyles
-} from '@material-ui/core'
+} from '@mui/material'
 
 import {AuthProps, withAuth} from '@sentaku/lib'
 import { Layout, Navbar } from '@sentaku/components'
 import {useCallback, useState} from 'react'
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import {FileCopyOutlined} from '@material-ui/icons'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import {FileCopyOutlined} from '@mui/icons-material'
 
 import Link from 'next/link'
 
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import theme from '../../theme'
+import withStyles from '@mui/styles/withStyles'
 
 const AccordionSummary = withStyles({
   root: {
