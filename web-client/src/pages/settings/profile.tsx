@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {AuthProps, withAuth} from '@sentaku/lib'
 
 import { Layout } from '@sentaku/components'

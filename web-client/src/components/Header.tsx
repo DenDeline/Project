@@ -1,11 +1,10 @@
-import React from 'react'
 import {
   AppBar,
-  createStyles,
-  makeStyles,
   Theme,
   Toolbar,
-  Typography
+  Typography,
+  createStyles,
+  makeStyles
 } from '@material-ui/core'
 
 export interface HeaderProps {

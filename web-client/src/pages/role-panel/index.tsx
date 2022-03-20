@@ -1,18 +1,17 @@
-﻿import React, {useCallback, useEffect, useState} from 'react'
-import {GetServerSideProps} from 'next'
-import axios from 'axios'
+﻿import {AuthProps, withAuth} from '@sentaku/lib'
 
-import { AuthProps, withAuth } from '@sentaku/lib'
-import { Permissions } from '@sentaku/constants'
-
+import {Button, Chip, Container, Grid, Paper, Typography, createStyles, makeStyles} from '@material-ui/core'
+import {ConfigureUserDialog, Layout, Navbar} from '@sentaku/components'
 import {DataGrid, GridCellParams, GridColDef} from '@material-ui/data-grid'
-import {Button, Chip, Container, createStyles, Grid, makeStyles, Paper, Typography} from '@material-ui/core'
-
-import { Navbar, ConfigureUserDialog, Layout } from '@sentaku/components'
+import {useCallback, useEffect, useState} from 'react'
 
 import CheckIcon from '@material-ui/icons/Check'
 import ClearIcon from '@material-ui/icons/Clear'
 
+import {GetServerSideProps} from 'next'
+import {Permissions} from '@sentaku/constants'
+
+import axios from 'axios'
 
 const useStyles = makeStyles(theme =>
   createStyles({

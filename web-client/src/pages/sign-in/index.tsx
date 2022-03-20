@@ -1,6 +1,5 @@
-﻿import React from 'react'
+﻿import {GetServerSideProps} from 'next'
 import RandExp from 'randexp'
-import {GetServerSideProps} from 'next'
 import cookie from 'cookie'
 import {createHash} from 'crypto'
 

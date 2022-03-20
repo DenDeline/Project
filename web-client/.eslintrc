@@ -6,6 +6,13 @@
   ],
   "rules": {
     "semi": ["error", "never"],
-    "quotes": ["error", "single"]
+    "quotes": ["error", "single"],
+    "eqeqeq": ["error", "smart"],
+    "no-useless-return": "warn",
+    "no-trailing-spaces": "error",
+    "sort-imports": ["error"],
+    "no-duplicate-imports": "error",
+    "block-spacing": "error",
+    "semi-spacing": "error"
   }
 }

@@ -1,17 +1,26 @@
-﻿import React, {useCallback, useEffect, useState} from 'react'
-import {
-  Button, Checkbox, Chip, CircularProgress, createStyles,
+﻿import {
+  Button,
+  Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Input, makeStyles, Menu, MenuItem, Paper,
-  TextField, Theme
+  DialogTitle,
+  FormControlLabel,
+  Grid,
+  Menu,
+  MenuItem,
+  Paper,
+  TextField,
+  Theme,
+  createStyles, makeStyles
 } from '@material-ui/core'
+
+import {useCallback, useEffect, useState} from 'react'
+
+import { Add } from '@material-ui/icons'
 import Link from 'next/link'
-import {Add} from '@material-ui/icons'
-
-
 interface ConfigureUserDialogProps {
   open: boolean,
   selectedUser?: {

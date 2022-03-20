@@ -1,8 +1,6 @@
-import React from 'react'
-import {createStyles, Grid, Link as MaterialLink, makeStyles, Theme, Typography} from '@material-ui/core'
+import {Grid, Link as MaterialLink, Theme, Typography, createStyles, makeStyles} from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
 import Link from 'next/link'
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

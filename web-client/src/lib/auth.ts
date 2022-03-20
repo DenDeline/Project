@@ -3,13 +3,11 @@ import {
   GetServerSidePropsResult
 } from 'next'
 
-import staticAxios from 'axios'
-
+import { ApplicationUser } from '../models/user'
 import { Permissions } from '@sentaku/constants'
 
-import {ApplicationUser} from '../models/user'
 import { apiAxios } from './defaults'
-
+import staticAxios from 'axios'
 export interface AuthConfig {
   withRedirect: boolean,
   roles: string[],
@@ -63,7 +61,7 @@ export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>)
       }
 
       const callbackResult = await callback(context)
-      
+
       if ('props' in callbackResult) {
         return {
           props: {

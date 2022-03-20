@@ -1,10 +1,6 @@
-import React from 'react'
-
-import Head from 'next/head'
-
-import {Layout, Navbar} from '@sentaku/components'
-
 import {AuthProps, withAuth} from '@sentaku/lib'
+import {Layout, Navbar} from '@sentaku/components'
+import Head from 'next/head'
 
 export const getServerSideProps = withAuth(async () => {
   return {

@@ -1,5 +1,4 @@
-﻿import React from 'react'
-import {createStyles, Grid, Link as MaterialLink, makeStyles, Paper} from '@material-ui/core'
+﻿import {Grid, Link as MaterialLink, Paper, createStyles, makeStyles} from '@material-ui/core'
 import Link from 'next/link'
 
 const useStyles = makeStyles(theme =>
