@@ -1,86 +1,93 @@
-import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
-import {ApplicationUser} from "../models/user";
-import axios from "axios";
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult
+} from 'next'
 
+import { ApplicationUser } from '../models/user'
+import { Permissions } from '@sentaku/constants'
+
+import { apiAxios } from './defaults'
+import staticAxios from 'axios'
 export interface AuthConfig {
-    withRedirect: boolean,
-    roles: string[]
+  withRedirect: boolean,
+  roles: string[],
+  permissions: Permissions
 }
 
 export interface AuthProps<P = {}> {
-    data?: { user: ApplicationUser } & P
-    error?: {
-        status: number,
-        message: string
-    }
+  data?: { user: ApplicationUser } & P
+  error?: {
+    status?: string,
+    message: string
+  }
 }
 
-export type GetServerSidePropsContextWithUser = GetServerSidePropsContext & { req: { user: ApplicationUser }}
+export type GetServerSidePropsContextWithUser = GetServerSidePropsContext & { req: { user?: ApplicationUser } }
 export type Callback<P> = (context: GetServerSidePropsContextWithUser) => Promise<GetServerSidePropsResult<P>>
 
-export const withAuth =<P>(callback: Callback<P>, config?: Partial<AuthConfig>) => {
-    return async (context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<AuthProps<P>>> => {
 
-        try {
-            const { req } = context;
+export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>) => {
+  return async (context: GetServerSidePropsContextWithUser): Promise<GetServerSidePropsResult<AuthProps<P>>> => {
+    try {
+      const accessToken = context.req.cookies.access_token
 
-            if (!req.cookies.access_token) {
-                //TODO: Implement refresh token
-                if (config?.withRedirect){
-                    return {
-                        redirect: {
-                            destination: '/sign-in',
-                            statusCode: 302
-                        }
-                    }
-                }
-                else {
-                    return {
-                        props: {
-                            error: {
-                                message: 'Forbidden',
-                                status: 302
-                            }
-                        }
-                    }
-                }
-
+      if (!accessToken) {
+        //TODO: Implement refresh token
+        context.req.user = undefined
+        if (config?.withRedirect) {
+          return {
+            redirect: {
+              destination: '/sign-in',
+              statusCode: 302
             }
-
-            let { data: user } = await axios.get<ApplicationUser>('https://localhost:5001/api/user', {
-                headers: {
-                    Authorization: `Bearer ${req.cookies.access_token}`
-                }
-            })
-
-            console.log(user)
-
-            context.req = Object.defineProperty(context.req, 'user', { value: user })
-
-            const result = await callback(context as GetServerSidePropsContextWithUser);
-
-            if ('props' in result){
-                return {
-                    props: {
-                        data: {
-                            ...result.props,
-                            user
-                        }
-                    }
-                }
+          }
+        } else {
+          return {
+            props: {
+              error: {
+                message: 'Forbidden',
+                status: '403'
+              }
             }
-            return result;
+          }
         }
-        catch ({response: {status, data}}) {
-            return {
-                props: {
-                    error: {
-                        status,
-                        message: data
-                    }
-                }
-            }
-        }
+      }
 
-    };
+      apiAxios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+
+      if (context.req.user === undefined) {
+        let {data: user} = await apiAxios.get<ApplicationUser>('/user')
+        context.req = Object.defineProperty(context.req, 'user', {value: user})
+      }
+
+      const callbackResult = await callback(context)
+
+      if ('props' in callbackResult) {
+        return {
+          props: {
+            data: {
+              user: context.req.user as ApplicationUser,
+              ...callbackResult.props
+            }
+          }
+        }
+      }
+
+      return callbackResult
+
+    } catch (err) {
+      if (staticAxios.isAxiosError(err)) {
+        return {
+          props: {
+            error: {
+              status: err.code,
+              message: err.message
+            }
+          }
+        }
+      }
+
+      throw err
+    }
+  }
 }

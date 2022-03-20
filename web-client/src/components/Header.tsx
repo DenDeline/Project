@@ -1,46 +1,52 @@
-import React from "react";
-import {
-    AppBar,
-    createStyles,
-    makeStyles,
-    Theme,
-    Toolbar,
-    Typography
-} from "@material-ui/core";
+import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+import { styled } from '@mui/material/styles'
 
-export interface HeaderProps{
-    position: 'static' | 'sticky',
+const PREFIX = 'Header'
+
+const classes = {
+  navbar: `${PREFIX}-navbar`,
+  title: `${PREFIX}-title`
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        navbar: {
-            marginBottom: theme.spacing(2)
-        },
-        title: {
-            flexGrow: 1
-        }
-    })
-);
+const StyledAppBar = styled(AppBar)(({theme}) => ({
+  [`&.${classes.navbar}`]: {
+    marginBottom: theme.spacing(2)
+  },
 
+  [`& .${classes.title}`]: {
+    flexGrow: 1
+  }
+}))
 
-const Header: React.FC<HeaderProps> = ({position,children}) => {
-    const classes = useStyles();
-    return (
-        <AppBar position={position} color={'inherit'} className={classes.navbar}>
-            <Toolbar>
-                <Typography variant={'h3'} noWrap className={classes.title}>
-                    Vote
-                </Typography>
-                <div style={{marginLeft: "auto"}}>
-                    {
-                        children
-                    }
-                </div>
-
-            </Toolbar>
-        </AppBar>
-    )
+export interface HeaderProps {
+  position: 'static' | 'sticky',
 }
 
- export default Header;
+const Header: React.FC<HeaderProps> = ({position, children}) => {
+
+  return (
+    <StyledAppBar
+      position={position}
+      color={'inherit'}
+      className={classes.navbar}
+    >
+      <Toolbar>
+        <Typography
+          variant={'h3'}
+          noWrap
+          className={classes.title}
+        >
+          Vote
+        </Typography>
+        <div
+          style={{marginLeft: 'auto'}}
+        >
+          {children}
+        </div>
+
+      </Toolbar>
+    </StyledAppBar>
+  )
+}
+
+export default Header

@@ -1,30 +1,32 @@
-import React from 'react';
-import Head from 'next/head';
-import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import theme from '../theme';
-import {AppProps} from "next/app";
+import { CacheProvider, EmotionCache } from '@emotion/react'
+import { StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles'
 
-export default function MyApp(props: AppProps) {
-    const { Component, pageProps } = props;
-    
-    React.useEffect(() => {
-        const jssStyles = document.querySelector('#jss-server-side');
-        if (jssStyles?.parentElement) {
-            jssStyles.parentElement.removeChild(jssStyles);
-        }
-    }, []);
+import {AppProps} from 'next/app'
+import CssBaseline from '@mui/material/CssBaseline'
+import Head from 'next/head'
 
-    return (
-        <React.Fragment>
-            <Head>
-                <title>My page</title>
-                <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-            </Head>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Component {...pageProps} />
-            </ThemeProvider>
-        </React.Fragment>
-    );
+import { createEmotionCache } from '@sentaku/utils'
+import { lightTheme } from '@sentaku/styles/theme'
+
+interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+const clientSideEmotionCache = createEmotionCache()
+
+export default function MyApp(props: MyAppProps) {
+  const {Component, pageProps, emotionCache = clientSideEmotionCache} = props
+
+  return (
+    <CacheProvider value={emotionCache}>
+      <Head>
+        <title>My page</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
+      </Head>
+      <ThemeProvider theme={lightTheme}>
+        <CssBaseline/>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </CacheProvider>
+  )
 }
