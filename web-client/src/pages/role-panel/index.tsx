@@ -96,11 +96,10 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
 
     (async () => {
       setLoading(true)
-
-      const usersResult = await axios.get<UserReadModel[]>(process.env.NEXT_PUBLIC_API_URL + '/users')
+      const usersResult = await axios.get<UserReadModel[]>('/api/users')
 
       const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
-        const userRoles = await axios.get<{ roles: string[] }>(`${process.env.NEXT_PUBLIC_API_URL}/users/${userResult.username}/roles`)
+        const userRoles = await axios.get<{ roles: string[] }>(`api/users/${userResult.username}/roles`)
         return {
           ...userResult,
           roles: userRoles.data.roles

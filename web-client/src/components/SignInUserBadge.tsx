@@ -1,4 +1,6 @@
-import { Box, Grid, IconButton, Link as MaterialLink, Menu, MenuItem, Theme, Tooltip, Typography } from '@mui/material'
+import { Avatar, Box, Grid, IconButton, Link as MaterialLink, Menu, MenuItem, Theme, Tooltip, Typography } from '@mui/material'
+
+import Image from 'next/image'
 
 import {AccountCircle} from '@mui/icons-material'
 import { Link } from '.'
@@ -52,7 +54,7 @@ const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
           sx={{ p: 0 }}
           onClick={handleUserMenuOpen}
         >
-          <AccountCircle />
+          <Avatar src={'http://localhost:3000/api/user/profileImage'} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -74,22 +76,6 @@ const SignInUserBadge: React.FC<SignInUserBadgeProps> = ({user}) => {
         <MenuItem component={Link} href={'/logout'}>Logout</MenuItem>
       </Menu>
     </Box>
-    // <StyledGrid container spacing={1}>
-    //   <Grid item>
-    //     <AccountCircle className={classes.userAvatar}/>
-    //   </Grid>
-    //   <Grid item sm>
-    //     <Typography gutterBottom variant={'caption'}>
-    //       Hello, {user.name || user.username} {user.role && (<>({user.role})</>)}
-    //     </Typography>
-    //     <br/>
-    //     <Link href={'/settings/profile'} passHref={true}>
-    //       <MaterialLink>
-    //         My profile
-    //       </MaterialLink>
-    //     </Link>
-    //   </Grid>
-    // </StyledGrid>
   )
 }
 

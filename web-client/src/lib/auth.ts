@@ -56,7 +56,7 @@ export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>)
       apiAxios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
       if (context.req.user === undefined) {
-        let {data: user} = await apiAxios.get<ApplicationUser>('/user')
+        let {data: user} = await apiAxios.get<ApplicationUser>('/api/user')
         context.req = Object.defineProperty(context.req, 'user', {value: user})
       }
 
