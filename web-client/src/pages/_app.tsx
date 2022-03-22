@@ -7,6 +7,8 @@ import Head from 'next/head'
 
 import { createEmotionCache } from '@sentaku/utils'
 import { lightTheme } from '@sentaku/styles/theme'
+import { SWRConfig } from 'swr'
+import { fetcher } from '@sentaku/lib'
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -25,7 +27,9 @@ export default function MyApp(props: MyAppProps) {
       </Head>
       <ThemeProvider theme={lightTheme}>
         <CssBaseline/>
-        <Component {...pageProps} />
+          <SWRConfig value={{ fetcher: fetcher }}>
+            <Component {...pageProps} />
+          </SWRConfig>
       </ThemeProvider>
     </CacheProvider>
   )

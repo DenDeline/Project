@@ -7,4 +7,4 @@ export type {
 
 export { withAuth } from './auth'
 
-export { apiAxios, authAxios } from './defaults'
+export { apiAxios, authAxios, fetcher } from './defaults'
