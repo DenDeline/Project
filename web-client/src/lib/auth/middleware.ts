@@ -1,32 +1,10 @@
-import React from 'react'
-
-import {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult
-} from 'next'
-
-import { apiAxios } from './defaults'
 import staticAxios from 'axios'
+import { apiAxios } from '@sentaku/lib'
 
-import { ApplicationUser } from '../models/user'
-import { Permissions, Roles } from '@sentaku/constants'
+import { ApplicationUser } from '../../models/user'
 
-export interface AuthConfig {
-  withRedirect: boolean,
-  roles: string[],
-  permissions: Permissions
-}
-
-export type PropsWithUser<P = {}> = { user?: ApplicationUser } & P
-export type AuthProps<P = {}> = PropsWithUser<P> | { authError: AuthError }
-
-export interface AuthError {
-  status?: string
-  message: string
-}
-
-export type GetServerSidePropsContextWithUser = GetServerSidePropsContext & { req: { user?: ApplicationUser } }
-export type Callback<P> = (context: GetServerSidePropsContextWithUser) => Promise<GetServerSidePropsResult<P>>
+import type { GetServerSidePropsResult } from 'next/types'
+import type { AuthConfig, AuthProps, Callback, GetServerSidePropsContextWithUser } from './types'
 
 export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>) => {
   return async (context: GetServerSidePropsContextWithUser): Promise<GetServerSidePropsResult<AuthProps<P>>> => {
@@ -123,27 +101,4 @@ export const withAuth = <P>(callback: Callback<P>, config?: Partial<AuthConfig>)
       throw err
     }
   }
-}
-
-export interface AuthContextProps {
-  user?: ApplicationUser
-}
-
-export const AuthContext = React.createContext<AuthContextProps>({
-  user: undefined
-})
-
-export const useUser = (): ApplicationUser | undefined => {
-  const authContext = React.useContext(AuthContext)
-  return authContext.user
-}
-
-export const useRoles = (): Roles[] => {
-  const user = useUser()
-  return React.useMemo(() => user === undefined ? [Roles.Unauthorized] : user.roles, [user])
-}
-
-export const usePermissions = (): Permissions => {
-  const user = useUser()
-  return React.useMemo(() => user?.permissions ?? Permissions.None, [user?.permissions])
 }
