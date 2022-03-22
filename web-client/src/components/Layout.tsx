@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
         <Header position={'static'}>
           {user
             ? <SignInUserBadge user={user}/>
-            : <Button onClick={handleLoginClick}>Login</Button>
+            : <Button color={'inherit'} onClick={handleLoginClick}>Login</Button>
           }
         </Header>
         <div>

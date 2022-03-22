@@ -1,23 +1,7 @@
-import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, IconButton, Theme, Toolbar, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
-const PREFIX = 'Header'
-
-const classes = {
-  navbar: `${PREFIX}-navbar`,
-  title: `${PREFIX}-title`
-}
-
-const StyledAppBar = styled(AppBar)(({theme}) => ({
-  [`&.${classes.navbar}`]: {
-    marginBottom: theme.spacing(2)
-  },
-
-  [`& .${classes.title}`]: {
-    flexGrow: 1
-  }
-}))
-
+import MenuIcon from '@mui/icons-material/Menu'
 export interface HeaderProps {
   position: 'static' | 'sticky',
 }
@@ -25,27 +9,31 @@ export interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({position, children}) => {
 
   return (
-    <StyledAppBar
-      position={position}
-      color={'inherit'}
-      className={classes.navbar}
-    >
-      <Toolbar>
-        <Typography
-          variant={'h3'}
-          noWrap
-          className={classes.title}
-        >
-          Vote
-        </Typography>
-        <div
-          style={{marginLeft: 'auto'}}
-        >
-          {children}
-        </div>
-
-      </Toolbar>
-    </StyledAppBar>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position={position} >
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant={'h6'}
+            component={'div'}
+            sx={{ flexGrow: 1 }}
+          >
+            Vote
+          </Typography>
+          <Box>
+            {children}
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </Box>
   )
 }
 
