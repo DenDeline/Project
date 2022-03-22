@@ -9,7 +9,7 @@ import { apiAxios } from './defaults'
 import staticAxios from 'axios'
 
 import { ApplicationUser } from '../models/user'
-import { Permissions } from '@sentaku/constants'
+import { Permissions, Roles } from '@sentaku/constants'
 
 export interface AuthConfig {
   withRedirect: boolean,
@@ -136,6 +136,11 @@ export const AuthContext = React.createContext<AuthContextProps>({
 export const useUser = (): ApplicationUser | undefined => {
   const authContext = React.useContext(AuthContext)
   return authContext.user
+}
+
+export const useRoles = (): Roles[] => {
+  const user = useUser()
+  return React.useMemo(() => user === undefined ? [Roles.Unauthorized] : user.roles, [user])
 }
 
 export const usePermissions = (): Permissions => {

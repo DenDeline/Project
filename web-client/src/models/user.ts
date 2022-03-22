@@ -1,10 +1,10 @@
-import { Permissions } from '@sentaku/constants'
+import { Permissions, Roles } from '@sentaku/constants'
 export interface ApplicationUser {
   id: string
   username: string,
   name?: string,
   surname?: string,
   verified: boolean,
-  roles: string[],
+  roles: Roles[],
   permissions: Permissions
 }
