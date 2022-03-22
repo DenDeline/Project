@@ -18,7 +18,7 @@
 } from '@mui/material'
 
 import {AuthProps, withAuth} from '@sentaku/lib'
-import { Layout, Navbar } from '@sentaku/components'
+import { Layout } from '@sentaku/components'
 import {useCallback, useState} from 'react'
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -152,7 +152,6 @@ const Voting: React.FC<AuthProps> = (props) => {
     >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
-          <Navbar/>
           {
             questions.map((question, index) => (
               <Accordion variant={'outlined'} key={index} expanded={question.expanded}>

@@ -1,7 +1,7 @@
 ﻿import {AuthProps, withAuth} from '@sentaku/lib'
 
 import { Button, Chip, Container, Grid, Paper, Typography } from '@mui/material'
-import {ConfigureUserDialog, Layout, Navbar} from '@sentaku/components'
+import {ConfigureUserDialog, Layout} from '@sentaku/components'
 import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid'
 import {useCallback, useEffect, useState} from 'react'
 
@@ -189,7 +189,6 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
     >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
-          <Navbar/>
           <Paper variant={'outlined'}>
             <Grid container direction={'column'}>
               <Grid item sx={{ p: theme => theme.spacing(2), backgroundColor: 'rgba(0, 0, 0, .03)', borderBottom: '1px solid rgba(0, 0, 0, .125)' }}>
