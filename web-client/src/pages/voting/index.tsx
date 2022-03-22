@@ -31,6 +31,7 @@ import { accordionSummaryClasses } from '@mui/material/AccordionSummary'
 import { lightTheme } from '@sentaku/styles/theme'
 
 import { styled } from '@mui/material/styles'
+import { NextPage } from 'next'
 
 
 const AccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
@@ -66,7 +67,7 @@ export const getServerSideProps = withAuth(async ({req}) => {
   }
 }, {withRedirect: true})
 
-const Voting: React.FC<AuthProps> = (props) => {
+const Voting: NextPage = (props) => {
 
   const voteTypes = [
     {
@@ -146,10 +147,7 @@ const Voting: React.FC<AuthProps> = (props) => {
   }, [answers])
 
   return (
-    <Layout
-      title={'Current voting'}
-      user={props.data?.user}
-    >
+    <Layout title={'Current voting'}>
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
           {

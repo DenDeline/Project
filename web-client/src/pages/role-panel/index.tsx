@@ -8,7 +8,7 @@ import {useCallback, useEffect, useState} from 'react'
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 
-import {GetServerSideProps} from 'next'
+import {GetServerSideProps, NextPage} from 'next'
 import {Permissions} from '@sentaku/constants'
 
 import axios from 'axios'
@@ -83,9 +83,9 @@ export const getServerSideProps: GetServerSideProps = withAuth(async (context) =
 
     }
   }
-}, {withRedirect: true, permissions: Permissions.ManageUserRoles })
+}, {withRedirect: true, permissions: Permissions.Administrator })
 
-const RolePanel: React.FC<AuthProps> = ({data, error}) => {
+const RolePanel: NextPage = () => {
 
 
   const [rows, setRows] = useState<User[]>([])
@@ -185,7 +185,6 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
   return (
     <Layout
       title={'Role panel'}
-      user={data?.user}
     >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>

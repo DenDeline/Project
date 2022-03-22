@@ -1,6 +1,7 @@
-import {AuthProps, withAuth} from '@sentaku/lib'
+import {withAuth} from '@sentaku/lib'
 
 import { Layout } from '@sentaku/components'
+import { NextPage } from 'next'
 
 export const getServerSideProps = withAuth(async () => {
   return {
@@ -8,9 +9,9 @@ export const getServerSideProps = withAuth(async () => {
   }
 }, {withRedirect: true})
 
-const ProfileSettings: React.FC<AuthProps> = ({data, error}) => {
+const ProfileSettings: NextPage = () => {
   return (
-    <Layout user={data?.user} title={'Profile config'}>
+    <Layout title={'Profile config'}>
       <h2>Upload documents</h2>
       <form encType={'multipart/form-data'} method={'post'}>
         <dl>

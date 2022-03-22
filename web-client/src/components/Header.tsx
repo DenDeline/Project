@@ -5,11 +5,17 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { useCallback, useRef, useState } from 'react'
 
 import { Link } from '@sentaku/components'
+import { ApplicationUser } from 'models/user'
+import { Permissions } from '@sentaku/constants'
+import { useUser } from '@sentaku/lib'
+
 export interface HeaderProps {
   position: 'static' | 'sticky',
+  user?: ApplicationUser
 }
 
-const Header: React.FC<HeaderProps> = ({position, children}) => {
+const Header: React.FC<HeaderProps> = ({position, children, user}) => {
+
   const [isNavigationMenuOpen, setIsNavigationMenuOpen] = useState(false)
 
   const handleNavigationMenuOpen = useCallback(() => {
@@ -21,18 +27,20 @@ const Header: React.FC<HeaderProps> = ({position, children}) => {
   } ,[])
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, mb: theme => theme.spacing(2) }}>
       <AppBar position={position} color={'inherit'} >
         <Toolbar>
-          <IconButton
-            size={'large'}
-            edge={'start'}
-            aria-label={'menu'}
-            onClick={handleNavigationMenuOpen}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {user && (
+            <IconButton
+              size={'large'}
+              edge={'start'}
+              aria-label={'menu'}
+              onClick={handleNavigationMenuOpen}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography
             variant={'h6'}
             component={'div'}
@@ -45,22 +53,26 @@ const Header: React.FC<HeaderProps> = ({position, children}) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Drawer
-        open={isNavigationMenuOpen}
-        anchor={'left'}
-        onClose={handleNavigationMenuClose}
-      >
-        <Box sx={{ width: 320 }}>
-          <List>
-            <ListItem component={Link} href={'/voting'}>
-              Current vote
-            </ListItem>
-            <ListItem component={Link} href={'/role-panel'}>
-              Role panel
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
+      {user && (
+        <Drawer
+          open={isNavigationMenuOpen}
+          anchor={'left'}
+          onClose={handleNavigationMenuClose}
+        >
+          <Box sx={{ width: 320 }}>
+            <List>
+              <ListItem component={Link} href={'/voting'}>
+                Current vote
+              </ListItem>
+              {(user.permissions & Permissions.Administrator) === Permissions.Administrator && (
+                <ListItem component={Link} href={'/role-panel'}>
+                  Admin panel
+                </ListItem>
+              )}
+            </List>
+          </Box>
+        </Drawer>
+      )}
     </Box>
   )
 }
