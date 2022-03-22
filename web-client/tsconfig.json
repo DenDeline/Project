@@ -27,6 +27,9 @@
       "@sentaku/lib": [
         "lib/"
       ],
+      "@sentaku/lib/auth": [
+        "lib/auth/"
+      ],
       "@sentaku/constants": [
         "constants/"
       ],

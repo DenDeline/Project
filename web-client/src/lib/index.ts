@@ -1,10 +1,3 @@
-export type {
-  AuthConfig,
-  Callback,
-  AuthProps,
-  GetServerSidePropsContextWithUser
-} from './auth'
+export * from './auth'
 
-export { withAuth } from './auth'
-
-export { apiAxios, authAxios } from './defaults'
+export { apiAxios, authAxios, fetcher } from './defaults'

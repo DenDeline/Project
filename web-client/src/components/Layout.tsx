@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles'
 
 import {useCallback} from 'react'
 import {useRouter} from 'next/router'
+import { useUser } from '@sentaku/lib'
 
 const PREFIX = 'Layout'
 
@@ -27,16 +28,11 @@ const Root = styled('div')((
 }))
 
 interface LayoutProps {
-  user?: {
-    username: string
-    name?: string
-    role?: string
-  },
   title: string
 }
 
-const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
-
+const Layout: React.FC<LayoutProps> = ({title, children}) => {
+  const user = useUser()
   const router = useRouter()
 
   const handleLoginClick = useCallback(async () => {
@@ -46,10 +42,10 @@ const Layout: React.FC<LayoutProps> = ({user, title, children}) => {
   return (
     (<Root>
       <div className={classes.app}>
-        <Header position={'static'}>
+        <Header position={'static'} user={user}>
           {user
-            ? <SignInUserBadge user={user}/>
-            : <Button onClick={handleLoginClick}>Login</Button>
+            ? <SignInUserBadge user={user} />
+            : <Button color={'inherit'} onClick={handleLoginClick}>Login</Button>
           }
         </Header>
         <div>

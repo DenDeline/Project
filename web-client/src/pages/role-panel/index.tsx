@@ -1,14 +1,14 @@
 ﻿import {AuthProps, withAuth} from '@sentaku/lib'
 
 import { Button, Chip, Container, Grid, Paper, Typography } from '@mui/material'
-import {ConfigureUserDialog, Layout, Navbar} from '@sentaku/components'
+import {ConfigureUserDialog, Layout} from '@sentaku/components'
 import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid'
 import {useCallback, useEffect, useState} from 'react'
 
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 
-import {GetServerSideProps} from 'next'
+import {GetServerSideProps, NextPage} from 'next'
 import {Permissions} from '@sentaku/constants'
 
 import axios from 'axios'
@@ -83,9 +83,9 @@ export const getServerSideProps: GetServerSideProps = withAuth(async (context) =
 
     }
   }
-}, {withRedirect: true, permissions: Permissions.ManageUserRoles })
+}, {withRedirect: true, permissions: Permissions.Administrator })
 
-const RolePanel: React.FC<AuthProps> = ({data, error}) => {
+const RolePanel: NextPage = () => {
 
 
   const [rows, setRows] = useState<User[]>([])
@@ -96,11 +96,10 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
 
     (async () => {
       setLoading(true)
-
-      const usersResult = await axios.get<UserReadModel[]>(process.env.NEXT_PUBLIC_API_URL + '/users')
+      const usersResult = await axios.get<UserReadModel[]>('/api/users')
 
       const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<User> => {
-        const userRoles = await axios.get<{ roles: string[] }>(`${process.env.NEXT_PUBLIC_API_URL}/users/${userResult.username}/roles`)
+        const userRoles = await axios.get<{ roles: string[] }>(`api/users/${userResult.username}/roles`)
         return {
           ...userResult,
           roles: userRoles.data.roles
@@ -186,11 +185,9 @@ const RolePanel: React.FC<AuthProps> = ({data, error}) => {
   return (
     <Layout
       title={'Role panel'}
-      user={data?.user}
     >
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
-          <Navbar/>
           <Paper variant={'outlined'}>
             <Grid container direction={'column'}>
               <Grid item sx={{ p: theme => theme.spacing(2), backgroundColor: 'rgba(0, 0, 0, .03)', borderBottom: '1px solid rgba(0, 0, 0, .125)' }}>

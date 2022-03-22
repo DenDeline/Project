@@ -18,7 +18,7 @@
 } from '@mui/material'
 
 import {AuthProps, withAuth} from '@sentaku/lib'
-import { Layout, Navbar } from '@sentaku/components'
+import { Layout } from '@sentaku/components'
 import {useCallback, useState} from 'react'
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -31,6 +31,7 @@ import { accordionSummaryClasses } from '@mui/material/AccordionSummary'
 import { lightTheme } from '@sentaku/styles/theme'
 
 import { styled } from '@mui/material/styles'
+import { NextPage } from 'next'
 
 
 const AccordionSummary = styled(MuiAccordionSummary)(({ theme }) => ({
@@ -66,7 +67,7 @@ export const getServerSideProps = withAuth(async ({req}) => {
   }
 }, {withRedirect: true})
 
-const Voting: React.FC<AuthProps> = (props) => {
+const Voting: NextPage = (props) => {
 
   const voteTypes = [
     {
@@ -146,13 +147,9 @@ const Voting: React.FC<AuthProps> = (props) => {
   }, [answers])
 
   return (
-    <Layout
-      title={'Current voting'}
-      user={props.data?.user}
-    >
+    <Layout title={'Current voting'}>
       <Container maxWidth={'xl'}>
         <Typography component={'div'}>
-          <Navbar/>
           {
             questions.map((question, index) => (
               <Accordion variant={'outlined'} key={index} expanded={question.expanded}>

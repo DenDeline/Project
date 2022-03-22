@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Sentaku.SharedKernel.Constants;
 
 namespace Sentaku.WebApi.Models.User;
 
@@ -12,4 +14,6 @@ public class GetCurrentUserResponse
   public DateTime CreatedAt { get; set; }
   public bool Verified { get; set; }
   public string Birthday { get; set; }
+  public IEnumerable<string> Roles { get; set; }
+  public Permissions Permissions { get; set; }
 }

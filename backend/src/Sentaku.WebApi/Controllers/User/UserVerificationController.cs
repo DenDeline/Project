@@ -11,6 +11,7 @@ using Sentaku.WebApi.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
 
+[Authorize]
 [ApiController]
 public class UserVerificationController : ControllerBase
 {
@@ -20,8 +21,7 @@ public class UserVerificationController : ControllerBase
   {
     _userVerificationService = userVerificationService;
   }
-
-  [Authorize]
+  
   [HttpGet("/api/user/profileImage")]
   public async Task<ActionResult<string>> GetCurrentUserProfileImage()
   {
@@ -39,9 +39,7 @@ public class UserVerificationController : ControllerBase
 
     return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
   }
-
-
-  [Authorize]
+  
   [HttpGet("/api/users/{username}/profileImage")]
   public async Task<ActionResult<string>> GetUserProfileImageByUsername(string username)
   {
@@ -54,8 +52,7 @@ public class UserVerificationController : ControllerBase
 
     return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
   }
-
-  [Authorize]
+  
   [HttpPost("/api/user/profileImage")]
   public async Task<ActionResult> UpdateUserProfileImage([FromForm] UpdateProfileImageRequest request)
   {

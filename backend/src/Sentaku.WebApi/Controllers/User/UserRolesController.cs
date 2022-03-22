@@ -14,6 +14,7 @@ using Sentaku.WebApi.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
 
+[Authorize]
 [ApiController]
 public class UserRolesController : ControllerBase
 {

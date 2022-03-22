@@ -1,51 +1,79 @@
-import { AppBar, Theme, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Drawer, IconButton, List, ListItem, Theme, Toolbar, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
-const PREFIX = 'Header'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useCallback, useRef, useState } from 'react'
 
-const classes = {
-  navbar: `${PREFIX}-navbar`,
-  title: `${PREFIX}-title`
-}
-
-const StyledAppBar = styled(AppBar)(({theme}) => ({
-  [`&.${classes.navbar}`]: {
-    marginBottom: theme.spacing(2)
-  },
-
-  [`& .${classes.title}`]: {
-    flexGrow: 1
-  }
-}))
+import { Link } from '@sentaku/components'
+import { ApplicationUser } from 'models/user'
+import { Permissions } from '@sentaku/constants'
+import { useUser } from '@sentaku/lib'
 
 export interface HeaderProps {
   position: 'static' | 'sticky',
+  user?: ApplicationUser
 }
 
-const Header: React.FC<HeaderProps> = ({position, children}) => {
+const Header: React.FC<HeaderProps> = ({position, children, user}) => {
+
+  const [isNavigationMenuOpen, setIsNavigationMenuOpen] = useState(false)
+
+  const handleNavigationMenuOpen = useCallback(() => {
+    setIsNavigationMenuOpen(true)
+  }, [])
+
+  const handleNavigationMenuClose = useCallback(() => {
+    setIsNavigationMenuOpen(false)
+  } ,[])
 
   return (
-    <StyledAppBar
-      position={position}
-      color={'inherit'}
-      className={classes.navbar}
-    >
-      <Toolbar>
-        <Typography
-          variant={'h3'}
-          noWrap
-          className={classes.title}
+    <Box sx={{ flexGrow: 1, mb: theme => theme.spacing(2) }}>
+      <AppBar position={position} color={'inherit'} >
+        <Toolbar>
+          {user && (
+            <IconButton
+              size={'large'}
+              edge={'start'}
+              aria-label={'menu'}
+              onClick={handleNavigationMenuOpen}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography
+            variant={'h6'}
+            component={'div'}
+            sx={{ flexGrow: 1 }}
+          >
+            Vote
+          </Typography>
+          <Box>
+            {children}
+          </Box>
+        </Toolbar>
+      </AppBar>
+      {user && (
+        <Drawer
+          open={isNavigationMenuOpen}
+          anchor={'left'}
+          onClose={handleNavigationMenuClose}
         >
-          Vote
-        </Typography>
-        <div
-          style={{marginLeft: 'auto'}}
-        >
-          {children}
-        </div>
-
-      </Toolbar>
-    </StyledAppBar>
+          <Box sx={{ width: 320 }}>
+            <List>
+              <ListItem component={Link} href={'/voting'}>
+                Current vote
+              </ListItem>
+              {(user.permissions & Permissions.Administrator) === Permissions.Administrator && (
+                <ListItem component={Link} href={'/role-panel'}>
+                  Admin panel
+                </ListItem>
+              )}
+            </List>
+          </Box>
+        </Drawer>
+      )}
+    </Box>
   )
 }
 
