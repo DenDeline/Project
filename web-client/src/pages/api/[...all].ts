@@ -1,17 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-
 export default async function handle (req: NextApiRequest, res: NextApiResponse) {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  const accessTokenName = process.env.COOKIE_ACCESS_TOKEN_NAME
 
   if (apiUrl === undefined) {
     throw new Error('NEXT_PUBLIC_API_URL is undefined')
   }
 
-  try {
-    const accessToken = req.cookies.access_token
+  if (accessTokenName === undefined) {
+    throw new Error('COOKIE_ACCESS_TOKEN_NAME is undefined')
+  }
 
-    const headers: Record<string, string> = {}
+  const accessToken = req.cookies[accessTokenName]
+
+  try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    }
 
     if (accessToken) {
       headers['Authorization'] = `Bearer ${accessToken}`
