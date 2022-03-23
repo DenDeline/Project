@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, res, query}) 
     code_verifier: codeVerifierFromCookies
   }
 
-  const response = await authAxios.post<AccessTokenResponse>('/oauth2/token', new URLSearchParams(postData).toString())
+  const response = await authAxios.post<AccessTokenResponse>('/login/oauth2/token', new URLSearchParams(postData).toString())
 
   res.setHeader(
     'Set-Cookie',

@@ -28,15 +28,12 @@ public class UserRolesController : ControllerBase
     _userManager = userManager;
     _roleService = roleService;
   }
-
-  [Authorize]
+  
   [HttpGet("/api/user/roles")]
   public async Task<ActionResult<GetUserRolesResponse>> GetCurrentUserRoles()
   {
     if (User.Identity?.Name is null)
-    {
       return Forbid();
-    }
 
     var user = await _userManager.FindByNameAsync(User.Identity.Name);
     var roles = await _userManager.GetRolesAsync(user);

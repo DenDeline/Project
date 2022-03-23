@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async ({res}) => {
   return {
     redirect: {
       statusCode: 302,
-      destination: `${process.env.NEXT_PUBLIC_AUTH_SERVER_URL}/oauth2/authorize?response_type=${encodeURIComponent(responseType)}&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=${encodeURIComponent(codeChallengeMethod)}`,
+      destination: `${process.env.NEXT_PUBLIC_AUTH_SERVER_URL}/login/oauth2/authorize?response_type=${encodeURIComponent(responseType)}&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=${encodeURIComponent(codeChallengeMethod)}`,
     }
   }
 }

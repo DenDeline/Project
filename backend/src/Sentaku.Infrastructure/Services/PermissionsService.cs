@@ -34,6 +34,9 @@ namespace Sentaku.Infrastructure.Services
           (role, applicationRole) => applicationRole.Permissions)
         .ToListAsync();
 
+      if (!rolePermissions.Any())
+        return Permissions.None;
+      
       var permissions = rolePermissions.Aggregate((current, rolePermission) => current | rolePermission);
 
       return (permissions & Permissions.Administrator) == Permissions.Administrator ? Permissions.All : permissions;
