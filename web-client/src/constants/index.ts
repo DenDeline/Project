@@ -1,2 +1,2 @@
 export { Permissions } from './permissions'
-export { Roles } from './roles'
+export { Roles, RoleNames } from './roles'

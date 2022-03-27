@@ -19,13 +19,19 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
       'Content-Type': 'application/json'
     }
 
+    let reqBody = null
+
+    if (req.body)
+      reqBody = JSON.stringify(req.body)
+
     if (accessToken) {
       headers['Authorization'] = `Bearer ${accessToken}`
     }
 
     const response = await fetch(`${apiUrl}${req.url}`, {
       method: req.method,
-      headers: headers
+      headers: headers,
+      body: reqBody
     })
 
     const body = await response.arrayBuffer()

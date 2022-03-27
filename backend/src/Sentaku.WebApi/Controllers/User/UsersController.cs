@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel.Constants;
 using Sentaku.WebApi.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
@@ -33,7 +34,19 @@ public class UsersController : ControllerBase
   [HttpGet("/api/users")]
   public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetAllUsers(CancellationToken ctsToken)
   {
+    if (User.Identity?.Name is null)
+      return Ok(new List<GetUserResponse>());
+
     var users = await _userManager.Users.ToListAsync(ctsToken);
+    
+    var permissionsResult = await _permissionsService.GetPermissionsByUsernameAsync(User.Identity.Name);
+
+    if (permissionsResult.IsSuccess &&
+        (permissionsResult.Value & Permissions.Administrator) == Permissions.Administrator)
+    {
+      return Ok(_mapper.Map<IEnumerable<GetUserWithPrivateInfoResponse>>(users));
+    }
+    
     return Ok(_mapper.Map<IEnumerable<GetUserResponse>>(users));
   }
   

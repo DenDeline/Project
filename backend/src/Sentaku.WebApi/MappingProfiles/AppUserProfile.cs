@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Sentaku.Infrastructure.Data;
+using Sentaku.WebApi.Models.Admin.Users;
 using Sentaku.WebApi.Models.User;
 
 namespace Sentaku.WebApi.MappingProfiles
@@ -10,6 +11,7 @@ namespace Sentaku.WebApi.MappingProfiles
     {
       CreateMap<AppUser, GetUserResponse>();
       CreateMap<AppUser, GetCurrentUserResponse>();
+      CreateMap<AppUser, GetUserWithPrivateInfoResponse>();
     }
   }
 }

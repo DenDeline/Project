@@ -65,8 +65,8 @@ const Header: React.FC<HeaderProps> = ({position, children, user}) => {
                 Current vote
               </ListItem>
               {(user.permissions & Permissions.Administrator) === Permissions.Administrator && (
-                <ListItem component={Link} href={'/role-panel'}>
-                  Admin panel
+                <ListItem component={Link} href={'/admin/dashboard/users'}>
+                  Users
                 </ListItem>
               )}
             </List>

@@ -101,8 +101,8 @@ namespace Sentaku.WebApi
           {
             AuthorizationCode = new OpenApiOAuthFlow
             {
-              AuthorizationUrl = new Uri("https://localhost:7045/oauth2/authorize"),
-              TokenUrl = new Uri("https://localhost:7045/oauth2/token")
+              AuthorizationUrl = new Uri("https://localhost:7045/login/oauth2/authorize"),
+              TokenUrl = new Uri("https://localhost:7045/login/oauth2/token")
             }
           }
         });
