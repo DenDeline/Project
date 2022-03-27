@@ -17,12 +17,17 @@ namespace Sentaku.Infrastructure.Data.Config
           .IsRequired();
 
       builder.Property(e => e.Enabled)
-          .HasDefaultValue(false);
+          .HasDefaultValue(false)
+          .IsRequired();
 
       builder.Property(e => e.IsDefault)
-          .HasDefaultValue(false);
+          .HasDefaultValue(false)
+          .IsRequired();
 
-      builder.HasMany<AppUser>().WithOne().HasForeignKey(user => user.LanguageId).IsRequired();
+      builder.HasMany<AppUser>()
+        .WithOne()
+        .HasForeignKey(user => user.LanguageId)
+        .IsRequired();
     }
   }
 }

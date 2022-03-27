@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Project.Infrastructure.Data;
 using Sentaku.Infrastructure.Data;
 
 #nullable disable
 
-namespace Project.Infrastructure.Data.Migraions
+namespace Sentaku.Infrastructure.Data.Migraions
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -37,9 +36,8 @@ namespace Project.Infrastructure.Data.Migraions
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -62,9 +60,8 @@ namespace Project.Infrastructure.Data.Migraions
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -84,9 +81,8 @@ namespace Project.Infrastructure.Data.Migraions
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -97,11 +93,11 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -112,8 +108,8 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -129,10 +125,10 @@ namespace Project.Infrastructure.Data.Migraions
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Project.ApplicationCore.Aggregates.AppFile", b =>
+            modelBuilder.Entity("Sentaku.ApplicationCore.Aggregates.AppFile", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Content")
                         .IsRequired()
@@ -153,7 +149,7 @@ namespace Project.Infrastructure.Data.Migraions
                     b.ToTable("AppFile");
                 });
 
-            modelBuilder.Entity("Project.ApplicationCore.Aggregates.Language", b =>
+            modelBuilder.Entity("Sentaku.ApplicationCore.Aggregates.Language", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -186,10 +182,10 @@ namespace Project.Infrastructure.Data.Migraions
                     b.ToTable("Languages");
                 });
 
-            modelBuilder.Entity("Project.Infrastructure.Data.ApplicationRole", b =>
+            modelBuilder.Entity("Sentaku.Infrastructure.Data.AppRole", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -217,12 +213,14 @@ namespace Project.Infrastructure.Data.Migraions
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasCheckConstraint("CK_Position", "[Position] > 0");
                 });
 
-            modelBuilder.Entity("Project.Infrastructure.Data.ApplicationUser", b =>
+            modelBuilder.Entity("Sentaku.Infrastructure.Data.AppUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -252,7 +250,8 @@ namespace Project.Infrastructure.Data.Migraions
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -271,15 +270,16 @@ namespace Project.Infrastructure.Data.Migraions
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProfileImageId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid?>("ProfileImageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -312,7 +312,7 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Project.Infrastructure.Data.ApplicationRole", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -321,7 +321,7 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Project.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -330,7 +330,7 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Project.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -339,13 +339,13 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Project.Infrastructure.Data.ApplicationRole", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -354,24 +354,24 @@ namespace Project.Infrastructure.Data.Migraions
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Project.Infrastructure.Data.ApplicationUser", null)
+                    b.HasOne("Sentaku.Infrastructure.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Project.Infrastructure.Data.ApplicationUser", b =>
+            modelBuilder.Entity("Sentaku.Infrastructure.Data.AppUser", b =>
                 {
-                    b.HasOne("Project.ApplicationCore.Aggregates.Language", null)
+                    b.HasOne("Sentaku.ApplicationCore.Aggregates.Language", null)
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project.ApplicationCore.Aggregates.AppFile", "ProfileImage")
+                    b.HasOne("Sentaku.ApplicationCore.Aggregates.AppFile", "ProfileImage")
                         .WithOne()
-                        .HasForeignKey("Project.Infrastructure.Data.ApplicationUser", "ProfileImageId");
+                        .HasForeignKey("Sentaku.Infrastructure.Data.AppUser", "ProfileImageId");
 
                     b.Navigation("ProfileImage");
                 });
