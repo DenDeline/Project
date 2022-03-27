@@ -36,6 +36,9 @@
       "@sentaku/components": [
         "components/"
       ],
+      "@sentaku/components/*": [
+        "components/*"
+      ],
       "@sentaku/styles/*": [
         "styles/*"
       ],

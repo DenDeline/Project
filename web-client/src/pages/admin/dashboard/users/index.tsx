@@ -1,14 +1,21 @@
-﻿import {AuthProps, withAuth} from '@sentaku/lib'
+﻿import {GetServerSideProps, NextPage} from 'next'
+import dynamic from 'next/dynamic'
 
-import { Button, Chip, Container, Grid, Paper, Typography } from '@mui/material'
-import {ConfigureUserDialog, Layout} from '@sentaku/components'
+import {AuthProps, withAuth} from '@sentaku/lib'
+
+import { Button, CardHeader, Chip, Container, Grid, IconButton, Paper, Typography, Stack } from '@mui/material'
+
+const ConfigureUserDialog = dynamic(() => import('@sentaku/components/ConfigureUserDialog'))
+
+import {Layout} from '@sentaku/components'
 import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid'
 import {useCallback, useEffect, useState} from 'react'
 
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
+import ReplayIcon from '@mui/icons-material/Replay'
+import AddIcon from '@mui/icons-material/Add'
 
-import {GetServerSideProps, NextPage} from 'next'
 import {Permissions, Roles, RoleNames} from '@sentaku/constants'
 
 import axios from 'axios'
@@ -33,36 +40,46 @@ export const getServerSideProps: GetServerSideProps = withAuth(async (context) =
 
 const RolePanel: NextPage = () => {
 
+  const [reloadData, setReloadData] = useState(true)
+
   const [rows, setRows] = useState<Omit<ApplicationUser, 'permissions'>[]>([])
   const [isGridLoading, setIsGridLoading] = useState<boolean>(false)
 
+  const handleReloadDataButtonClick = useCallback(() => {
+    setReloadData(true)
+    setRows([])
+  }, [])
+
   useEffect(() => {
-    let active = true;
+    let active = true
 
-    (async () => {
-      setIsGridLoading(true)
-      const usersResult = await axios.get<UserReadModel[]>('/api/users')
+    if (reloadData) {
+      (async () => {
+        setIsGridLoading(true)
+        const usersResult = await axios.get<UserReadModel[]>('/api/users')
 
-      const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<Omit<ApplicationUser, 'permissions'>> => {
-        const userRoles = await axios.get<{ roles: string[] }>(`/api/users/${userResult.username}/roles`)
-        return {
-          roles: userRoles.data.roles as Roles[],
-          ...userResult
+        const usersWithRoles = await Promise.all(usersResult.data.map(async (userResult: UserReadModel): Promise<Omit<ApplicationUser, 'permissions'>> => {
+          const userRoles = await axios.get<{ roles: string[] }>(`/api/users/${userResult.username}/roles`)
+          return {
+            roles: userRoles.data.roles as Roles[],
+            ...userResult
+          }
+        }))
+
+        if (!active) {
+          return
         }
-      }))
 
-      if (!active) {
-        return
-      }
-
-      setRows(usersWithRoles)
-      setIsGridLoading(false)
-    })()
+        setRows(usersWithRoles)
+        setReloadData(false)
+        setIsGridLoading(false)
+      })()
+    }
 
     return () => {
       active = false
     }
-  }, [])
+  }, [reloadData])
 
   const RolesCell = useCallback((params: GridCellParams<Element, ApplicationUser>) => (
     <Grid container spacing={1}>
@@ -123,13 +140,17 @@ const RolePanel: NextPage = () => {
 
   const handleSaveUser = useCallback(async (username: ApplicationUser['name']) => {
 
-    await axios.post(`/api/users/${username}/verify`, { verified: selectedUserVerification })
+    try {
+      await axios.post(`/api/users/${username}/verify`, { verified: selectedUserVerification })
 
-    if (selectedUserVerification) {
-      await axios.post<{ roles: Roles[] }>(`/api/users/${username}/roles`, { roles: selectedUserRoles })
+      if (selectedUserVerification) {
+        await axios.post<{ roles: Roles[] }>(`/api/users/${username}/roles`, { roles: selectedUserRoles })
+      }
+
+      setRows(rows.map(user => user.username !== username ? user : { ...user, roles: selectedUserRoles, verified: selectedUserVerification }))
+    } catch (err) {
+      console.error(err)
     }
-
-    setRows(rows.map(user => user.username !== username ? user : { ...user, roles: selectedUserRoles, verified: selectedUserVerification }))
 
   }, [rows, selectedUserRoles, selectedUserVerification])
 
@@ -138,13 +159,23 @@ const RolePanel: NextPage = () => {
       title={'Users'}
     >
       <Container maxWidth={'xl'}>
-          <Grid container direction={'column'} sx={{ mb: theme => theme.spacing(2) }}>
-            <Grid item sx={{ p: theme => theme.spacing(2), backgroundColor: t => t.palette.grey[100] }}>
-              <Typography variant={'h5'}>
-                Configure users
-              </Typography>
-            </Grid>
-          </Grid>
+          <CardHeader
+            title={'Configure users'}
+            action={(
+              <Stack spacing={2} direction={'row'}>
+                <IconButton aria-label="Reload grid" onClick={handleReloadDataButtonClick}>
+                  <ReplayIcon />
+                </IconButton>
+                <Button
+                  variant={'contained'}
+                  disableElevation
+                  startIcon={<AddIcon />}
+                >
+                  Create
+                </Button>
+              </Stack>
+            )}
+          />
           <DataGrid
             autoHeight
             rows={rows}
