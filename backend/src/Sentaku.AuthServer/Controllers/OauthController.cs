@@ -19,7 +19,9 @@ public class OauthController : Controller
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
 
-    public OauthController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+    public OauthController(
+      UserManager<AppUser> userManager,
+      SignInManager<AppUser> signInManager)
     {
       _userManager = userManager;
       _signInManager = signInManager;
@@ -217,21 +219,15 @@ public class OauthController : Controller
       if (!codeTokenValidationResult.IsValid)
         return ResponseHelper.ErrorResponse(request.RedirectUri, codeTokenValidationResult.Error, codeTokenValidationResult.ErrorDescription);
 
-      var user = await _userManager.FindByIdAsync(codeToken.UserId);
-
-      if (user is null)
-        return ResponseHelper.InvalidRequest(request.RedirectUri);
-
-      var token = await tokenService.GetTokenAsync(
-        user.UserName, 
+      var tokenResult = await tokenService.GetTokenAsync(
+        codeToken.UserId, 
         "https://localhost:7045", 
-        "https://localhost:5001");
+        "https://localhost:5001",
+        cancellationToken);
 
-      return Ok(new
-      {
-        access_token = token,
-        token_type = "Bearer",
-        expires_in = 3600
-      });
+      if (tokenResult.IsSuccess)
+        return Ok(tokenResult.Value);
+      
+      return ResponseHelper.ResourceOwnerNotFound(request.RedirectUri);
     }
   }

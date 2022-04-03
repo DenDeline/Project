@@ -10,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
   if (builder.Environment.IsDevelopment())
-    options.EnableSensitiveDataLogging();
+    options
+      .LogTo(Console.WriteLine, LogLevel.Information)
+      .EnableSensitiveDataLogging()
+      .EnableDetailedErrors();
+  
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 

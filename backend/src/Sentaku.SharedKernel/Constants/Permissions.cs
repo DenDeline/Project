@@ -12,12 +12,14 @@ namespace Sentaku.SharedKernel.Constants
     VerifyUsers = 1 << 3,
     ManageVotingSessions = 1 << 4,
     ViewVotingSessions = 1 << 5,
+    ViewUsers = 1 << 6,
 
     All = Administrator |
           ManageUserRoles |
           BanUsers |
           VerifyUsers |
           ManageVotingSessions |
-          ViewVotingSessions
+          ViewVotingSessions | 
+          ViewUsers
   }
 }

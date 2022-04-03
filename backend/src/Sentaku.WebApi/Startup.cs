@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sentaku.ApplicationCore;
@@ -42,7 +45,11 @@ namespace Sentaku.WebApi
       services.AddDbContext<AppDbContext>(options =>
       {
         if (Environment.IsDevelopment())
-          options.EnableSensitiveDataLogging();
+          options
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors();
+        
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
 
@@ -65,6 +72,7 @@ namespace Sentaku.WebApi
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
 
+      services.AddHttpContextAccessor();
       services.AddSingleton<IAuthorizationPolicyProvider, PermissionsPolicyProvider>();
       services.AddScoped<IAuthorizationHandler, PermissionsAuthorizationHandler>();
 
@@ -76,6 +84,48 @@ namespace Sentaku.WebApi
             ValidIssuer = "https://localhost:7045",
             ValidAudience = "https://localhost:5001",
             IssuerSigningKey = new SigningIssuerCertificate().GetPublicKey()
+          };
+
+          options.Events = new JwtBearerEvents
+          {
+            OnTokenValidated = async context =>
+            {
+              if (context.Principal is null)
+              {
+                context.Fail("Principal is not authenticated");
+                return;
+              }
+
+              var userManager =  context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
+
+              var userId = context.Principal.FindFirstValue(userManager.Options.ClaimsIdentity.UserIdClaimType);
+              var securityStamp = context.Principal.FindFirstValue(userManager.Options.ClaimsIdentity.SecurityStampClaimType);
+
+              if (userId is null || securityStamp is null)
+              {
+                context.Fail("Invalid access token");
+                return;
+              }
+
+              var userResponse = await userManager.Users
+                .Where(_ => _.Id == userId)
+                .Select(_ => new { _.SecurityStamp })
+                .FirstOrDefaultAsync(context.HttpContext.RequestAborted);
+
+              if (userResponse is null)
+              {
+                context.Fail("User doesn't exist");
+                return;
+              }
+
+              if (securityStamp != userResponse.SecurityStamp)
+              {
+                context.Fail("Principal is not authenticated");
+                return;
+              }
+              
+              context.Success();
+            }
           };
         }); 
 

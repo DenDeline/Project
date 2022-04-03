@@ -30,24 +30,20 @@ public class UsersController : ControllerBase
     _permissionsService = permissionsService;
     _mapper = mapper;
   }
-
+  
   [HttpGet("/api/users")]
-  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetAllUsers(CancellationToken ctsToken)
+  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetAllUsers(CancellationToken cancellationToken)
   {
-    if (User.Identity?.Name is null)
-      return Ok(new List<GetUserResponse>());
+    var permissionsResult = await _permissionsService.GetPermissionsAsync(User, cancellationToken);
 
-    var users = await _userManager.Users.ToListAsync(ctsToken);
-    
-    var permissionsResult = await _permissionsService.GetPermissionsByUsernameAsync(User.Identity.Name);
+    if (!permissionsResult.IsSuccess || (permissionsResult.Value & Permissions.ViewUsers) != Permissions.ViewUsers)
+      return Forbid();
 
-    if (permissionsResult.IsSuccess &&
-        (permissionsResult.Value & Permissions.Administrator) == Permissions.Administrator)
-    {
-      return Ok(_mapper.Map<IEnumerable<GetUserWithPrivateInfoResponse>>(users));
-    }
-    
-    return Ok(_mapper.Map<IEnumerable<GetUserResponse>>(users));
+    var users = await _userManager.Users.ToListAsync(cancellationToken);
+
+    return (permissionsResult.Value & Permissions.Administrator) == Permissions.Administrator 
+      ? Ok(_mapper.Map<IEnumerable<GetUserWithPrivateInfoResponse>>(users)) 
+      : Ok(_mapper.Map<IEnumerable<GetUserResponse>>(users));
   }
   
   [HttpGet("/api/user")]
@@ -61,10 +57,12 @@ public class UsersController : ControllerBase
     
     response.Roles = await _userManager.GetRolesAsync(user);
 
-    var permissionResult =  await _permissionsService.GetPermissionsByUsernameAsync(User.Identity.Name);
+    var permissionResult =  await _permissionsService.GetPermissionsAsync(User);
 
-    if (permissionResult.IsSuccess)
-      response.Permissions = permissionResult.Value;
+    if (!permissionResult.IsSuccess)
+      return Forbid();
+    
+    response.Permissions = permissionResult.Value;
 
     return Ok(response);
   }
