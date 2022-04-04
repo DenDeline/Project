@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +15,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Sentaku.ApplicationCore;
 using Sentaku.Infrastructure;
 using Sentaku.Infrastructure.Data;
@@ -24,16 +28,24 @@ namespace Sentaku.WebApi
 {
   public class Startup
   {
+    
+    public const string NetJsClientCorsPolicy = "NetJSClientCorsPolicy";
+    public const string ServiceName = "WebApiSerivce";
+    
+    private readonly ResourceBuilder _resourceBuilder;
+
+    public IConfiguration Configuration { get; }
+    public IWebHostEnvironment Environment { get; }
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
       Configuration = configuration;
       Environment = environment;
+      var assemblyVersion  = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
+      
+      _resourceBuilder = ResourceBuilder
+        .CreateDefault()
+        .AddService(ServiceName, serviceVersion: assemblyVersion, serviceInstanceId: System.Environment.MachineName);
     }
-
-    public const string NetJsClientCorsPolicy = "NetJSClientCorsPolicy";
-
-    public IConfiguration Configuration { get; }
-    public IWebHostEnvironment Environment { get; }
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -42,14 +54,35 @@ namespace Sentaku.WebApi
 
       services.AddAutoMapper(typeof(Startup).Assembly);
 
+      services.AddOpenTelemetryTracing(builder =>
+      {
+        builder
+          .SetResourceBuilder(_resourceBuilder)
+          .AddConsoleExporter()
+          .AddHttpClientInstrumentation()
+          .AddAspNetCoreInstrumentation()
+          .AddEntityFrameworkCoreInstrumentation();
+      });
+
+      services.AddLogging(builder =>
+      {
+        builder.ClearProviders(); 
+        builder.AddOpenTelemetry(_ =>
+        {
+          _.SetResourceBuilder(_resourceBuilder);
+          _.AddConsoleExporter();
+        });
+      });
+
       services.AddDbContext<AppDbContext>(options =>
       {
         if (Environment.IsDevelopment())
+        {
           options
-            .LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
-        
+        }
+
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
       });
 
@@ -96,7 +129,7 @@ namespace Sentaku.WebApi
                 return;
               }
 
-              var userManager =  context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
+              var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<AppUser>>();
 
               var userId = context.Principal.FindFirstValue(userManager.Options.ClaimsIdentity.UserIdClaimType);
               var securityStamp = context.Principal.FindFirstValue(userManager.Options.ClaimsIdentity.SecurityStampClaimType);
@@ -141,6 +174,8 @@ namespace Sentaku.WebApi
 
       services.AddControllers();
 
+      services.AddEndpointsApiExplorer();
+      
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vote WebAPI", Version = "v1" });
@@ -166,7 +201,6 @@ namespace Sentaku.WebApi
             new List<string>()
           }
         });
-        c.OperationFilter<PermissionsOperationFilter>();
       });
     }
 
@@ -174,6 +208,14 @@ namespace Sentaku.WebApi
     {
       if (env.IsDevelopment())
       {
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+          c.OAuthClientId("project_swagger_3e1db73b647f43c297594797d62aec76");
+          c.OAuthUsePkce();
+          c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+        });
+        
         app.UseDeveloperExceptionPage();
         app.UseMigrationsEndPoint();
       }
@@ -186,14 +228,6 @@ namespace Sentaku.WebApi
 
       app.UseCors(NetJsClientCorsPolicy);
 
-      app.UseSwagger();
-      app.UseSwaggerUI(c =>
-      {
-        c.OAuthClientId("project_swagger_3e1db73b647f43c297594797d62aec76");
-        c.OAuthUsePkce();
-        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
-      });
-
       app.UseRouting();
 
       app.UseAuthentication();
@@ -201,6 +235,7 @@ namespace Sentaku.WebApi
 
       app.UseEndpoints(endpoints =>
       {
+        endpoints.MapSwagger();
         endpoints.MapControllers();
       });
     }
