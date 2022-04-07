@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-Project.WebMVC-9F3E10D9-4CA4-4F12-BB43-2A127B0971EE</UserSecretsId>
     <Nullable>enable</Nullable>
+    <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>
