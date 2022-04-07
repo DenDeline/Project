@@ -175,9 +175,10 @@ namespace Sentaku.WebApi
       services.AddControllers();
 
       services.AddEndpointsApiExplorer();
-      
+
       services.AddSwaggerGen(c =>
       {
+        c.EnableAnnotations();
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vote WebAPI", Version = "v1" });
         c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
         {
