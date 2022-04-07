@@ -30,7 +30,7 @@ namespace Sentaku.WebApi
   {
     
     public const string NetJsClientCorsPolicy = "NetJSClientCorsPolicy";
-    public const string ServiceName = "WebApiSerivce";
+    public const string ServiceName = "WebApiService";
     
     private readonly ResourceBuilder _resourceBuilder;
 
