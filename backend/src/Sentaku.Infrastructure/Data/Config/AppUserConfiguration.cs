@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 
 namespace Sentaku.Infrastructure.Data.Config
 {
@@ -23,6 +24,12 @@ namespace Sentaku.Infrastructure.Data.Config
         .HasOne(user => user.ProfileImage)
         .WithOne()
         .HasForeignKey<AppUser>(user => user.ProfileImageId);
+      
+      builder
+        .HasOne<VotingManager>()
+        .WithOne()
+        .HasForeignKey<VotingManager>(_ => _.IdentityId)
+        .IsRequired();
     }
   }
 }
