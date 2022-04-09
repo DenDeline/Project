@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ public class VotingManagersController: ControllerBase
     if (!result.IsSuccess)
       return this.ToActionResult(result);
 
-    return CreatedAtAction(nameof(GetVotingManagerByUsername), new { username = request.Username }, result.Value);
+    return CreatedAtAction(nameof(GetVotingManagerByUsername), new { managerId = result.Value.Id }, result.Value);
   }
 
   [HttpGet]
@@ -100,27 +101,25 @@ public class VotingManagersController: ControllerBase
     return Ok(response);
   }
   
-  [HttpGet("{username}")]
+  [HttpGet("{managerId:guid}")]
   [SwaggerResponse(StatusCodes.Status200OK)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerOperation( 
-    "Find voting manager by username", 
-    "Find voting manager by username", 
+    "Find voting manager by managerId", 
+    "Find voting manager by managerId", 
     Tags = new [] { "VotingManagers" })]
   public async Task<ActionResult<GetVotingManagerByUsernameResponse>> GetVotingManagerByUsername(
-    [FromRoute] string username,
+    [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var user = await _userManager.FindByNameAsync(username);
-
-    if (user is null)
-      return NotFound();
-    
-    var spec = new VotingManagerByIdentitySpec(user.Id);
-    
-    var votingManager = await _votingManagerRepository.GetBySpecAsync(spec, cancellationToken);
+    var votingManager = await _votingManagerRepository.GetByIdAsync(managerId, cancellationToken);
 
     if (votingManager is null)
+      return NotFound();
+    
+    var user = await _userManager.FindByIdAsync(votingManager.IdentityId);
+
+    if (user is null)
       return NotFound();
 
     var response = new GetVotingManagerByUsernameResponse
@@ -142,7 +141,7 @@ public class VotingManagersController: ControllerBase
     return Ok(response);
   }
   
-  [HttpPut("{username}/archive")]
+  [HttpPut("{managerId:guid}/archive")]
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully archived")]
@@ -151,15 +150,15 @@ public class VotingManagersController: ControllerBase
     "Archive voting manager and remove LeadManager role", 
     Tags = new [] { "VotingManagers", "Archiving" })]
   public async Task<ActionResult> UpdateArchiveVotingManagerById(
-    [FromRoute] string username,
+    [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var result = await _roleService.ArchiveVotingManagerByUsernameAsync(username, cancellationToken);
+    var result = await _roleService.ArchiveVotingManagerByIdAsync(managerId, cancellationToken);
 
     return this.ToActionResult(result);
   }
   
-  [HttpPut("{username}/restore")]
+  [HttpPut("{managerId:guid}/restore")]
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully restored")]
@@ -168,15 +167,15 @@ public class VotingManagersController: ControllerBase
     "Restore voting manager and add LeadManager role", 
     Tags = new [] { "VotingManagers", "Restoring" })]
   public async Task<ActionResult> UpdateRestoreVotingManagerById(
-    [FromRoute] string username,
+    [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var result = await _roleService.RestoreVotingManagerByUsernameAsync(username, cancellationToken);
+    var result = await _roleService.RestoreVotingManagerByUsernameAsync(managerId, cancellationToken);
 
     return this.ToActionResult(result);
   }
   
-  [HttpDelete("{username}")]
+  [HttpDelete("{managerId:guid}")]
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully deleted")]
@@ -185,10 +184,10 @@ public class VotingManagersController: ControllerBase
     "Delete voting manager form system and associated information", 
     Tags = new [] { "VotingManagers", "PermanentDelete" })]
   public async Task<ActionResult> DeleteVotingManagerById(
-    [FromRoute] string username,
+    [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var result = await _roleService.DeleteVotingManagerByUsernameAsync(username, cancellationToken);
+    var result = await _roleService.DeleteVotingManagerByUsernameAsync(managerId, cancellationToken);
 
     return this.ToActionResult(result);
   }
