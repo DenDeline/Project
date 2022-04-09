@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
   if (builder.Environment.IsDevelopment())
     options
-      .LogTo(Console.WriteLine, LogLevel.Information)
       .EnableSensitiveDataLogging()
       .EnableDetailedErrors();
   

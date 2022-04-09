@@ -38,6 +38,7 @@ namespace Sentaku.Infrastructure
       services.AddMediatR(assemblies.ToArray());
       
       services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+      services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
 
       services.AddScoped<MockDatabase>();
 

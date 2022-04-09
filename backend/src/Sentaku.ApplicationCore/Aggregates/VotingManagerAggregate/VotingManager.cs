@@ -15,16 +15,20 @@ namespace Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate
       
     }
 
-    public void CreateVoteSession(
+    public Guid CreateVoteSession(
       string agenda,
       DateTimeOffset startDate)
     {
       Guard.Against.NullOrWhiteSpace(agenda, nameof(agenda));
       Guard.Against.OutOfSQLDateRange(startDate.UtcDateTime, nameof(startDate));
+
+      var voteSessionId = Guid.NewGuid();
       
-      var domainEvent = new CreateVoteSessionEvent(this, agenda, startDate);
+      var domainEvent = new CreateVoteSessionEvent(this, voteSessionId, agenda, startDate);
       
       Events.Add(domainEvent);
+
+      return voteSessionId;
     }
   }
 }

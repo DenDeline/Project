@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Data\Migraions" />
       <Folder Include="Data\MigraionScripts" />
     </ItemGroup>
 </Project>

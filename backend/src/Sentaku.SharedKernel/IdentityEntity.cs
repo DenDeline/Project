@@ -16,18 +16,18 @@ public class IdentityEntity<TId>: BaseEntity<TId>, IIdentityEntity<TId>
   public string IdentityId { get; }
   public DateTime CreatedOn { get; }
   
-  public bool IsDisabled { get; protected set; }
-  public DateTime? DisabledOn { get; protected set; }
+  public bool IsArchived { get; protected set; }
+  public DateTime? ArchivedOn { get; protected set; }
 
-  public virtual void EnableIdentity()
+  public virtual void RestoreIdentity()
   {
-    IsDisabled = false;
-    DisabledOn = null;
+    IsArchived = false;
+    ArchivedOn = null;
   }
 
-  public virtual void DisableIdentity()
+  public virtual void ArchiveIdentity()
   {
-    IsDisabled = true;
-    DisabledOn = DateTime.UtcNow;
+    IsArchived = true;
+    ArchivedOn = DateTime.UtcNow;
   }
 }

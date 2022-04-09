@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sentaku.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Sentaku.Infrastructure.Data;
 namespace Sentaku.Infrastructure.Data.Migraions
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220407210056_VotingManager__Add_CreatedOn__Rename_IsDisabled_DisabledOn")]
+    partial class VotingManager__Add_CreatedOn__Rename_IsDisabled_DisabledOn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,21 +189,6 @@ namespace Sentaku.Infrastructure.Data.Migraions
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Agenda")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTimeOffset>("StartDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
 
                     b.Property<Guid?>("VotingManagerId")
                         .HasColumnType("uniqueidentifier");

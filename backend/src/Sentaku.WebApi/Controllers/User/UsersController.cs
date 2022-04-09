@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
 using Sentaku.SharedKernel.Constants;
+using Sentaku.WebApi.Authorization.PermissionsAuthorization;
 using Sentaku.WebApi.Models.User;
+using Microsoft.AspNetCore.Http;
 
 namespace Sentaku.WebApi.Controllers.User;
 
@@ -31,22 +33,18 @@ public class UsersController : ControllerBase
     _mapper = mapper;
   }
   
-  [HttpGet("/api/users")]
-  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetAllUsers(CancellationToken cancellationToken)
+  [RequirePermissions(Permissions.ViewUsers)]
+  [HttpGet("/users")]
+  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetUsers(CancellationToken cancellationToken)
   {
-    var permissionsResult = await _permissionsService.GetPermissionsAsync(User, cancellationToken);
-
-    if (!permissionsResult.IsSuccess || (permissionsResult.Value & Permissions.ViewUsers) != Permissions.ViewUsers)
-      return Forbid();
-
-    var users = await _userManager.Users.ToListAsync(cancellationToken);
-
-    return (permissionsResult.Value & Permissions.Administrator) == Permissions.Administrator 
-      ? Ok(_mapper.Map<IEnumerable<GetUserWithPrivateInfoResponse>>(users)) 
-      : Ok(_mapper.Map<IEnumerable<GetUserResponse>>(users));
+    var response = await _mapper
+      .ProjectTo<GetUserResponse>(_userManager.Users)
+      .ToListAsync(cancellationToken);
+    
+    return Ok(response);
   }
   
-  [HttpGet("/api/user")]
+  [HttpGet("/user")]
   public async Task<ActionResult<GetCurrentUserResponse>> GetCurrentUser()
   {
     if (User.Identity?.Name is null)
@@ -67,7 +65,10 @@ public class UsersController : ControllerBase
     return Ok(response);
   }
 
-  [HttpGet("/api/users/{username}")]
+  [HttpGet("/users/{username}")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesDefaultResponseType]
   public async Task<ActionResult<GetUserResponse>> GetUserByName([FromRoute] string username)
   {
     var user = await _userManager.FindByNameAsync(username);

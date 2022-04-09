@@ -9,27 +9,28 @@ namespace Sentaku.Infrastructure.Data.Config
   {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
-      builder.Property(_ => _.Id)
+      builder
+        .Property(_ => _.Id)
         .HasConversion<Guid>();
 
-      builder.Property(_ => _.Name)
+      builder
+        .Property(_ => _.Name)
         .HasMaxLength(64)
         .IsRequired();
 
-      builder.Property(_ => _.Surname)
+      builder
+        .Property(_ => _.Surname)
         .HasMaxLength(64)
+        .IsRequired();
+
+      builder
+        .Property(_ => _.CreatedAt)
         .IsRequired();
 
       builder
         .HasOne(user => user.ProfileImage)
         .WithOne()
         .HasForeignKey<AppUser>(user => user.ProfileImageId);
-      
-      builder
-        .HasOne<VotingManager>()
-        .WithOne()
-        .HasForeignKey<VotingManager>(_ => _.IdentityId)
-        .IsRequired();
     }
   }
 }

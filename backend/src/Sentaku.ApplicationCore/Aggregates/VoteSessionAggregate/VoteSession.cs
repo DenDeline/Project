@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
+using Ardalis.SmartEnum.SystemTextJson;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.SharedKernel;
@@ -10,13 +12,14 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
   public class VoteSession : BaseEntity<Guid>, IAggregateRoot
   {
     public DateTime CreatedOn { get; }
-    public VotingManager VotingManager { get; }
-    public Guid VotingManagerId { get; }
+    public VotingManager? VotingManager { get; }
+    public Guid? VotingManagerId { get; }
     
     public string Agenda { get; }
     
     public DateTimeOffset StartDate { get; }
     
+    [JsonConverter(typeof(SmartEnumNameConverter<SessionState, int>))]
     public SessionState State { get; }
     
     private VoteSession() {}

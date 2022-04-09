@@ -12,11 +12,11 @@ public interface IIdentityEntity: IEntity
 {
   string IdentityId { get; }
   DateTime CreatedOn { get; }
-  bool IsDisabled { get; }
-  DateTime? DisabledOn { get; }
+  bool IsArchived { get; }
+  DateTime? ArchivedOn { get; }
 
-  void EnableIdentity();
-  void DisableIdentity();
+  void RestoreIdentity();
+  void ArchiveIdentity();
 }
 
 

@@ -17,7 +17,10 @@ public class CreateVoteSessionHandler: INotificationHandler<CreateVoteSessionEve
   
   public async Task Handle(CreateVoteSessionEvent notification, CancellationToken cancellationToken)
   {
-    var session = new VoteSession(notification.VotingManager, notification.Agenda, notification.StartDate);
+    var session = new VoteSession(notification.VotingManager, notification.Agenda, notification.StartDate)
+    {
+      Id = notification.VoteSessionId
+    };
 
     await _voteSessionRepository.AddAsync(session, cancellationToken);
   }

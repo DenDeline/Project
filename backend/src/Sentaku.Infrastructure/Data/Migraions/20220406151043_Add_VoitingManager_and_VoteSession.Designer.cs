@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sentaku.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Sentaku.Infrastructure.Data;
 namespace Sentaku.Infrastructure.Data.Migraions
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220406151043_Add_VoitingManager_and_VoteSession")]
+    partial class Add_VoitingManager_and_VoteSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,22 +190,7 @@ namespace Sentaku.Infrastructure.Data.Migraions
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Agenda")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTimeOffset>("StartDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("VotingManagerId")
+                    b.Property<Guid>("VotingManagerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -219,16 +206,13 @@ namespace Sentaku.Infrastructure.Data.Migraions
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ArchivedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime?>("DisabledOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("IdentityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsArchived")
+                    b.Property<bool>("IsDisabled")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -288,9 +272,6 @@ namespace Sentaku.Infrastructure.Data.Migraions
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -426,7 +407,8 @@ namespace Sentaku.Infrastructure.Data.Migraions
                     b.HasOne("Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.VotingManager", "VotingManager")
                         .WithMany()
                         .HasForeignKey("VotingManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VotingManager");
                 });

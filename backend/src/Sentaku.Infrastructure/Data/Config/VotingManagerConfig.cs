@@ -15,8 +15,17 @@ public class VotingManagerConfig: IEntityTypeConfiguration<VotingManager>
       .HasConversion<Guid>();
 
     builder
-      .HasMany<VoteSession>()
-      .WithOne(_ => _.VotingManager)
-      .HasForeignKey(_ => _.VotingManagerId);
+      .Property(_ => _.CreatedOn)
+      .IsRequired();
+
+    builder
+      .HasOne<AppUser>()
+      .WithOne()
+      .HasForeignKey<VotingManager>(_ => _.IdentityId)
+      .IsRequired();
+
+    builder
+      .Property(_ => _.IsArchived)
+      .IsRequired();
   }
 }
