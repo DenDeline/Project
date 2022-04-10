@@ -6,6 +6,7 @@ using Ardalis.GuardClauses;
 using Ardalis.SmartEnum.SystemTextJson;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
+using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Events;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.ValueObjects;
 using Sentaku.SharedKernel;
@@ -161,6 +162,8 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
     {
       State = SessionState.Closed;
       ClosedOn = DateTime.UtcNow;
+      
+      Events.Add(new VoteSessionClosedEvent(Id));
     }
     
     private void ApproveResults()

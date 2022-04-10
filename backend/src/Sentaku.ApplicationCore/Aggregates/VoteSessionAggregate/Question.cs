@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
@@ -23,6 +24,9 @@ public class Question: BaseEntity<Guid>
   private readonly List<Vote> _votes = new();
   public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
   
+  private readonly List<VotingResult> _results = new();
+  public IReadOnlyList<VotingResult> Results => _results.AsReadOnly();
+
   // EF CORE
   private Question() {}
   public Question(VoteSession session, int index, string summary, string description)
@@ -41,4 +45,10 @@ public class Question: BaseEntity<Guid>
   }
 
   public void AddVote(Voter voter, VoteTypes type) => _votes.Add(new Vote(this, voter, type));
+
+  public void CalculateResults()
+  {
+    var results= _votes.GroupBy(v => v.Type, v => v.VoterId, (type, voters) => new VotingResult(this, type, voters.Count()));
+    _results.AddRange(results);
+  }
 }

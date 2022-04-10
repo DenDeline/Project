@@ -31,6 +31,10 @@ public class QuestionConfig: IEntityTypeConfiguration<Question>
       .HasForeignKey(_ => _.QuestionId);
 
     builder
+      .HasMany(_ => _.Results)
+      .WithOne(_ => _.Question);
+    
+    builder
       .Property(_ => _.CreatedOn)
       .IsRequired();
 

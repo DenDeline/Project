@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate.Specifications;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Specifications;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
+using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
 using Sentaku.SharedKernel.Constants;
 using Sentaku.SharedKernel.Interfaces;
@@ -28,6 +30,7 @@ public class VoteSessionsController: ControllerBase
   private readonly IRepository<VotingManager> _votingManagerRepository;
   private readonly IRepository<VoteSession> _voteSessionRepository;
   private readonly IReadRepository<VoteSession> _voteSessionReadRepository;
+  private readonly IPermissionsService _permissionsService;
   private readonly IRepository<Voter> _voterRepository;
 
   public VoteSessionsController(
@@ -35,12 +38,14 @@ public class VoteSessionsController: ControllerBase
     IRepository<VotingManager> votingManagerRepository,
     IRepository<VoteSession> voteSessionRepository,
     IReadRepository<VoteSession> voteSessionReadRepository,
+    IPermissionsService permissionsService,
     IRepository<Voter> voterRepository)
   {
     _userManager = userManager;
     _votingManagerRepository = votingManagerRepository;
     _voteSessionRepository = voteSessionRepository;
     _voteSessionReadRepository = voteSessionReadRepository;
+    _permissionsService = permissionsService;
     _voterRepository = voterRepository;
   }
 
@@ -192,5 +197,55 @@ public class VoteSessionsController: ControllerBase
 
     await _voteSessionRepository.SaveChangesAsync(cancellationToken);
     return NoContent();
+  }
+  
+  [HttpGet("{sessionId:guid}/results")]
+  [RequirePermissions(Permissions.ViewVotingSessions)]
+  public async Task<ActionResult> GetResultsBySessionId(
+    [FromRoute] Guid sessionId,
+    CancellationToken cancellationToken)
+  {
+    var userId = _userManager.GetUserId(User);
+
+    if (userId is null)
+      return Unauthorized();
+    
+    var stateSpec = new VoteSessionStateByIdSpec(sessionId);
+    
+    var state = await _voteSessionReadRepository.GetBySpecAsync(stateSpec, cancellationToken);
+
+    if (state is null)
+      return NotFound();
+
+    if (state.Equals(SessionState.ResultsApproved))
+    {
+      var voteSessionSpec = new VoteSessionResultsByIdSpec(sessionId);
+    
+      var results = await _voteSessionRepository.GetBySpecAsync(voteSessionSpec, cancellationToken);
+
+      if (results is null)
+        return NotFound();
+    
+      return Ok(results);
+    }
+
+    if (!state.Equals(SessionState.Closed))
+      return BadRequest();
+
+    {
+      var result = await _permissionsService.ValidatePermissionsAsync(User, Permissions.ManageVotingSessions, cancellationToken);
+      if (!result.Succeeded)
+        return BadRequest();
+      
+      var voteSessionSpec = new VoteSessionResultsByIdSpec(sessionId);
+    
+      var results = await _voteSessionRepository.GetBySpecAsync(voteSessionSpec, cancellationToken);
+
+      if (results is null)
+        return NotFound();
+    
+      return Ok(results);
+    }
+
   }
 }
