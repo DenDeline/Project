@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Aggregates;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.SharedKernel;
 using Sentaku.SharedKernel.Interfaces;
@@ -31,9 +32,8 @@ namespace Sentaku.Infrastructure.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-
-      modelBuilder.ConfigureSmartEnum();
       
+
       modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 

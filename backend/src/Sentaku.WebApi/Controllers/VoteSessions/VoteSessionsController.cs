@@ -23,15 +23,18 @@ public class VoteSessionsController: ControllerBase
 {
   private readonly UserManager<AppUser> _userManager;
   private readonly IRepository<VotingManager> _votingManagerRepository;
+  private readonly IRepository<VoteSession> _voteSessionRepository;
   private readonly IReadRepository<VoteSession> _voteSessionReadRepository;
 
   public VoteSessionsController(
     UserManager<AppUser> userManager,
     IRepository<VotingManager> votingManagerRepository,
+    IRepository<VoteSession> voteSessionRepository,
     IReadRepository<VoteSession> voteSessionReadRepository)
   {
     _userManager = userManager;
     _votingManagerRepository = votingManagerRepository;
+    _voteSessionRepository = voteSessionRepository;
     _voteSessionReadRepository = voteSessionReadRepository;
   }
 
@@ -83,5 +86,24 @@ public class VoteSessionsController: ControllerBase
   {
     var session = await _voteSessionReadRepository.ListAsync(cancellationToken);
     return Ok(session);
+  }
+  
+  [HttpPut("{sessionId:guid}/state/next")]
+  [RequirePermissions(Permissions.ManageVotingSessions)]
+  public async Task<ActionResult<VoteSession>> UpdateMoveSessionInNextStateById(
+    [FromRoute] Guid sessionId,
+    CancellationToken cancellationToken)
+  {
+    var session = await _voteSessionRepository.GetByIdAsync(sessionId, cancellationToken);
+
+    if (session is null)
+      return NotFound();
+
+    if (!session.MoveInNextState())
+      return BadRequest();
+
+    await _voteSessionRepository.SaveChangesAsync(cancellationToken);
+    return NoContent();
+
   }
 }

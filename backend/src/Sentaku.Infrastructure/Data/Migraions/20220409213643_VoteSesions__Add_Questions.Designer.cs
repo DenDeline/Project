@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sentaku.Infrastructure.Data;
 
@@ -11,9 +12,10 @@ using Sentaku.Infrastructure.Data;
 namespace Sentaku.Infrastructure.Data.Migraions
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220409213643_VoteSesions__Add_Questions")]
+    partial class VoteSesions__Add_Questions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,26 +225,17 @@ namespace Sentaku.Infrastructure.Data.Migraions
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ActivatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Agenda")
                         .IsRequired()
                         .HasMaxLength(2000)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<DateTime?>("ClosedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("QuestionCount")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("ResultsApprovedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTimeOffset>("StartDate")
                         .HasColumnType("datetimeoffset");

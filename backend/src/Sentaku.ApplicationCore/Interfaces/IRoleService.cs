@@ -9,31 +9,20 @@ namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IRoleService
   {
-    Task<Result<IReadOnlyList<string>>> UpdateRolesByUsernameAsync(
-      string currentUsername,
-      string updatingUsername,
-      IReadOnlyList<string> updatingRoles,
-      CancellationToken cancellationToken = default);
-
-    Task<Result<IReadOnlyList<string>>> DeleteUserRolesByUsernameAsync(
-      string currentUsername,
-      string updatingUsername,
-      CancellationToken cancellationToken = default);
-
     Task<Result<VotingManager>> CreateVotingManagerByUsernameAsync(
       string username,
       CancellationToken cancellationToken = default);
 
-    Task<Result> ArchiveVotingManagerByUsernameAsync(
-      string username,
+    Task<Result> ArchiveVotingManagerByIdAsync(
+      Guid managerId,
       CancellationToken cancellationToken = default);
 
     Task<Result> RestoreVotingManagerByUsernameAsync(
-      string username,
+      Guid managerId,
       CancellationToken cancellationToken = default);
     
     Task<Result> DeleteVotingManagerByUsernameAsync(
-      string username,
+      Guid managerId,
       CancellationToken cancellationToken = default);
   }
 }

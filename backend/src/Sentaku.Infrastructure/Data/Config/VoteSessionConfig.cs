@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
-using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 
 namespace Sentaku.Infrastructure.Data.Config;
 
@@ -20,17 +20,22 @@ public class VoteSessionConfig: IEntityTypeConfiguration<VoteSession>
       .HasMaxLength(2000)
       .IsUnicode()
       .IsRequired();
-
+    
     builder
       .Property(_ => _.State)
+      .HasConversion(p => p.Value, p => SessionState.FromValue(p))
       .IsRequired();
-    
+
     builder
       .Property(_ => _.CreatedOn)
       .IsRequired();
     
     builder
       .Property(_ => _.StartDate)
+      .IsRequired();
+
+    builder
+      .Property(_ => _.QuestionCount)
       .IsRequired();
   }
 }
