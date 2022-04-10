@@ -52,10 +52,6 @@ public class VotingManagersController: ControllerBase
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status201Created)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User not found")]
-  [SwaggerOperation( 
-    "Create voting manager", 
-    "Create voting managers by identity username", 
-    Tags = new [] { "VotingManagers" })]
   [ProducesDefaultResponseType]
   public async Task<ActionResult<VotingManager>> CreateVotingManager(
     [FromBody] CreateVotingManagerRequest request,
@@ -70,10 +66,6 @@ public class VotingManagersController: ControllerBase
   }
 
   [HttpGet]
-  [SwaggerOperation( 
-    "List voting manager", 
-    "List all voting managers in system", 
-    Tags = new [] { "VotingManagers", "ObserveDomain" })]
   public async Task<ActionResult<IEnumerable<ListVotingManagersResponse>>> ListVotingManagers(
     CancellationToken cancellationToken)
   {
@@ -104,10 +96,6 @@ public class VotingManagersController: ControllerBase
   [HttpGet("{managerId:guid}")]
   [SwaggerResponse(StatusCodes.Status200OK)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
-  [SwaggerOperation( 
-    "Find voting manager by managerId", 
-    "Find voting manager by managerId", 
-    Tags = new [] { "VotingManagers" })]
   public async Task<ActionResult<GetVotingManagerByUsernameResponse>> GetVotingManagerByUsername(
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
@@ -145,10 +133,6 @@ public class VotingManagersController: ControllerBase
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully archived")]
-  [SwaggerOperation( 
-    "Archive voting manager", 
-    "Archive voting manager and remove LeadManager role", 
-    Tags = new [] { "VotingManagers", "Archiving" })]
   public async Task<ActionResult> UpdateArchiveVotingManagerById(
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
@@ -162,10 +146,6 @@ public class VotingManagersController: ControllerBase
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully restored")]
-  [SwaggerOperation( 
-    "Restore voting manager", 
-    "Restore voting manager and add LeadManager role", 
-    Tags = new [] { "VotingManagers", "Restoring" })]
   public async Task<ActionResult> UpdateRestoreVotingManagerById(
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
@@ -179,10 +159,6 @@ public class VotingManagersController: ControllerBase
   [RequirePermissions(Permissions.Administrator)]
   [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Vote manager not found")]
   [SwaggerResponse(StatusCodes.Status204NoContent, Description = "Successfully deleted")]
-  [SwaggerOperation( 
-    "Delete voting manager form system", 
-    "Delete voting manager form system and associated information", 
-    Tags = new [] { "VotingManagers", "PermanentDelete" })]
   public async Task<ActionResult> DeleteVotingManagerById(
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)

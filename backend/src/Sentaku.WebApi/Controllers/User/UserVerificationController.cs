@@ -53,7 +53,7 @@ public class UserVerificationController : ControllerBase
     return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
   }
   
-  [HttpPost("/user/profileImage")]
+  [HttpPut("/user/profileImage")]
   public async Task<ActionResult> UpdateUserProfileImage([FromForm] UpdateProfileImageRequest request)
   {
     if (User.Identity?.Name is null)
@@ -90,7 +90,7 @@ public class UserVerificationController : ControllerBase
   [ProducesResponseType(StatusCodes.Status403Forbidden)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status200OK)]
-  [HttpPost("/users/{username}/verify")]
+  [HttpPut("/users/{username}/verify")]
   public async Task<ActionResult> UpdateUserVerification(
     [FromRoute] string username,
     [FromBody] UpdateUserVerificationRequest request)
