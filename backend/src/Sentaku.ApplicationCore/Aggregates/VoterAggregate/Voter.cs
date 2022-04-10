@@ -4,8 +4,13 @@ using Sentaku.SharedKernel.Interfaces;
 
 namespace Sentaku.ApplicationCore.Aggregates.VoterAggregate
 {
-  public class Voter : BaseEntity<Guid>, IAggregateRoot
+  public class Voter : IdentityEntity<Guid>, IAggregateRoot
   {
+    private Voter() {}
     
+    public Voter(string identityId): base(identityId)
+    {
+      
+    }
   }
 }

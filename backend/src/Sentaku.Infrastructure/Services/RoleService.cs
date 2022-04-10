@@ -9,6 +9,7 @@ using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate.Specifications;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
@@ -87,7 +88,7 @@ namespace Sentaku.Infrastructure.Services
       return Result.Success();
     }
     
-    public async Task<Result> RestoreVotingManagerByUsernameAsync(
+    public async Task<Result> RestoreVotingManagerByIdAsync(
       Guid managerId,
       CancellationToken cancellationToken = default)
     {
@@ -106,7 +107,7 @@ namespace Sentaku.Infrastructure.Services
       return Result.Success();
     }
 
-    public async Task<Result> DeleteVotingManagerByUsernameAsync(
+    public async Task<Result> DeleteVotingManagerByIdAsync(
       Guid managerId,
       CancellationToken cancellationToken = default)
     {
@@ -123,39 +124,84 @@ namespace Sentaku.Infrastructure.Services
       return Result.Success();
     }
 
-    public async Task<Result<bool>> AssignAuthorityByUsername(
-      ClaimsPrincipal currentUser,
-      string username,
-      CancellationToken cancellationToken = default)
+    public async Task<Result<Voter>> CreateVoterByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-      var currentUserId = _userManager.GetUserId(currentUser);
-      
-      if (currentUserId is null)
-        return Result<bool>.Forbidden();
+      Guard.Against.NullOrWhiteSpace(username, nameof(username));
 
-      return true;
+      var user = await _userManager.FindByNameAsync(username);
+      
+      if (user is null)
+        return Result<Voter>.NotFound();
+
+      var spec = new VoterByIdentitySpec(user.Id);
+
+      var votingManagerExists = await _voterRepository.AnyAsync(spec, cancellationToken);
+
+      if (votingManagerExists)
+        return Result<Voter>.Error("User is already voter");
+
+      await _userManager.AddToRoleAsync(user, RolesEnum.Authority.Name);
+
+      var voter = new Voter(user.Id);
+      
+      return await _voterRepository.AddAsync(voter, cancellationToken);
     }
 
-    public async Task<Result<bool>> AssignRepresentativeAuthorityByUsername(
-      ClaimsPrincipal currentUser,
-      string username,
-      CancellationToken cancellationToken = default)
+    public async Task<Result> ArchiveVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
     {
-      var currentUserId = _userManager.GetUserId(currentUser);
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
       
-      if (currentUserId is null)
-        return Result<bool>.Forbidden();
+      if (voter is null)
+        return Result.NotFound();
 
-      var updatingUserResponse = await _userManager.Users
-        .Where(_ => _.NormalizedUserName == _userManager.NormalizeName(username))
-        .Select(_ => _.Id)
-        .FirstOrDefaultAsync(cancellationToken);
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
       
-      if (updatingUserResponse is null)
-        return Result<bool>.NotFound();
+      if (user is null)
+        return Result.NotFound();
       
       
-      return true;
+      voter.ArchiveIdentity();
+      await _voterRepository.UpdateAsync(voter, cancellationToken);
+      
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.Authority.Name);
+
+      return Result.Success();
+    }
+
+    public async Task<Result> RestoreVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
+    {
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
+      
+      if (voter is null)
+        return Result.NotFound();
+
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
+      
+      if (user is null)
+        return Result.NotFound();
+      
+      voter.RestoreIdentity();
+      await _voterRepository.UpdateAsync(voter, cancellationToken);
+      
+      await _userManager.AddToRoleAsync(user, RolesEnum.Authority.Name);
+
+      return Result.Success();
+
+    }
+
+    public async Task<Result> DeleteVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
+    {
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
+      
+      if (voter is null)
+        return Result.NotFound();
+
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
+
+      await _voterRepository.DeleteAsync(voter, cancellationToken);
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.Authority.Name);
+      
+      return Result.Success();
     }
   }
 }

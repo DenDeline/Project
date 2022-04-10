@@ -170,7 +170,7 @@ public class VotingManagersController: ControllerBase
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var result = await _roleService.RestoreVotingManagerByUsernameAsync(managerId, cancellationToken);
+    var result = await _roleService.RestoreVotingManagerByIdAsync(managerId, cancellationToken);
 
     return this.ToActionResult(result);
   }
@@ -187,7 +187,7 @@ public class VotingManagersController: ControllerBase
     [FromRoute] Guid managerId,
     CancellationToken cancellationToken)
   {
-    var result = await _roleService.DeleteVotingManagerByUsernameAsync(managerId, cancellationToken);
+    var result = await _roleService.DeleteVotingManagerByIdAsync(managerId, cancellationToken);
 
     return this.ToActionResult(result);
   }

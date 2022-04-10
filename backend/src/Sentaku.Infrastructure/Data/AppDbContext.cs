@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Aggregates;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
@@ -27,6 +28,8 @@ namespace Sentaku.Infrastructure.Data
     public DbSet<VoteSession> VoteSessions { get; set; }
 
     public DbSet<VotingManager> VotingManagers { get; set; } 
+    
+    public DbSet<Voter> Voters { get; set; }
     public DbSet<Language> Languages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

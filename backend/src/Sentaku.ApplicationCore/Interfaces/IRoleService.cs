@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 
 namespace Sentaku.ApplicationCore.Interfaces
@@ -17,12 +18,28 @@ namespace Sentaku.ApplicationCore.Interfaces
       Guid managerId,
       CancellationToken cancellationToken = default);
 
-    Task<Result> RestoreVotingManagerByUsernameAsync(
+    Task<Result> RestoreVotingManagerByIdAsync(
       Guid managerId,
       CancellationToken cancellationToken = default);
     
-    Task<Result> DeleteVotingManagerByUsernameAsync(
+    Task<Result> DeleteVotingManagerByIdAsync(
       Guid managerId,
+      CancellationToken cancellationToken = default);
+    
+    Task<Result<Voter>> CreateVoterByUsernameAsync(
+      string username,
+      CancellationToken cancellationToken = default);
+
+    Task<Result> ArchiveVoterByIdAsync(
+      Guid voterId,
+      CancellationToken cancellationToken = default);
+
+    Task<Result> RestoreVoterByIdAsync(
+      Guid voterId,
+      CancellationToken cancellationToken = default);
+    
+    Task<Result> DeleteVoterByIdAsync(
+      Guid voterId,
       CancellationToken cancellationToken = default);
   }
 }
