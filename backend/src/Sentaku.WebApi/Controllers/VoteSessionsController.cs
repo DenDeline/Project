@@ -17,7 +17,7 @@ using Sentaku.SharedKernel.Interfaces;
 using Sentaku.SharedKernel.Models.VoteSession;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
 
-namespace Sentaku.WebApi.Controllers.VoteSessions;
+namespace Sentaku.WebApi.Controllers;
 
 [Authorize]
 [ApiController]
