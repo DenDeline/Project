@@ -7,6 +7,7 @@ using Ardalis.SmartEnum.SystemTextJson;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
+using Sentaku.ApplicationCore.ValueObjects;
 using Sentaku.SharedKernel;
 using Sentaku.SharedKernel.Interfaces;
 
@@ -29,8 +30,8 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
     public IReadOnlyList<Question> Questions => _questions.AsReadOnly();
     public int QuestionCount { get; private set; }
 
-    private readonly List<Voter> _voters = new();
-    public IReadOnlyList<Voter> Voters => _voters.AsReadOnly();
+    private readonly List<JoinedVotersSessions> _joinedVoters = new();
+    public IReadOnlyList<JoinedVotersSessions> JoinedVoters => _joinedVoters.AsReadOnly();
     
     [JsonConverter(typeof(SmartEnumNameConverter<SessionState, int>))]
     public SessionState State { get; private set; }
@@ -80,7 +81,7 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
     {
       if (!State.CanEditSession) return false;
       
-      var requireQuestion = GetQuestionByIndex(questionIndex);;
+      var requireQuestion = GetQuestionByIndex(questionIndex);
       
       if (requireQuestion is null)
         return false;
@@ -102,8 +103,10 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
 
       if (!State.Equals(SessionState.Active))
         return false;
+
+      var joinedVoter = _joinedVoters.SingleOrDefault(_ => _.VoterId == voter.Id);
       
-      if(_voters.All(_ => _.Id != voter.Id))
+      if(joinedVoter is null or { IsVoted: true })
         return false;
 
       if (_questions.Count != votes.Length)
@@ -112,6 +115,8 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
       foreach (var question in _questions)
         question.AddVote(voter, VoteTypes.FromValue(votes[question.Index]));
 
+      joinedVoter.IsVoted = true;
+      
       return true;
     }
     
@@ -122,10 +127,10 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
       if (!State.Equals(SessionState.Pending))
         return false;
       
-      if(_voters.Any(_ => _.Id == voter.Id))
+      if(_joinedVoters.Any(_ => _.VoterId == voter.Id))
         return false;
       
-      _voters.Add(voter);
+      _joinedVoters.Add(new JoinedVotersSessions(voter, this));
 
       return true;
     }

@@ -128,7 +128,7 @@ public class VoteSessionsController: ControllerBase
     return Ok(voters);
   }
   
-  [HttpPut("{sessionId:guid}/join")]
+  [HttpPut("{sessionId:guid}/voters/join")]
   [RequirePermissions(Permissions.ViewVotingSessions)]
   public async Task<ActionResult> UpdateJoinVoterBySessionId(
     [FromRoute] Guid sessionId,
@@ -161,7 +161,7 @@ public class VoteSessionsController: ControllerBase
     return NoContent();
   }
 
-  [HttpPut("{sessionId:guid}/vote")]
+  [HttpPut("{sessionId:guid}/votes")]
   [RequirePermissions(Permissions.ViewVotingSessions)]
   public async Task<ActionResult> UpdateVoteBySessionId(
     [FromRoute] Guid sessionId,

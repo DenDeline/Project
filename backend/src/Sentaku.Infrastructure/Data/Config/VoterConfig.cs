@@ -33,5 +33,10 @@ public class VoterConfig: IEntityTypeConfiguration<Voter>
       .HasMany<Vote>()
       .WithOne(_ => _.Voter)
       .HasForeignKey(_ => _.VoterId);
+    
+    builder
+      .HasMany(_ => _.JoinedSessions)
+      .WithOne(_ => _.Voter)
+      .HasForeignKey(_ => _.VoterId);
   }
 }

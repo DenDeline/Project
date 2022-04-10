@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
+using Sentaku.ApplicationCore.ValueObjects;
 
 namespace Sentaku.Infrastructure.Data.Config;
 
@@ -16,8 +17,9 @@ public class VoteSessionConfig: IEntityTypeConfiguration<VoteSession>
       .OnDelete(DeleteBehavior.SetNull);
     
     builder
-      .HasMany(_ => _.Voters)
-      .WithMany(_ => _.Sessions);
+      .HasMany(_ => _.JoinedVoters)
+      .WithOne(_ => _.VoteSession)
+      .HasForeignKey(_ => _.VoteSessionId);
 
     builder
       .Property(_ => _.Agenda)

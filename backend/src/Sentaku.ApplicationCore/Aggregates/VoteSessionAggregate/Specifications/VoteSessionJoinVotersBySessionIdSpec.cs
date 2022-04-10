@@ -10,8 +10,8 @@ public class VoteSessionJoinVotersBySessionIdSpec: Specification<VoteSession, IE
   public VoteSessionJoinVotersBySessionIdSpec(Guid sessionId)
   {
     Query
-      .Select(_ => _.Voters.Select(_ => _.Id))
-      .Include(_ => _.Voters)
+      .Select(_ => _.JoinedVoters.Select(_ => _.VoterId))
+      .Include(_ => _.JoinedVoters)
       .Where(_ => _.Id == sessionId);
   }
 }

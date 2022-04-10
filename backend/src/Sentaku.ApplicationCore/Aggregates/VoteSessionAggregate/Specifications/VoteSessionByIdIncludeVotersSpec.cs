@@ -8,7 +8,7 @@ public class VoteSessionByIdIncludeVotersSpec: Specification<VoteSession>, ISing
   public VoteSessionByIdIncludeVotersSpec(Guid sessionId)
   {
     Query
-      .Include(_ => _.Voters)
+      .Include(_ => _.JoinedVoters)
       .Where(_ => _.Id == sessionId);
   }
 }

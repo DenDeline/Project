@@ -9,7 +9,7 @@ public class VoteSessionByIdIncludeQuestionsAndVotersSpec: Specification<VoteSes
   {
     Query
       .Include(_ => _.Questions)
-      .Include(_ => _.Voters)
+      .Include(_ => _.JoinedVoters)
       .Where(_ => _.Id == sessionId);
   }
 }
