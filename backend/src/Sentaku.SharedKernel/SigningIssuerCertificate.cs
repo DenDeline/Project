@@ -5,25 +5,30 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Sentaku.SharedKernel
 {
-  public class SigningIssuerCertificate : IDisposable
+  public class SigningIssuerCertificate: IDisposable
   {
-    private readonly RSA _rsa = RSA.Create();
-
-    public RsaSecurityKey GetPublicKey()
+    private readonly ECDsa _ecdsa;
+    
+    public SigningIssuerCertificate()
     {
-      _rsa.FromXmlString(File.ReadAllText("../../public_key.xml"));
-      return new RsaSecurityKey(_rsa);
+      _ecdsa = ECDsa.Create();
+    }
+    public ECDsaSecurityKey GetPublicKey()
+    {
+      _ecdsa.ImportFromPem(File.ReadAllText("public-key.pem"));
+      return new ECDsaSecurityKey(_ecdsa);
     }
 
     public SigningCredentials GetPrivateKey()
     {
-      _rsa.FromXmlString(File.ReadAllText("../../private_key.xml"));
-      return new SigningCredentials(new RsaSecurityKey(_rsa), SecurityAlgorithms.RsaSha256);
+      _ecdsa.ImportFromPem(File.ReadAllText("private-key.pem"));
+
+      return new SigningCredentials(new ECDsaSecurityKey(_ecdsa), SecurityAlgorithms.EcdsaSha256);
     }
 
     public void Dispose()
     {
-      _rsa.Dispose();
+      _ecdsa.Dispose();
     }
   }
 }

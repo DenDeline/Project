@@ -1,0 +1,29 @@
+﻿@model Sentaku.AuthServer.ViewModels.LoginViewModel
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "_Layout";
+}
+
+<h2>Login</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Login"></label>
+        <input type="text" asp-for="Login">
+        <span asp-validation-for="Login"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input type="password" asp-for="Password">
+    </div>
+    <div>
+        <input asp-for="ReturnTo" value="@Model.ReturnTo" hidden="hidden">
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+<div>
+    Don't have an account? <a asp-action="Signup" asp-route-returnTo="@Model.ReturnTo">Sign up</a>
+</div>

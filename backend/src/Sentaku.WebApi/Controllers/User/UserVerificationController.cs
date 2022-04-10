@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Models.User;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
-using Sentaku.WebApi.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
 
@@ -22,7 +22,7 @@ public class UserVerificationController : ControllerBase
     _userVerificationService = userVerificationService;
   }
   
-  [HttpGet("/api/user/profileImage")]
+  [HttpGet("/user/profileImage")]
   public async Task<ActionResult<string>> GetCurrentUserProfileImage()
   {
     if (User.Identity?.Name is null)
@@ -40,7 +40,7 @@ public class UserVerificationController : ControllerBase
     return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
   }
   
-  [HttpGet("/api/users/{username}/profileImage")]
+  [HttpGet("/users/{username}/profileImage")]
   public async Task<ActionResult<string>> GetUserProfileImageByUsername(string username)
   {
     var profileImageResult = await _userVerificationService.GetProfileImageByUsernameAsync(username);
@@ -53,7 +53,7 @@ public class UserVerificationController : ControllerBase
     return File(profileImageResult.Value.Content, profileImageResult.Value.ContentType);
   }
   
-  [HttpPost("/api/user/profileImage")]
+  [HttpPut("/user/profileImage")]
   public async Task<ActionResult> UpdateUserProfileImage([FromForm] UpdateProfileImageRequest request)
   {
     if (User.Identity?.Name is null)
@@ -90,7 +90,7 @@ public class UserVerificationController : ControllerBase
   [ProducesResponseType(StatusCodes.Status403Forbidden)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(StatusCodes.Status200OK)]
-  [HttpPost("/api/users/{username}/verify")]
+  [HttpPut("/users/{username}/verify")]
   public async Task<ActionResult> UpdateUserVerification(
     [FromRoute] string username,
     [FromBody] UpdateUserVerificationRequest request)

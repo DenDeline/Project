@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 
 namespace Sentaku.Infrastructure.Data.Config
 {
@@ -7,6 +9,24 @@ namespace Sentaku.Infrastructure.Data.Config
   {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
+      builder
+        .Property(_ => _.Id)
+        .HasConversion<Guid>();
+
+      builder
+        .Property(_ => _.Name)
+        .HasMaxLength(64)
+        .IsRequired();
+
+      builder
+        .Property(_ => _.Surname)
+        .HasMaxLength(64)
+        .IsRequired();
+
+      builder
+        .Property(_ => _.CreatedAt)
+        .IsRequired();
+
       builder
         .HasOne(user => user.ProfileImage)
         .WithOne()

@@ -8,7 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.WebApi.Models.User;
+using Sentaku.SharedKernel.Constants;
+using Sentaku.WebApi.Authorization.PermissionsAuthorization;
+using Microsoft.AspNetCore.Http;
+using Sentaku.SharedKernel.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
 
@@ -29,15 +32,19 @@ public class UsersController : ControllerBase
     _permissionsService = permissionsService;
     _mapper = mapper;
   }
-
-  [HttpGet("/api/users")]
-  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetAllUsers(CancellationToken ctsToken)
+  
+  [RequirePermissions(Permissions.ViewUsers)]
+  [HttpGet("/users")]
+  public async Task<ActionResult<IEnumerable<GetUserResponse>>> GetUsers(CancellationToken cancellationToken)
   {
-    var users = await _userManager.Users.ToListAsync(ctsToken);
-    return Ok(_mapper.Map<IEnumerable<GetUserResponse>>(users));
+    var response = await _mapper
+      .ProjectTo<GetUserResponse>(_userManager.Users)
+      .ToListAsync(cancellationToken);
+    
+    return Ok(response);
   }
   
-  [HttpGet("/api/user")]
+  [HttpGet("/user")]
   public async Task<ActionResult<GetCurrentUserResponse>> GetCurrentUser()
   {
     if (User.Identity?.Name is null)
@@ -48,15 +55,20 @@ public class UsersController : ControllerBase
     
     response.Roles = await _userManager.GetRolesAsync(user);
 
-    var permissionResult =  await _permissionsService.GetPermissionsByUsernameAsync(User.Identity.Name);
+    var permissionResult =  await _permissionsService.GetPermissionsAsync(User);
 
-    if (permissionResult.IsSuccess)
-      response.Permissions = permissionResult.Value;
+    if (!permissionResult.IsSuccess)
+      return Forbid();
+    
+    response.Permissions = permissionResult.Value;
 
     return Ok(response);
   }
 
-  [HttpGet("/api/users/{username}")]
+  [HttpGet("/users/{username}")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [ProducesDefaultResponseType]
   public async Task<ActionResult<GetUserResponse>> GetUserByName([FromRoute] string username)
   {
     var user = await _userManager.FindByNameAsync(username);

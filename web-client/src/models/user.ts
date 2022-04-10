@@ -6,5 +6,6 @@ export interface ApplicationUser {
   surname?: string,
   verified: boolean,
   roles: Roles[],
-  permissions: Permissions
+  permissions: Permissions,
+  createdAt: Date
 }

@@ -31,5 +31,8 @@ public static class ResponseHelper
   
   public static IActionResult InvalidGrant(string redirectUri, string? description = null, string? state = null)
     => ErrorResponse(redirectUri, AuthServerConstants.ErrorResponseTypes.InvalidGrant, description, state);
+  
+  public static IActionResult ResourceOwnerNotFound(string redirectUri, string? description = null, string? state = null)
+    => ErrorResponse(redirectUri, AuthServerConstants.ErrorResponseTypes.ResourceOwnerNotFound, description, state);
 }
   

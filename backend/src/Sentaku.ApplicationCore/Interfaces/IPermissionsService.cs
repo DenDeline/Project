@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using Ardalis.Result;
+using Microsoft.AspNetCore.Identity;
 using Sentaku.SharedKernel.Constants;
 
 namespace Sentaku.ApplicationCore.Interfaces
 {
   public interface IPermissionsService
   {
-    public Task<Result<Permissions>> GetPermissionsByUsernameAsync(string username);
+    Task<Result<Permissions>> GetPermissionsAsync(ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken = default);
+    Task<IdentityResult> ValidatePermissionsAsync(ClaimsPrincipal claimsPrincipal, Permissions requirePermissions, CancellationToken cancellationToken = default);
   }
 }

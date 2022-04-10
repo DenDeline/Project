@@ -1,158 +1,208 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate.Specifications;
+using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
+using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel;
+using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Interfaces;
 
 namespace Sentaku.Infrastructure.Services
 {
   public class RoleService : IRoleService
   {
     private readonly AppDbContext _context;
+    private readonly UserManager<AppUser> _userManager;
+    private readonly IRepository<VotingManager> _votingManagerRepository;
+    private readonly IRepository<Voter> _voterRepository;
+    private readonly RoleManager<AppRole> _roleManager;
 
     public RoleService(
-      AppDbContext context)
+      AppDbContext context,
+      UserManager<AppUser> userManager,
+      IRepository<VotingManager> votingManagerRepository,
+      IRepository<Voter> voterRepository,
+      RoleManager<AppRole> roleManager)
     {
       _context = context;
+      _userManager = userManager;
+      _votingManagerRepository = votingManagerRepository;
+      _voterRepository = voterRepository;
+      _roleManager = roleManager;
     }
 
-    public async Task<Result<IReadOnlyList<string>>> UpdateRolesByUsernameAsync(
-      string currentUsername,
-      string updatingUsername,
-      IReadOnlyList<string> updatingRoles,
+    public async Task<Result<VotingManager>> CreateVotingManagerByUsernameAsync(
+      string username,
       CancellationToken cancellationToken = default)
     {
-      var currentUser = await _context.Users
-        .Where(user => user.NormalizedUserName == currentUsername.ToUpperInvariant())
-        .Select(user => new { user.Id })
-        .FirstOrDefaultAsync(cancellationToken);
+      Guard.Against.NullOrWhiteSpace(username, nameof(username));
 
-      if (currentUser is null)
-        return Result<IReadOnlyList<string>>.Forbidden();
+      var user = await _userManager.FindByNameAsync(username);
+      
+      if (user is null)
+        return Result<VotingManager>.NotFound();
 
-      var updatingUser = await _context.Users
-        .Where(user => user.NormalizedUserName == updatingUsername.ToUpperInvariant())
-        .Select(user => new { user.Id, user.Verified })
-        .FirstOrDefaultAsync(cancellationToken);
+      var spec = new VotingManagerByIdentitySpec(user.Id);
 
-      if (updatingUser is null)
-        return Result<IReadOnlyList<string>>.NotFound();
+      var votingManagerExists = await _votingManagerRepository.AnyAsync(spec, cancellationToken);
 
-      if (!updatingUser.Verified)
-        return Result<IReadOnlyList<string>>.Forbidden();
+      if (votingManagerExists)
+        return Result<VotingManager>.Error("User is already vote manager");
 
-      var normalizedUpdatingRoles = updatingRoles
-        .Select(updatingRole => updatingRole.ToUpperInvariant())
-        .ToList();
+      await _userManager.AddToRoleAsync(user, RolesEnum.LeadManager.Name);
 
-      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(currentUser.Id, updatingUser.Id, updatingRoles, cancellationToken);
+      var votingManager = new VotingManager(user.Id);
+      
+      return await _votingManagerRepository.AddAsync(votingManager, cancellationToken);
+    }
+    
+    public async Task<Result> ArchiveVotingManagerByIdAsync(
+      Guid managerId,
+      CancellationToken cancellationToken = default)
+    {
+      var votingManager = await _votingManagerRepository.GetByIdAsync(managerId, cancellationToken);
+      
+      if (votingManager is null)
+        return Result.NotFound();
 
-      //TODO: handle other response types 
-      if (!canUpdateUserRolesResult.IsSuccess)
-        return Result<IReadOnlyList<string>>.Forbidden();
+      var user = await _userManager.FindByIdAsync(votingManager.IdentityId);
+      
+      if (user is null)
+        return Result.NotFound();
+      
+      votingManager.ArchiveIdentity();
+      await _votingManagerRepository.UpdateAsync(votingManager, cancellationToken);
+      
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.LeadManager.Name);
 
-      var updatingUserRoles = await _context.Roles
-        .Where(role => normalizedUpdatingRoles.Contains(role.NormalizedName))
-        .Select(role => new IdentityUserRole<string> { UserId = updatingUser.Id, RoleId = role.Id })
-        .ToListAsync(cancellationToken);
+      return Result.Success();
+    }
+    
+    public async Task<Result> RestoreVotingManagerByIdAsync(
+      Guid managerId,
+      CancellationToken cancellationToken = default)
+    {
+      var votingManager = await _votingManagerRepository.GetByIdAsync(managerId, cancellationToken);
+      
+      if (votingManager is null)
+        return Result.NotFound();
 
-      var oldUserRoles = await _context.UserRoles
-        .Where(_ => _.UserId == updatingUser.Id)
-        .ToListAsync(cancellationToken);
+      var user = await _userManager.FindByIdAsync(votingManager.IdentityId);
 
-      _context.UserRoles.RemoveRange(oldUserRoles.Except(updatingUserRoles));
-      _context.UserRoles.AddRange(updatingUserRoles.Except(oldUserRoles));
+      votingManager.RestoreIdentity();
+      await _votingManagerRepository.UpdateAsync(votingManager, cancellationToken);
+      
+      await _userManager.AddToRoleAsync(user, RolesEnum.LeadManager.Name);
 
-      await _context.SaveChangesAsync(cancellationToken);
-      return Result<IReadOnlyList<string>>.Success(updatingRoles);
+      return Result.Success();
     }
 
-    public async Task<Result<IReadOnlyList<string>>> DeleteUserRolesByUsernameAsync(
-      string currentUsername,
-      string updatingUsername,
+    public async Task<Result> DeleteVotingManagerByIdAsync(
+      Guid managerId,
       CancellationToken cancellationToken = default)
     {
-      var currentUser = await _context.Users
-        .Where(user => user.NormalizedUserName == currentUsername.ToUpperInvariant())
-        .Select(user => new { user.Id })
-        .FirstOrDefaultAsync(cancellationToken);
+      var votingManager = await _votingManagerRepository.GetByIdAsync(managerId, cancellationToken);
+      
+      if (votingManager is null)
+        return Result.NotFound();
 
-      if (currentUser is null)
-        return Result<IReadOnlyList<string>>.Forbidden();
+      var user = await _userManager.FindByIdAsync(votingManager.IdentityId);
 
-      var updatingUser = await _context.Users
-        .Where(user => user.NormalizedUserName == updatingUsername.ToUpperInvariant())
-        .Select(user => new { user.Id, user.Verified })
-        .FirstOrDefaultAsync(cancellationToken);
-
-      if (updatingUser is null)
-        return Result<IReadOnlyList<string>>.NotFound();
-
-      if (!updatingUser.Verified)
-        return Result<IReadOnlyList<string>>.Forbidden();
-
-      var updatingRoles = new List<string>().AsReadOnly();
-
-      var canUpdateUserRolesResult = await CanUpdateUserRolesAsync(
-        currentUser.Id,
-        updatingUser.Id,
-        //TODO: remove param
-        updatingRoles,
-        cancellationToken);
-
-      //TODO: handle other response types 
-      if (!canUpdateUserRolesResult.IsSuccess)
-        return Result<IReadOnlyList<string>>.Forbidden();
-
-      var oldUserRoles = await _context.UserRoles
-        .AsNoTracking()
-        .Where(_ => _.UserId == updatingUser.Id)
-        .ToListAsync(cancellationToken);
-
-      _context.UserRoles.RemoveRange(oldUserRoles);
-      await _context.SaveChangesAsync(cancellationToken);
-
-      return Result<IReadOnlyList<string>>.Success(updatingRoles);
+      await _votingManagerRepository.DeleteAsync(votingManager, cancellationToken);
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.LeadManager.Name);
+      
+      return Result.Success();
     }
 
-    private async Task<Result<bool>> CanUpdateUserRolesAsync(
-      string currentUserId,
-      string updatingUserId,
-      //TODO: add nullable support
-      IReadOnlyList<string> updatingRoles,
-      CancellationToken cancellationToken = default)
+    public async Task<Result<Voter>> CreateVoterByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-      var roles = _context.Roles;
+      Guard.Against.NullOrWhiteSpace(username, nameof(username));
 
-      var roleNames = await roles
-        .Select(_ => _.Name)
-        .ToListAsync(cancellationToken);
+      var user = await _userManager.FindByNameAsync(username);
+      
+      if (user is null)
+        return Result<Voter>.NotFound();
 
-      if (!updatingRoles.All(_ => roleNames.Contains(_)))
-        return Result<bool>.Error();
+      var spec = new VoterByIdentitySpec(user.Id);
 
-      var currentUserRoleMaxPosition = await _context.UserRoles
-        .Where(_ => _.UserId == currentUserId)
-        .Join(roles, nav => nav.RoleId, role => role.Id, (nav, role) => new { role.Position })
-        .MaxAsync(role => (int?)role.Position, cancellationToken) ?? 0;
+      var votingManagerExists = await _voterRepository.AnyAsync(spec, cancellationToken);
 
-      var updatingUserRoleMaxPosition = await _context.UserRoles
-        .Where(_ => _.UserId == updatingUserId)
-        .Join(roles, nav => nav.RoleId, role => role.Id, (nav, role) => new { role.Position })
-        .MaxAsync(role => (int?)role.Position, cancellationToken) ?? 0;
+      if (votingManagerExists)
+        return Result<Voter>.Error("User is already voter");
 
-      var updatingRolesMaxPosition = await _context.Roles
-        .Where(role => updatingRoles.Contains(role.Name))
-        .MaxAsync(role => (int?)role.Position, cancellationToken) ?? 0;
+      await _userManager.AddToRoleAsync(user, RolesEnum.Authority.Name);
 
-      return (
-        currentUserRoleMaxPosition > updatingUserRoleMaxPosition &&
-        currentUserRoleMaxPosition > updatingRolesMaxPosition
-        ) ? Result<bool>.Success(true) : Result<bool>.Forbidden();
+      var voter = new Voter(user.Id);
+      
+      return await _voterRepository.AddAsync(voter, cancellationToken);
+    }
+
+    public async Task<Result> ArchiveVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
+    {
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
+      
+      if (voter is null)
+        return Result.NotFound();
+
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
+      
+      if (user is null)
+        return Result.NotFound();
+      
+      
+      voter.ArchiveIdentity();
+      await _voterRepository.UpdateAsync(voter, cancellationToken);
+      
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.Authority.Name);
+
+      return Result.Success();
+    }
+
+    public async Task<Result> RestoreVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
+    {
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
+      
+      if (voter is null)
+        return Result.NotFound();
+
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
+      
+      if (user is null)
+        return Result.NotFound();
+      
+      voter.RestoreIdentity();
+      await _voterRepository.UpdateAsync(voter, cancellationToken);
+      
+      await _userManager.AddToRoleAsync(user, RolesEnum.Authority.Name);
+
+      return Result.Success();
+
+    }
+
+    public async Task<Result> DeleteVoterByIdAsync(Guid voterId, CancellationToken cancellationToken = default)
+    {
+      var voter = await _voterRepository.GetByIdAsync(voterId, cancellationToken);
+      
+      if (voter is null)
+        return Result.NotFound();
+
+      var user = await _userManager.FindByIdAsync(voter.IdentityId);
+
+      await _voterRepository.DeleteAsync(voter, cancellationToken);
+      await _userManager.RemoveFromRoleAsync(user, RolesEnum.Authority.Name);
+      
+      return Result.Success();
     }
   }
 }

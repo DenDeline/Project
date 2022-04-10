@@ -13,13 +13,13 @@ const ProfileSettings: NextPage = () => {
   return (
     <Layout title={'Profile config'}>
       <h2>Upload documents</h2>
-      <form encType={'multipart/form-data'} method={'post'}>
+      <form encType={'multipart/form-data'} method={'post'} action={'/api/user/profileImage'} >
         <dl>
           <dt>
             <label htmlFor={'profileImage'}>Image</label>
           </dt>
           <dd>
-            <input id={'profileImage'} name={'profileImage'} type={'file'}/>
+            <input id={'profileImage'} name={'FormFile'} type={'file'}/>
           </dd>
         </dl>
         <input type={'submit'} value={'Submit'}/>

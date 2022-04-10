@@ -79,6 +79,11 @@
       /// to the client via an HTTP redirect.)
       /// </summary>
       public const string TemporarilyUnavailable = "temporarily_unavailable";
+      
+      /// <summary>
+      /// The resource owner doesn't exist
+      /// </summary>
+      public const string ResourceOwnerNotFound = "resource_owner_not_found";
     }
     public static class CodeChallengeMethods
     {

@@ -1,3 +1,5 @@
+using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
@@ -9,7 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
   if (builder.Environment.IsDevelopment())
-    options.EnableSensitiveDataLogging();
+    options
+      .EnableSensitiveDataLogging()
+      .EnableDetailedErrors();
+  
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
@@ -29,7 +34,9 @@ builder.Services.AddAuthentication();
   //   config.ClientSecret = googleConfig["ClientSecret"];
   // });
 
-builder.Services.AddIdentityCore<AppUser>(config =>
+builder.Services.ConfigureApplicationCookie(_ => _.LoginPath = new PathString("/login"));
+
+builder.Services.AddIdentity<AppUser, AppRole>(config =>
   {
     if (builder.Environment.IsDevelopment())
     {
@@ -41,7 +48,6 @@ builder.Services.AddIdentityCore<AppUser>(config =>
       config.Password.RequireNonAlphanumeric = false;
     }
   })
-  .AddRoles<AppRole>()
   .AddEntityFrameworkStores<AppDbContext>()
   .AddDefaultTokenProviders();
 

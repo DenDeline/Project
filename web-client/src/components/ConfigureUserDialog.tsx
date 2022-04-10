@@ -1,265 +1,160 @@
 ﻿import {
+  Autocomplete,
   Button,
   Checkbox,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   FormControlLabel,
-  Grid,
-  Menu,
-  MenuItem,
-  Paper,
+  Stack,
   TextField,
-  Theme,
 } from '@mui/material'
 
-import {useCallback, useEffect, useState} from 'react'
+import {
+  LoadingButton
+} from '@mui/lab'
 
-import { Add } from '@mui/icons-material'
 import Link from 'next/link'
 
-import { styled } from '@mui/material/styles'
-
-const PREFIX = 'ConfigureUserDialog'
-
-const classes = {
-  root: `${PREFIX}-root`,
-  chip: `${PREFIX}-chip`
-}
-
-const StyledDialog = styled(Dialog)((
-  {
-    theme: Theme
-  }
-) => ({
-  [`& .${classes.root}`]: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    listStyle: 'none',
-    padding: Theme.spacing(0.5),
-    margin: 0,
-  },
-
-  [`& .${classes.chip}`]: {
-    margin: Theme.spacing(0.5),
-  }
-}))
+import { Roles, RoleNames } from '@sentaku/constants'
+import { ApplicationUser } from 'models/user'
+import { useCallback, useState } from 'react'
 
 interface ConfigureUserDialogProps {
   open: boolean,
-  selectedUser?: {
-    id: number,
-    username: string,
-    name: string,
-    surname: string,
-    verified: boolean
-    roles: string[]
-  },
-  permissions: {
-    editProfile: boolean,
-    approvingDocuments: boolean,
-    availableRoles: string[]
-  }
-  onSave: (user: any) => void
-  onClose: () => void
+  userId: ApplicationUser['id']
+  roles: ApplicationUser['roles']
+  username: ApplicationUser['username']
+  name: ApplicationUser['name']
+  surname: ApplicationUser['surname']
+  verified: ApplicationUser['verified']
+  onSave: (username: ApplicationUser['username']) => Promise<void>
+  onClose: () => void,
+  onExited: () => void,
+  onRolesChange: (newRoles: Roles[]) => void,
+  onVerificationChange: (verified: boolean) => void,
 }
 
-const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = (props) => {
+const ConfigureUserDialog: React.FC<ConfigureUserDialogProps> = ({
+  onClose,
+  onExited,
+  onSave,
+  open,
+  userId,
+  name,
+  surname,
+  username,
+  roles,
+  verified,
+  onRolesChange,
+  onVerificationChange
+}) => {
 
+  const [loading, setLoading] = useState(false)
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const handleUserSave = useCallback(() => {
+    let active = true;
 
-  const handleMenuClose = useCallback(() => {
-    setAnchorEl(null)
-  }, [])
+    (async () => {
+      setLoading(true)
+      await onSave(username)
 
-  const handleMenuClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget)
-  }, [])
+      if (!active) {
+        return
+      }
 
-  const [isUserChanged, setIsUserChanged] = useState<boolean>(false)
+      setLoading(false)
+      onClose()
+    })()
 
-  const [userRoles, setUserRoles] = useState<string[]>([])
-
-  const handleAppendRole = useCallback((role: string) => {
-    setUserRoles(userRoles.concat(role))
-    setIsUserChanged(true)
-  }, [userRoles])
-
-  const handleDeleteRole = useCallback((role: string) => {
-    setUserRoles(userRoles.filter(_ => _ !== role))
-    setIsUserChanged(true)
-  }, [userRoles])
-
-  const [userVerified, setUserVerified] = useState<boolean>(false)
-
-  const handleUserVerification = useCallback((verified: boolean) => {
-    setUserVerified(verified)
-    if (!verified) {
-      setUserRoles([])
+    return () => {
+      active = false
     }
-    setIsUserChanged(true)
-  }, [])
-
-  const [remindedRoles, setRemindedRoles] = useState<string[]>([])
-
-  useEffect(() => {
-    setRemindedRoles(props.permissions.availableRoles.filter(_ => !userRoles.includes(_)))
-  }, [props.permissions.availableRoles, userRoles])
-
-  useEffect(() => {
-    if (props.open) {
-      setUserRoles(props.selectedUser?.roles.slice() ?? [])
-      setUserVerified(props.selectedUser?.verified ?? false)
-    }
-  }, [props.open, props.selectedUser?.roles, props.selectedUser?.verified])
+  }, [onClose, onSave, username])
 
   return (
-    <StyledDialog
+    <Dialog
       fullWidth={true}
       maxWidth={'sm'}
-      open={props.open}
+      open={open}
       aria-labelledby={'dialog-title'}
-      onClose={props.onClose}
+      onClose={onClose}
+      TransitionProps={{
+        onExited: onExited
+      }}
     >
       <DialogTitle id={'dialog-title'}>
-        Configure user: {props.selectedUser?.username}
+        Configure user: {username}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
           Manage user account
         </DialogContentText>
-        <Grid
-          container
-          direction={'column'}
-          spacing={2}
-        >
-          <Grid item>
-            <TextField
-              label={'Username'}
-              value={props.selectedUser?.username}
-              disabled
-            />
-          </Grid>
-          <Grid item>
-            <TextField
+        <Stack sx={{ mb: t => t.spacing(1) }}>
+          <TextField
+            label={'Username'}
+            value={username}
+            margin={'normal'}
+            disabled
+          />
+          <TextField
               label={'Name'}
-              value={props.selectedUser?.name}
+              value={name}
+              margin={'normal'}
               disabled
             />
-          </Grid>
-          <Grid item>
+          <TextField
+            label={'Name'}
+            value={surname}
+            margin={'normal'}
+            disabled
+          />
+        </Stack>
+        <DialogContentText>
+          Only approved users have access for our resource <br/>
+          Links: <Link href={'/'}>Images</Link>
+        </DialogContentText>
+        <FormControlLabel
+          control={<Checkbox checked={verified} onClick={() => onVerificationChange(!verified)} />}
+          label={'Documents approved'}
+        />
+        <Autocomplete
+          multiple
+          id={'user-roles'}
+          options={[ Roles.Authority, Roles.LeadManager, Roles.RepresentativeAuthority ]}
+          value={roles}
+          getOptionLabel={option => RoleNames[option]}
+          onChange={(e, v) => onRolesChange(v)}
+          filterSelectedOptions
+          disabled={!verified}
+          ChipProps={{ color: 'secondary' }}
+          renderInput={(params) => (
             <TextField
-              label={'Name'}
-              value={props.selectedUser?.surname}
-              disabled
+              {...params}
+              margin={'normal'}
+              label={'User roles'}
+              placeholder={'User roles'}
             />
-          </Grid>
-          <Grid item>
-            <DialogContentText>
-              Only approved users have access for our resource <br/>
-              Links: <Link href={'/'}>Images</Link>
-            </DialogContentText>
-            <FormControlLabel
-              control={<Checkbox checked={userVerified}/>}
-              onClick={() => handleUserVerification(!userVerified)}
-              label={'Documents approved'}
-              disabled={!props.permissions.approvingDocuments}
-            />
-          </Grid>
-          {props.permissions.availableRoles.length > 0 && userVerified && (
-            <Grid item>
-              <DialogContentText>
-                User roles:
-              </DialogContentText>
-              <Paper component={'ul'} className={classes.root} variant={'outlined'}>
-                {userRoles.map((userRole, index) => (
-                    <li key={index}>
-                      {props.permissions.availableRoles.some(_ => _ === userRole)
-                        ? (
-                          <Chip
-                            label={userRole}
-                            color={'primary'}
-                            onDelete={() => {
-                              handleDeleteRole(userRole)
-                            }}
-                            className={classes.chip}
-                          />
-                        )
-                        : (
-                          <Chip
-                            label={userRole}
-                            color={'primary'}
-                            className={classes.chip}
-                          />
-                        )}
-                    </li>
-                  ))
-                }
-                {remindedRoles.length > 0 && (
-                  <li key={userRoles.length}>
-                    <Chip
-                      aria-controls="user-roles-menu"
-                      icon={<Add fontSize={'small'}/>}
-                      label={'Add role'}
-                      color={'default'}
-                      onClick={handleMenuClick}
-                      className={classes.chip}/>
-                    <Menu
-                      id="user-roles-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleMenuClose}
-                    >
-                      {
-                        remindedRoles.length > 0 ?
-                          remindedRoles.map(role => (
-                            <MenuItem key={role} onClick={() => {
-                              handleAppendRole(role)
-                              handleMenuClose()
-                            }}
-                            >
-                              {
-                                role
-                              }
-                            </MenuItem>)) :
-                          (
-                            <MenuItem onClick={handleMenuClose}>None</MenuItem>
-                          )
-                      }
-                    </Menu>
-                  </li>
-                  )
-                }
-              </Paper>
-            </Grid>
-            )
-          }
-        </Grid>
+          )}
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.onClose} color={'primary'}>
+        <Button onClick={onClose} color={'primary'}>
           Close
         </Button>
-        <Button onClick={() => {
-          if (isUserChanged) {
-            props.onSave({
-              id: props.selectedUser?.id,
-              username: props.selectedUser?.username,
-              verified: userVerified,
-              roles: userRoles
-            })
-          }
-          props.onClose()
-        }} color={'primary'} variant={'contained'}>
+        <LoadingButton
+          loading={loading}
+          onClick={handleUserSave}
+          color={'primary'}
+          variant={'contained'}
+          disableElevation
+        >
           Save
-        </Button>
+        </LoadingButton>
       </DialogActions>
-    </StyledDialog>
+    </Dialog>
   )
 }
 
