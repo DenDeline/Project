@@ -1,4 +1,4 @@
-﻿namespace Sentaku.WebApi.Models.User;
+﻿namespace Sentaku.SharedKernel.Models.User;
 
 public class UpdateUserVerificationRequest
 {

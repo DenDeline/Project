@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
+using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.SharedKernel;
 
 namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
@@ -8,6 +11,7 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
 public class Question: BaseEntity<Guid>
 {
   public int Index { get; set; }
+  
   [JsonIgnore]
   public VoteSession VoteSession { get; }
   public Guid VoteSessionId { get; }
@@ -15,6 +19,9 @@ public class Question: BaseEntity<Guid>
   public string Summary { get; private set; }
   public string Description { get; private set; }
   public DateTime CreatedOn { get; }
+
+  private readonly List<Vote> _votes = new();
+  public IReadOnlyList<Vote> Votes => _votes.AsReadOnly();
   
   // EF CORE
   private Question() {}
@@ -32,4 +39,6 @@ public class Question: BaseEntity<Guid>
     Summary = Guard.Against.NullOrWhiteSpace(summary, nameof(summary));
     Description = Guard.Against.NullOrWhiteSpace(description, nameof(description));
   }
+
+  public void AddVote(Voter voter, VoteTypes type) => _votes.Add(new Vote(this, voter, type));
 }

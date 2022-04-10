@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Sentaku.WebApi.Models.User;
+namespace Sentaku.SharedKernel.Models.User;
 
 public class GetUserRolesResponse
 {

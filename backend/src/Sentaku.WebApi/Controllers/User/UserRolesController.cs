@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Sentaku.Infrastructure.Data;
-using Sentaku.WebApi.Models.User;
+using Sentaku.SharedKernel.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;
 

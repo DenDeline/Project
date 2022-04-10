@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Text;
+using Ardalis.Result;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Sentaku.SharedKernel;
 
-namespace Ardalis.Result.AspNetCore;
+namespace Sentaku.WebApi.Extensions;
 
 public static class ResultExtensions
   {
     public static ActionResult ToActionResult(
-      this Ardalis.Result.Result result,
+      this Result result,
       ControllerBase controller)
     {
       return (ActionResult) controller.ToActionResult((IResult) result);
@@ -16,7 +18,7 @@ public static class ResultExtensions
 
     public static ActionResult ToActionResult(
       this ControllerBase controller,
-      Ardalis.Result.Result result)
+      Result result)
     {
       return (ActionResult) controller.ToActionResult((IResult) result);
     }

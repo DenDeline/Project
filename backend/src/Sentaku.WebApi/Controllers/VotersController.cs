@@ -15,10 +15,10 @@ using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
 using Sentaku.SharedKernel.Constants;
 using Sentaku.SharedKernel.Interfaces;
+using Sentaku.SharedKernel.Models;
+using Sentaku.SharedKernel.Models.Voter;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
-using Sentaku.WebApi.Models;
-using Sentaku.WebApi.Models.Voter;
-using Sentaku.WebApi.Models.VotingManagers;
+using Sentaku.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Sentaku.WebApi.Controllers;

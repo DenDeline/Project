@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sentaku.WebApi.Models.VoteSession;
+namespace Sentaku.SharedKernel.Models.VoteSession;
 
 public class CreateVoteSessionRequest
 {

@@ -28,5 +28,10 @@ public class VoterConfig: IEntityTypeConfiguration<Voter>
     builder
       .Property(_ => _.IsArchived)
       .IsRequired();
+    
+    builder
+      .HasMany<Vote>()
+      .WithOne(_ => _.Voter)
+      .HasForeignKey(_ => _.VoterId);
   }
 }

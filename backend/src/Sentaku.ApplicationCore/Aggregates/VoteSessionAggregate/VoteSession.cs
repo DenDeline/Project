@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
 using Ardalis.SmartEnum.SystemTextJson;
+using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.SharedKernel;
@@ -29,6 +29,9 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
     public IReadOnlyList<Question> Questions => _questions.AsReadOnly();
     public int QuestionCount { get; private set; }
 
+    private readonly List<Voter> _voters = new();
+    public IReadOnlyList<Voter> Voters => _voters.AsReadOnly();
+    
     [JsonConverter(typeof(SmartEnumNameConverter<SessionState, int>))]
     public SessionState State { get; private set; }
     
@@ -92,9 +95,45 @@ namespace Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate
       return true;
     }
 
+    public bool AddVotes(Voter voter, int[] votes)
+    {
+      Guard.Against.Null(voter, nameof(voter));
+      Guard.Against.NullOrEmpty(votes, nameof(votes));
+
+      if (!State.Equals(SessionState.Active))
+        return false;
+      
+      if(_voters.All(_ => _.Id != voter.Id))
+        return false;
+
+      if (_questions.Count != votes.Length)
+        return false;
+      
+      foreach (var question in _questions)
+        question.AddVote(voter, VoteTypes.FromValue(votes[question.Index]));
+
+      return true;
+    }
+    
+    public bool JoinVoter(Voter voter)
+    {
+      Guard.Against.Null(voter, nameof(voter));
+      
+      if (!State.Equals(SessionState.Pending))
+        return false;
+      
+      if(_voters.Any(_ => _.Id == voter.Id))
+        return false;
+      
+      _voters.Add(voter);
+
+      return true;
+    }
+
     public bool MoveInNextState()
     {
-      if (State.NextState is null) return false;
+      if (State.NextState is null)
+        return false;
 
       State.NextState
         .When(SessionState.Active)

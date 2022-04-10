@@ -14,6 +14,10 @@ public class VoteSessionConfig: IEntityTypeConfiguration<VoteSession>
       .WithMany()
       .HasForeignKey(_ => _.VotingManagerId)
       .OnDelete(DeleteBehavior.SetNull);
+    
+    builder
+      .HasMany(_ => _.Voters)
+      .WithMany(_ => _.Sessions);
 
     builder
       .Property(_ => _.Agenda)
@@ -33,7 +37,7 @@ public class VoteSessionConfig: IEntityTypeConfiguration<VoteSession>
     builder
       .Property(_ => _.StartDate)
       .IsRequired();
-
+    
     builder
       .Property(_ => _.QuestionCount)
       .IsRequired();

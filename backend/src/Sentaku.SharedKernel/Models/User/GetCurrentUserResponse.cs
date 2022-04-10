@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Sentaku.SharedKernel.Constants;
 
-namespace Sentaku.WebApi.Models.User;
+namespace Sentaku.SharedKernel.Models.User;
 
 public class GetCurrentUserResponse
 {

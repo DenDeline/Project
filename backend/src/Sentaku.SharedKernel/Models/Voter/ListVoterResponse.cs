@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sentaku.WebApi.Models.Voter;
+namespace Sentaku.SharedKernel.Models.Voter;
 
 public class ListVoterResponse
 {

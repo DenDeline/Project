@@ -11,14 +11,15 @@ using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.SharedKernel.Constants;
 using Sentaku.SharedKernel.Interfaces;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
-using Sentaku.WebApi.Models.VotingManagers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.WebApi.Models;
+using Sentaku.SharedKernel.Models;
+using Sentaku.SharedKernel.Models.VotingManagers;
+using Sentaku.WebApi.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Sentaku.WebApi.Controllers;

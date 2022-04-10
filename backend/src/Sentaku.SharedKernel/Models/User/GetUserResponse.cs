@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Sentaku.WebApi.Models.User;
+﻿namespace Sentaku.SharedKernel.Models.User;
 
 public class GetUserResponse: UserDto
 {

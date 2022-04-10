@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ardalis.Result;
 
-namespace Ardalis.Result;
+namespace Sentaku.SharedKernel;
 
 public class Result: IResult
 {

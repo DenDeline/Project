@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sentaku.WebApi.Models.VotingManagers;
+namespace Sentaku.SharedKernel.Models.Voter;
 
 public class CreateVoterRequest
 {

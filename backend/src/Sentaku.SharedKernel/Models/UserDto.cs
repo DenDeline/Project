@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sentaku.WebApi.Models;
+namespace Sentaku.SharedKernel.Models;
 
 public class UserDto
 {

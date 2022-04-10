@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Sentaku.Infrastructure.Data;
-using Sentaku.WebApi.Models.User;
+using Sentaku.SharedKernel.Models.User;
 
 namespace Sentaku.WebApi.MappingProfiles
 {

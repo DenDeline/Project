@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
+using Sentaku.SharedKernel;
 
 namespace Sentaku.ApplicationCore.Interfaces
 {

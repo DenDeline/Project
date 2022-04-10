@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sentaku.WebApi.Models.VotingManagers;
+namespace Sentaku.SharedKernel.Models.VotingManagers;
 
 public class ListVotingManagersResponse
 {

@@ -26,6 +26,11 @@ public class QuestionConfig: IEntityTypeConfiguration<Question>
       .HasForeignKey(_ => _.VoteSessionId);
 
     builder
+      .HasMany(_ => _.Votes)
+      .WithOne(_ => _.Question)
+      .HasForeignKey(_ => _.QuestionId);
+
+    builder
       .Property(_ => _.CreatedOn)
       .IsRequired();
 

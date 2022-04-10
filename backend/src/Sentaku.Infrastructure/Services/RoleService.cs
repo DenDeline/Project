@@ -14,6 +14,7 @@ using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
+using Sentaku.SharedKernel;
 using Sentaku.SharedKernel.Constants;
 using Sentaku.SharedKernel.Interfaces;
 
