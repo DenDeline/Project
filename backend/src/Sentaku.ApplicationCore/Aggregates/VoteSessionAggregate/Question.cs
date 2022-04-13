@@ -48,7 +48,11 @@ public class Question: BaseEntity<Guid>
 
   public void CalculateResults()
   {
-    var results= _votes.GroupBy(v => v.Type, v => v.VoterId, (type, voters) => new VotingResult(this, type, voters.Count()));
+    var results= _votes.GroupBy(
+      v => v.Type, 
+      v => v.VoterId, 
+      (type, voters) => new VotingResult(this, type, voters.Count()));
+    
     _results.AddRange(results);
   }
 }
