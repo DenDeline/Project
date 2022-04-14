@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.Infrastructure.Services
 {

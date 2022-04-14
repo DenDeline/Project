@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.SharedKernel.Constants;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
 using Microsoft.AspNetCore.Http;
+using Sentaku.SharedKernel.Enums;
 using Sentaku.SharedKernel.Models.User;
 
 namespace Sentaku.WebApi.Controllers.User;

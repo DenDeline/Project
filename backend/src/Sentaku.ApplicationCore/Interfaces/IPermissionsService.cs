@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.AspNetCore.Identity;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.ApplicationCore.Interfaces
 {

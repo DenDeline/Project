@@ -13,7 +13,7 @@ using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 using Sentaku.SharedKernel.Interfaces;
 using Sentaku.SharedKernel.Models;
 using Sentaku.SharedKernel.Models.Voter;

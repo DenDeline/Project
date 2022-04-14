@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.SharedKernel.Models.User;
 

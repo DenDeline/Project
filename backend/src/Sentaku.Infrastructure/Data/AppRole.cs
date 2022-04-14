@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.Infrastructure.Data
 {

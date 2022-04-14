@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentaku.ApplicationCore.Aggregates;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.Infrastructure.Data
 {

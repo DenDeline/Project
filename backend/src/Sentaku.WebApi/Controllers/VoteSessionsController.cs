@@ -14,7 +14,7 @@ using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 using Sentaku.SharedKernel.Interfaces;
 using Sentaku.SharedKernel.Models.VoteSession;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
@@ -93,9 +93,12 @@ public class VoteSessionsController: ControllerBase
   [HttpGet]
   [RequirePermissions(Permissions.ViewVotingSessions)]
   public async Task<ActionResult<IEnumerable<VoteSession>>> ListSessions(
+    [FromQuery] ListSessionsRequest request,
     CancellationToken cancellationToken)
   {
-    var session = await _voteSessionReadRepository.ListAsync(cancellationToken);
+    var spec = new VoteSessionsSearchSpec(request.Sorting);
+    
+    var session = await _voteSessionReadRepository.ListAsync(spec, cancellationToken);
     return Ok(session);
   }
   

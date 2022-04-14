@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.WebApi.Authorization.PermissionsAuthorization
 {

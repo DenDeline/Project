@@ -11,10 +11,10 @@ using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
-using Sentaku.SharedKernel.Constants;
 using Sentaku.SharedKernel.Interfaces;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
 using Microsoft.AspNetCore.Http;
+using Sentaku.SharedKernel.Enums;
 
 namespace Sentaku.WebApi.Controllers;
 
@@ -150,6 +150,6 @@ public class VoteSessionResultsController: ControllerBase
     Response.ContentLength = pdf.BinaryData.Length;
     Response.Headers.Add("Content-Disposition", "attachment; filename=results_" + sessionId + ".pdf");
 
-    return File(pdf.BinaryData,"application/pdf;");
+    return File(pdf.BinaryData,MediaTypeNames.Application.Pdf);
   }
 }

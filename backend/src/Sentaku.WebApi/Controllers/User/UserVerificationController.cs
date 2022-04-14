@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sentaku.ApplicationCore.Interfaces;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 using Sentaku.SharedKernel.Models.User;
 using Sentaku.WebApi.Authorization.PermissionsAuthorization;
 

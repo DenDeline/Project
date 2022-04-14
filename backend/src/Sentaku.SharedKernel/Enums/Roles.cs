@@ -1,6 +1,6 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace Sentaku.SharedKernel.Constants
+namespace Sentaku.SharedKernel.Enums
 {
   public abstract class RolesEnum : SmartEnum<RolesEnum>
   {

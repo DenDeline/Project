@@ -15,7 +15,7 @@ using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
 using Sentaku.ApplicationCore.Interfaces;
 using Sentaku.Infrastructure.Data;
 using Sentaku.SharedKernel;
-using Sentaku.SharedKernel.Constants;
+using Sentaku.SharedKernel.Enums;
 using Sentaku.SharedKernel.Interfaces;
 
 namespace Sentaku.Infrastructure.Services
