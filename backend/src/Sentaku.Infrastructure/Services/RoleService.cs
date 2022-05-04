@@ -52,6 +52,9 @@ namespace Sentaku.Infrastructure.Services
       
       if (user is null)
         return Result<VotingManager>.NotFound();
+      
+      if (!user.Verified)
+        return Result<VotingManager>.Error("User isn't verified");
 
       var spec = new VotingManagerByIdentitySpec(user.Id);
 
@@ -133,6 +136,9 @@ namespace Sentaku.Infrastructure.Services
       
       if (user is null)
         return Result<Voter>.NotFound();
+      
+      if (!user.Verified)
+        return Result<Voter>.Error("User isn't verified");
 
       var spec = new VoterByIdentitySpec(user.Id);
 
