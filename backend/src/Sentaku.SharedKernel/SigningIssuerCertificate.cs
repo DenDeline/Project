@@ -23,7 +23,13 @@ namespace Sentaku.SharedKernel
     {
       _ecdsa.ImportFromPem(File.ReadAllText("private-key.pem"));
 
-      return new SigningCredentials(new ECDsaSecurityKey(_ecdsa), SecurityAlgorithms.EcdsaSha256);
+      return new SigningCredentials(new ECDsaSecurityKey(_ecdsa), SecurityAlgorithms.EcdsaSha256)
+      {
+        CryptoProviderFactory = new CryptoProviderFactory
+        {
+          CacheSignatureProviders = false
+        }
+      };
     }
 
     public void Dispose()

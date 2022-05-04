@@ -2,7 +2,7 @@
 
 namespace Sentaku.SharedKernel.Models.VoteSession;
 
-public record ListSessionsResult(
+public record GetVoteSessionByIdResult(
   Guid Id, 
   Guid? VotingManagerId,
   string State, 

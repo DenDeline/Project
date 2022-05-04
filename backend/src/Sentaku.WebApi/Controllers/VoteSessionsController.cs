@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate;
 using Sentaku.ApplicationCore.Aggregates.VoterAggregate.Specifications;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate;
-using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Enums;
 using Sentaku.ApplicationCore.Aggregates.VoteSessionAggregate.Specifications;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate;
 using Sentaku.ApplicationCore.Aggregates.VotingManagerAggregate.Specifications;
@@ -71,18 +70,22 @@ public class VoteSessionsController: ControllerBase
 
     await _votingManagerRepository.SaveChangesAsync(cancellationToken);
 
-    var session = await _voteSessionReadRepository.GetByIdAsync(sessionId, cancellationToken);
+    var voteSessionByspec = new VoteSessionByIdSpec(sessionId);
+    
+    var session = await _voteSessionReadRepository.GetBySpecAsync(voteSessionByspec, cancellationToken);
 
     return session is null ? Conflict() : CreatedAtAction(nameof(GetSessionById), new { sessionId }, session);
   }
 
   [HttpGet("{sessionId:guid}")]
   [RequirePermissions(Permissions.ViewVotingSessions)]
-  public async Task<ActionResult<VoteSession>> GetSessionById(
+  public async Task<ActionResult<GetVoteSessionByIdResult>> GetSessionById(
     [FromRoute] Guid sessionId,
     CancellationToken cancellationToken)
   {
-    var session = await _voteSessionReadRepository.GetByIdAsync(sessionId, cancellationToken);
+    var spec = new VoteSessionByIdSpec(sessionId);
+    
+    var session = await _voteSessionReadRepository.GetBySpecAsync(spec, cancellationToken);
 
     if (session is null)
       return NotFound();
@@ -92,7 +95,7 @@ public class VoteSessionsController: ControllerBase
   
   [HttpGet]
   [RequirePermissions(Permissions.ViewVotingSessions)]
-  public async Task<ActionResult<IEnumerable<VoteSession>>> ListSessions(
+  public async Task<ActionResult<IEnumerable<ListSessionsResult>>> ListSessions(
     [FromQuery] ListSessionsRequest request,
     CancellationToken cancellationToken)
   {
@@ -154,7 +157,7 @@ public class VoteSessionsController: ControllerBase
     if (voter is null)
       return Forbid();
 
-    var voteSessionSpec = new VoteSessionByIdIncludeQuestionsSpec(sessionId);
+    var voteSessionSpec = new VoteSessionByIdIncludeVotersSpec(sessionId);
     
     var session = await _voteSessionRepository.GetBySpecAsync(voteSessionSpec, cancellationToken);
 
